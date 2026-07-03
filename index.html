@@ -70,6 +70,12 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .wordmark{font-family:Unbounded;font-weight:700;font-size:16px;}
 .heroimg{position:relative;border-radius:26px;overflow:hidden;box-shadow:var(--sh-up);}
 .heroimg img{width:100%;height:296px;object-fit:cover;display:block;}
+.collage{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.cl{position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--sh-card);}
+.cl img{width:100%;height:118px;object-fit:cover;display:block;}
+.cl span{position:absolute;left:8px;bottom:8px;background:rgba(255,255,255,.94);color:var(--txt);font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;}
+.t.add{color:var(--accent);font-weight:700;}
+.t.add .plus{width:24px;height:24px;border-radius:8px;border:2px dashed var(--accent);flex:none;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;}
 .vrow{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
 .vcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:9px;cursor:pointer;box-shadow:var(--sh-card);transition:transform .1s;}
 .vcard:active{transform:scale(.98);}
@@ -174,10 +180,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <span class="wordmark">Мой&nbsp;путь</span>
     </div>
 
-    <div class="heroimg" style="margin-top:14px;"><img src="img/splash-hero.jpg" alt="человек на пути к цели"></div>
+    <div class="collage" style="margin-top:14px;">
+      <div class="cl"><img src="img/hero-4.jpg" alt="Бизнес"><span>Бизнес</span></div>
+      <div class="cl"><img src="img/splash-hero.jpg" alt="Спорт" style="object-position:center 20%;"><span>Спорт</span></div>
+      <div class="cl"><img src="img/hero-3.jpg" alt="Здоровье"><span>Здоровье</span></div>
+      <div class="cl"><img src="img/hero-5.jpg" alt="Режим дня"><span>Режим дня</span></div>
+    </div>
 
-    <h1 style="margin-top:18px;">Дойти можно.<br>Начни сегодня.</h1>
-    <p class="mut" style="font-size:15.5px;line-height:1.5;margin-top:9px;">Срываются все — мы поможем вернуться и дойти. Бери и делай. Сорвался — снова делай.</p>
+    <h1 style="margin-top:16px;">Ставь цели —<br>ты сможешь.</h1>
+    <p class="mut" style="font-size:15.5px;line-height:1.5;margin-top:9px;"><b style="color:var(--txt)">Простые действия = большие результаты.</b> Окружение и наставник сделают максимум для твоей победы.</p>
 
     <button class="btn btn-amber" style="margin-top:18px;" onclick="go('pain')">Начать путь&nbsp;→</button>
 
@@ -197,45 +208,37 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <!-- 2. ВЫБОР НАПРАВЛЕНИЯ -->
   <section class="screen full" data-s="pain">
-    <div class="kick">Шаг 1 из 3</div>
-    <h1 style="margin:9px 0 6px;">С чего наведём порядок</h1>
-    <p class="mut small">Выбери, что качаем первым. Одно направление — один фокус. Остальное подключим позже.</p>
+    <div class="kick">Шаг 1 из 2</div>
+    <h1 style="margin:9px 0 6px;">Чего хочешь достичь?</h1>
+    <p class="mut small">Выбери направление — и сразу перейдёшь к выбору действий. Один тап.</p>
     <div style="margin-top:16px;display:flex;flex-direction:column;gap:11px;">
-      <div class="card pick cat" onclick="single(this)"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l3 8 4-16 3 8h5"/></svg></div><div><b>Тело и спорт</b><div class="small mut">Тренировки, движение, сила. Тело, в котором уверенно.</div></div></div>
-      <div class="card pick cat" onclick="single(this)"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v3M5 11a7 7 0 0 1 14 0M3 18h18M8.5 18a3.5 3.5 0 0 1 7 0"/></svg></div><div><b>Здоровье и режим</b><div class="small mut">Сон, подъём, энергия. День, который ты держишь сам.</div></div></div>
-      <div class="card pick cat" onclick="single(this)"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><div><b>Финансы&nbsp;×2</b><div class="small mut">Деньги под контролем, действия каждый день — рост дохода.</div></div></div>
-      <div class="card pick cat" onclick="single(this)"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg></div><div><b>Привычки</b><div class="small mut">Маленькие шаги, которые собираются в новую жизнь.</div></div></div>
+      <div class="card pick cat" onclick="pickCat(this,'biz')"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><div><b>Бизнес</b><div class="small mut">Доход, дело, рост. Точные действия каждый день.</div></div></div>
+      <div class="card pick cat" onclick="pickCat(this,'sport')"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l3 8 4-16 3 8h5"/></svg></div><div><b>Спорт</b><div class="small mut">Форма, сила, энергия. Тело, в котором уверенно.</div></div></div>
+      <div class="card pick cat" onclick="pickCat(this,'health')"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 16.5 3 13.2 3 9.3 3 6.4 5.2 4 8 4c1.6 0 3.1.8 4 2.1C12.9 4.8 14.4 4 16 4c2.8 0 5 2.4 5 5.3 0 3.9-4 7.2-9 11.7z"/></svg></div><div><b>Здоровье</b><div class="small mut">Самочувствие, питание, сон. Фундамент всего.</div></div></div>
+      <div class="card pick cat" onclick="pickCat(this,'regime')"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div><div><b>Режим дня</b><div class="small mut">Подъём, план, порядок. День под твоим контролем.</div></div></div>
     </div>
-    <div class="spacer" style="min-height:14px;"></div>
-    <button class="btn btn-amber" onclick="go('minimum')">Дальше</button>
+    <p class="note">Дальше подскажем действия под твоё направление — или добавишь свои.</p>
   </section>
 
-  <!-- 3. МИНИМУМ -->
+  <!-- 3. ВЫБОР ДЕЙСТВИЙ -->
   <section class="screen full" data-s="minimum">
-    <div class="kick">Шаг 2 из 3</div>
-    <h1 style="margin:9px 0 6px;">Твой минимум на каждый день</h1>
-    <p class="mut small">Отметь привычки, которые реально потянешь. Лучше мало и стабильно, чем много и в ноль.</p>
-    <div class="tasks card" style="margin-top:15px;">
-      <div class="t on" onclick="multi(this)"><div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div><span class="lbl">Подъём в одно время</span></div>
-      <div class="t on" onclick="multi(this)"><div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div><span class="lbl">Прогулка / пробежка 10 минут</span></div>
-      <div class="t" onclick="multi(this)"><div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div><span class="lbl">20 отжиманий</span></div>
-      <div class="t on" onclick="multi(this)"><div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div><span class="lbl">Стакан воды с утра</span></div>
-      <div class="t" onclick="multi(this)"><div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div><span class="lbl">Зарядка 10 минут</span></div>
-      <div class="t on" onclick="multi(this)"><div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div><span class="lbl">Не есть после 20:00</span></div>
-    </div>
+    <div class="kick">Шаг 2 из 2 · <span id="catName">Спорт</span></div>
+    <h1 style="margin:9px 0 6px;">Выбери свои действия</h1>
+    <p class="mut small">Подсказки — под твоё направление. Отметь 3–4 пункта, которые будешь делать каждый день, или добавь свои.</p>
+    <div class="tasks card" style="margin-top:15px;" id="habitList"></div>
     <div class="card2" style="margin-top:12px;">
-      <b class="amber small">Почему минимум, а не максимум</b>
-      <p class="small mut" style="margin-top:5px;">Минимум невозможно провалить. Сделал по чуть-чуть каждый день — и через месяц ты другой человек. Планку поднимем, когда привыкнешь побеждать.</p>
+      <b class="amber small">Простые действия = большие результаты</b>
+      <p class="small mut" style="margin-top:5px;">Начни с того, что реально сделаешь каждый день. Войдёшь в ритм — поднимем планку. Так и приходят к большим целям.</p>
     </div>
     <div class="spacer" style="min-height:14px;"></div>
-    <button class="btn btn-amber" onclick="go('mentor')">Закрепить минимум</button>
+    <button class="btn btn-amber" onclick="go('mentor')">Закрепить план</button>
   </section>
 
   <!-- 4. САМ / С НАСТАВНИКОМ -->
   <section class="screen full" data-s="mentor">
-    <div class="kick">Шаг 3 из 3</div>
+    <div class="kick">Последний шаг</div>
     <h1 style="margin:9px 0 6px;">Идёшь сам или<br>с наставником</h1>
-    <p class="mut small">Сам — твой темп, твои правила. С наставником — рядом человек, который прошёл этот путь и подстрахует на срыве. Оба варианта рабочие.</p>
+    <p class="mut small">Сам — твой темп, твои правила. С наставником — быстрее и надёжнее: рядом человек, который уже прошёл этот путь и доведёт до результата.</p>
 
     <div class="choice" style="margin-top:20px;">
       <div class="ch" onclick="toast('Окей, идёшь сам. Захочешь — наставник рядом 👊','ok');go('today')">
@@ -252,8 +255,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     </div>
 
     <div class="card" style="margin-top:16px;">
-      <div class="row"><img class="av" src="img/mentor-1.jpg" alt=""><div><b>Александр</b> <span class="chip">наставник</span><div class="small mut" style="margin-top:3px;">25 лет в дисциплине. Падал, возвращался, доходил.</div></div></div>
-      <p class="small mut" style="margin-top:11px;border-top:1px solid var(--line);padding-top:11px;font-style:normal;">«Я не верю в силу воли по щелчку. Верю в систему и в то, что после срыва ты снова встаёшь. Покажу как.»</p>
+      <div class="row"><img class="av" src="img/mentor-1.jpg" alt=""><div><b>Александр</b> <span class="chip">наставник</span><div class="small mut" style="margin-top:3px;">25 лет в дисциплине. Ставит цели — и доходит.</div></div></div>
+      <p class="small mut" style="margin-top:11px;border-top:1px solid var(--line);padding-top:11px;font-style:normal;">«Верю в систему и точные действия каждый день. Ставь цель — покажу, как дойти до результата.»</p>
     </div>
     <p class="note">Передумаешь — переключишься в любой момент. Это не клетка.</p>
   </section>
@@ -270,7 +273,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <circle cx="36" cy="36" r="30" stroke="#F1E7D6"/>
         <circle id="dayRing" cx="36" cy="36" r="30" stroke="#F0792F" stroke-dasharray="188" stroke-dashoffset="141"/>
       </svg>
-      <div style="flex:1;"><div class="small mut">Твой минимум сегодня</div><b style="font-size:18px;"><span class="num" id="doneN">1</span> из 4 сделано</b><div class="small dim" id="dayState">отметь привычки ниже ↓</div></div>
+      <div style="flex:1;"><div class="small mut">Твой план сегодня</div><b style="font-size:18px;"><span class="num" id="doneN">1</span> из 4 сделано</b><div class="small dim" id="dayState">отметь действия ниже ↓</div></div>
     </div>
 
     <div class="card tasks" style="margin-top:12px;">
@@ -282,12 +285,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
     <div class="quote" style="margin-top:12px;">
       <div class="kick">Цитата дня</div>
-      <p style="margin-top:8px;font-size:15.5px;font-weight:600;line-height:1.4;">«Не обязательно быть лучшим. Обязательно — сделать сегодня то, что обещал себе.»</p>
+      <p style="margin-top:8px;font-size:15.5px;font-weight:600;line-height:1.4;">«Правильные привычки и точные действия каждый день приведут тебя к результату.»</p>
     </div>
 
     <div class="card" style="margin-top:12px;">
       <div class="row"><img class="av sm" src="img/mentor-1.jpg" alt=""><div><b class="small">Александр</b> <span class="dim small">· напутствие</span></div></div>
-      <p class="bubble" style="margin-top:9px;max-width:100%;">С добрым утром. Сегодня просто закрой свой минимум — этого достаточно. Я рядом 💪</p>
+      <p class="bubble" style="margin-top:9px;max-width:100%;">Доброе утро! Отличный день, чтобы стать на шаг ближе к цели. Закрой свой план — и день в плюс. Погнали 💪</p>
       <div class="row" style="gap:9px;margin-top:11px;">
         <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="go('checkin')">Чек-ин дня</button>
         <button class="btn btn-amber btn-sm" style="flex:1;" onclick="go('mentorchat')">Ответить</button>
@@ -346,11 +349,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <div class="row between" style="margin-top:8px;"><span class="small dim">мин. 10 мин</span><span class="small amber" style="font-weight:700;">сейчас 25 мин</span></div>
       </div>
       <div class="card" style="margin-top:12px;text-align:center;">
-        <div class="icc" style="margin:0 auto;width:54px;height:54px;border-radius:50%;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M21 12a9 9 0 1 1-2.6-6.3"/><path d="M21 4v5h-5"/></svg></div>
-        <b style="display:block;margin-top:10px;font-size:17px;font-family:Unbounded;font-weight:600;">Сорвался — это часть пути</b>
-        <p class="small mut" style="margin-top:7px;">Срыв не обнуляет тебя. Он обнуляет один день. Серию начнём заново прямо сейчас — без вины. Встал, отряхнулся, пошёл дальше.</p>
-        <button class="btn btn-amber btn-sm" style="margin:14px auto 0;width:100%;" onclick="addPts(30,'С возвращением! +30 баллов за возврат 🔥');go('today')">Начать заново сегодня · +30</button>
+        <div class="icc" style="margin:0 auto;width:54px;height:54px;border-radius:50%;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
+        <b style="display:block;margin-top:10px;font-size:17px;font-family:Unbounded;font-weight:600;">Формула успеха</b>
+        <p class="small mut" style="margin-top:7px;">Минимум → 100% → максимум. Начни с простого, войди в ритм — и поднимай планку. Простые действия каждый день дают большие результаты.</p>
+        <button class="btn btn-amber btn-sm" style="margin:14px auto 0;width:100%;" onclick="addPts(30,'Планка поднята! +30 баллов. Ты растёшь 🔥');go('today')">Поднять планку · +30</button>
       </div>
+      <p class="note">Пропустил день? Бывает. Просто продолжай — серия восстановится.</p>
     </div>
 
     <!-- pane 1 — НАГРАДЫ (разрежено) -->
@@ -374,9 +378,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="medals">
         <div class="med amber" onclick="toast('Поделиться: «Первый шаг» 📲','share')"><div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8 11l8-5M8 13l8 5"/></svg></div><div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v18l7-5 7 5V3z"/></svg></div><b>Первый шаг</b><span class="st">получено</span></div>
         <div class="med amber" onclick="toast('Поделиться: «7 дней подряд» 📲','share')"><div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8 11l8-5M8 13l8 5"/></svg></div><div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-2 1-3 2-5 1 2 3 2 3-4z"/></svg></div><b>7 дней подряд</b><span class="st">получено</span></div>
-        <div class="med grn" onclick="toast('Поделиться: «Вернулся после срыва» 📲','share')"><div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8 11l8-5M8 13l8 5"/></svg></div><div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.3"/><path d="M21 4v5h-5"/></svg></div><b>Вернулся</b><span class="st">получено</span></div>
+        <div class="med grn" onclick="toast('Поделиться: «Цель недели» 📲','share')"><div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8 11l8-5M8 13l8 5"/></svg></div><div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><b>Цель недели</b><span class="st">получено</span></div>
         <div class="med amber" onclick="toast('Поделиться: «Ранняя пташка» 📲','share')"><div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8 11l8-5M8 13l8 5"/></svg></div><div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v3M5 12a7 7 0 0 1 14 0M3 18h18"/></svg></div><b>Ранняя пташка</b><span class="st">получено</span></div>
-        <div class="med lock"><div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><b>20 дней без срыва</b><span class="st">9 / 20</span></div>
+        <div class="med lock"><div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><b>20 дней подряд</b><span class="st">9 / 20</span></div>
         <div class="med lock"><div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><b>Чемпион недели</b><span class="st">скоро</span></div>
       </div>
       <p class="note">Открой любую медаль — поделись в сторис. Твоя победа заведёт того, кто пока сомневается.</p>
@@ -412,9 +416,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <span class="chip neu" style="cursor:pointer;" onclick="go('mentors')">Все наставники →</span>
     </div>
     <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px;">
-      <div class="bubble">Видел твой чек-ин — энергия проседает. Как сам?</div>
-      <div class="bubble me">Вечером тяжело, боюсь слиться к выходным</div>
-      <div class="bubble">Понял. До выходных — только минимум, не геройствуй. Вернёмся к 25 минутам на след. неделе. Ты сможешь 👊</div>
+      <div class="bubble">Видел твой чек-ин — темп отличный. Как ощущения?</div>
+      <div class="bubble me">Всё по плану! Хочу закрыть неделю на 100%</div>
+      <div class="bubble">Красава. Держи фокус на главном деле — в пятницу подведём итоги и поднимем планку 👊</div>
     </div>
     <div class="card2" style="margin-top:14px;">
       <b class="small">План недели от наставника</b>
@@ -431,13 +435,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
   <!-- 9. СРЕДА -->
   <section class="screen" data-s="team">
     <h2>Среда</h2>
-    <p class="small mut">Чат тех, кто тоже доходит. Здесь не ноют — поддерживают, делятся победами и тянут друг друга вперёд.</p>
+    <p class="small mut">Окружение, которое тянет вверх: победы, поддержка, общий ритм. Вместе доходят быстрее.</p>
     <div class="card2" style="margin-top:14px;">
       <div class="row between"><b>Команда «Рассвет»</b><span class="chip grn">6 из 8 в деле</span></div>
     </div>
     <div class="card feed" style="margin-top:12px;">
       <div class="f"><div class="av sm avtxt" style="background:linear-gradient(135deg,#1AA06A,#37C18A);">И</div><div><b class="small">Игорь</b> <span class="dim small">· 7:10</span><div class="small mut">Пробежал под дождём. Не хотел — побежал.</div><div class="chip" style="margin-top:7px;">🔥 12 · красава</div></div></div>
-      <div class="f"><div class="av sm avtxt">М</div><div><b class="small">Марина</b> <span class="dim small">· 8:02</span><div class="small mut">Сорвалась вчера — сегодня вернулась 💪</div><div class="chip grn" style="margin-top:7px;">+30 ⭐ за возврат</div></div></div>
+      <div class="f"><div class="av sm avtxt">М</div><div><b class="small">Марина</b> <span class="dim small">· 8:02</span><div class="small mut">Закрыла весь план недели — на 100% 💪</div><div class="chip grn" style="margin-top:7px;">+50 ⭐ за неделю</div></div></div>
       <div class="f"><div class="av sm avtxt" style="background:linear-gradient(135deg,#7C5CFF,#A78BFA);">Д</div><div><b class="small">Дмитрий</b> <span class="dim small">· 8:40</span><div class="small mut">11 дней подряд, держусь!</div><div class="chip neu" style="margin-top:7px;">👏 15 поддержали</div></div></div>
     </div>
     <button class="btn btn-amber" style="margin-top:14px;" onclick="toast('Поддержка отправлена команде 🔥','ok')">Поддержать команду</button>
@@ -454,7 +458,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div class="row" style="gap:10px;margin-top:12px;">
       <div class="card" style="flex:1;text-align:center;"><b class="num" style="font-size:22px;">11</b><div class="small mut">дней</div></div>
       <div class="card" style="flex:1;text-align:center;"><b class="num amber" style="font-size:22px;">5</b><div class="small mut">медалей</div></div>
-      <div class="card" style="flex:1;text-align:center;"><b class="num grn" style="font-size:22px;">2</b><div class="small mut">возврата</div></div>
+      <div class="card" style="flex:1;text-align:center;"><b class="num grn" style="font-size:22px;">3</b><div class="small mut">вызова</div></div>
     </div>
 
     <div class="card" style="margin-top:12px;">
@@ -482,7 +486,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <img src="img/hero-2.jpg" alt="Игорь">
         <div class="hbody">
           <div class="row between"><b style="font-size:17px;">Игорь</b><span class="chip">−8 кг</span></div>
-          <div class="tiny dim" style="margin-top:2px;">38 лет · логист · Тело и спорт</div>
+          <div class="tiny dim" style="margin-top:2px;">38 лет · логист · Спорт</div>
           <div class="ba w"><span class="dot"></span><div class="small mut">Десять лет «с понедельника». Одышка на третьем этаже, 96 кг, зал бросал через неделю.</div></div>
           <div class="ba s"><span class="dot"></span><div class="small">88 кг, бегаю 5 км без остановки, на свой шестой этаж — пешком. Жена заметила первой.</div></div>
           <div class="hquote">«Я не стал железным человеком. Я просто перестал бросать.»</div>
@@ -493,7 +497,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <img src="img/hero-1.jpg" alt="Кристина">
         <div class="hbody">
           <div class="row between"><b style="font-size:17px;">Кристина</b><span class="chip">60 дней зарядки</span></div>
-          <div class="tiny dim" style="margin-top:2px;">31 год · бухгалтер · Тело и спорт</div>
+          <div class="tiny dim" style="margin-top:2px;">31 год · бухгалтер · Спорт</div>
           <div class="ba w"><span class="dot"></span><div class="small mut">Сидячая работа, спина болела к обеду, вечером сил — только на сериалы.</div></div>
           <div class="ba s"><span class="dot"></span><div class="small">Каждое утро 10 минут растяжки и 50 приседаний. Спина не ноет, хожу пешком две остановки.</div></div>
           <div class="hquote">«Я не села на шпагат. Но я больше не та, что доползает до дивана. Дуэль с подругой реально завела.»</div>
@@ -504,7 +508,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <img src="img/hero-3.jpg" alt="Марина">
         <div class="hbody">
           <div class="row between"><b style="font-size:17px;">Марина</b><span class="chip grn">сон в 23:30</span></div>
-          <div class="tiny dim" style="margin-top:2px;">29 лет · мама в декрете · Здоровье и режим</div>
+          <div class="tiny dim" style="margin-top:2px;">29 лет · мама в декрете · Режим дня</div>
           <div class="ba w"><span class="dot"></span><div class="small mut">Ложилась в 2–3 ночи, вставала разбитой, кофе литрами. С ребёнком — на нуле.</div></div>
           <div class="ba s"><span class="dot"></span><div class="small">Засыпаю до полуночи почти каждый день. Утро перестало быть пыткой.</div></div>
           <div class="hquote">«Маленькая победа, но впервые за два года я высыпаюсь.»</div>
@@ -515,7 +519,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <img src="img/hero-4.jpg" alt="Денис">
         <div class="hbody">
           <div class="row between"><b style="font-size:17px;">Денис</b><span class="chip">+40 000 ₽ подушка</span></div>
-          <div class="tiny dim" style="margin-top:2px;">34 года · мастер на маркетплейсе · Финансы</div>
+          <div class="tiny dim" style="margin-top:2px;">34 года · мастер на маркетплейсе · Бизнес</div>
           <div class="ba w"><span class="dot"></span><div class="small mut">Деньги утекали в никуда, к 20-му числу занимал до зарплаты. Не понимал куда.</div></div>
           <div class="ba s"><span class="dot"></span><div class="small">Веду траты каждый день, отложил первую подушку — 40 000. Впервые в жизни есть запас.</div></div>
           <div class="hquote">«Не миллионы. Но я наконец вижу, куда идут мои деньги, и сплю спокойно.»</div>
@@ -526,7 +530,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <img src="img/hero-5.jpg" alt="Алёна">
         <div class="hbody">
           <div class="row between"><b style="font-size:17px;">Алёна</b><span class="chip">21 день подряд</span></div>
-          <div class="tiny dim" style="margin-top:2px;">26 лет · дизайнер · Привычки</div>
+          <div class="tiny dim" style="margin-top:2px;">26 лет · дизайнер · Режим дня</div>
           <div class="ba w"><span class="dot"></span><div class="small mut">Бросала всё на третий день: английский, рисование, медитации. Куча начатого.</div></div>
           <div class="ba s"><span class="dot"></span><div class="small">21 день подряд — страница в дневник и 15 минут английского. Цепочка не рвётся.</div></div>
           <div class="hquote">«Минимум должен быть таким мелким, чтобы стыдно было не сделать. 15 минут, не час.»</div>
@@ -537,10 +541,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <img src="img/hero-6.jpg" alt="Сергей">
         <div class="hbody">
           <div class="row between"><b style="font-size:17px;">Сергей</b><span class="chip grn">30 дней без сигарет</span></div>
-          <div class="tiny dim" style="margin-top:2px;">45 лет · инженер · Здоровье и режим</div>
+          <div class="tiny dim" style="margin-top:2px;">45 лет · инженер · Здоровье</div>
           <div class="ba w"><span class="dot"></span><div class="small mut">Бросал курить раз десять. «Последняя» сигарета не заканчивалась. Уже не верил.</div></div>
           <div class="ba s"><span class="dot"></span><div class="small">30 дней без единой. Сорвался раз на второй неделе — вернулся в тот же день. Дышу иначе.</div></div>
-          <div class="hquote">«Главное, что дали тут — право сорваться и не считать это провалом.»</div>
+          <div class="hquote">«Здесь мне помогли не бросить после осечки — и я дошёл. 30 дней, дышу по-другому.»</div>
         </div>
       </div>
     </div>
@@ -562,9 +566,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="mcard">
         <img src="img/mentor-1.jpg" alt="Александр">
         <div>
-          <div class="row between"><b style="font-size:16px;">Александр</b><span class="chip">Тело и спорт</span></div>
-          <div class="small amber" style="font-weight:700;margin-top:3px;">Падал — вставал. Так 25 лет.</div>
-          <p class="small mut" style="margin-top:6px;">Сорваться может каждый — важно вернуться на следующий день. Покажу, как держать форму, когда нет сил.</p>
+          <div class="row between"><b style="font-size:16px;">Александр</b><span class="chip">Спорт</span></div>
+          <div class="small amber" style="font-weight:700;margin-top:3px;">Ставь цели — ты сможешь. Проверено 25 годами.</div>
+          <p class="small mut" style="margin-top:6px;">Дисциплина — это система, а не сила воли. Покажу, как держать форму и ритм даже в самый загруженный день.</p>
           <div class="row" style="gap:7px;margin-top:9px;flex-wrap:wrap;"><span class="chip neu">25 лет дисциплины</span><span class="chip neu">300+ человек</span></div>
         </div>
       </div>
@@ -572,7 +576,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="mcard">
         <img src="img/mentor-2.jpg" alt="Марина">
         <div>
-          <div class="row between"><b style="font-size:16px;">Марина</b><span class="chip">Режим и здоровье</span></div>
+          <div class="row between"><b style="font-size:16px;">Марина</b><span class="chip">Здоровье</span></div>
           <div class="small amber" style="font-weight:700;margin-top:3px;">Сон, еда, движение — фундамент, а не подвиг.</div>
           <p class="small mut" style="margin-top:6px;">Здоровье — это не диета на месяц, а ритм, который остаётся. Научу строить день так, чтобы тело сказало спасибо.</p>
           <div class="row" style="gap:7px;margin-top:9px;flex-wrap:wrap;"><span class="chip neu">12 лет в режиме</span><span class="chip neu">500+ человек</span></div>
@@ -582,7 +586,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="mcard">
         <img src="img/mentor-3.jpg" alt="Дмитрий">
         <div>
-          <div class="row between"><b style="font-size:16px;">Дмитрий</b><span class="chip">Доход и дисциплина</span></div>
+          <div class="row between"><b style="font-size:16px;">Дмитрий</b><span class="chip">Бизнес</span></div>
           <div class="small amber" style="font-weight:700;margin-top:3px;">Деньги любят тех, кто доводит до конца.</div>
           <p class="small mut" style="margin-top:6px;">Прошёл путь от долгов до стабильного дохода — без волшебных схем, на привычках. Покажу маленькие шаги к деньгам каждый день.</p>
           <div class="row" style="gap:7px;margin-top:9px;flex-wrap:wrap;"><span class="chip neu">15 лет в деле</span><span class="chip neu">200+ человек</span></div>
@@ -592,7 +596,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="mcard">
         <img src="img/mentor-4.jpg" alt="Анна">
         <div>
-          <div class="row between"><b style="font-size:16px;">Анна</b><span class="chip">Привычки и характер</span></div>
+          <div class="row between"><b style="font-size:16px;">Анна</b><span class="chip">Режим дня</span></div>
           <div class="small amber" style="font-weight:700;margin-top:3px;">Маленький шаг сегодня сильнее большого плана на потом.</div>
           <p class="small mut" style="margin-top:6px;">Сила не в мотивации, а в системе. Собирала свою жизнь по кирпичику после выгорания. Помогу превратить намерения в привычки.</p>
           <div class="row" style="gap:7px;margin-top:9px;flex-wrap:wrap;"><span class="chip neu">10 лет в коучинге</span><span class="chip neu">250+ человек</span></div>
@@ -628,7 +632,35 @@ function go(id){
   if(history.replaceState)history.replaceState(null,'','#'+id);
 }
 function back(){go(prev||'splash');}
-function single(el){el.parentElement.querySelectorAll('.pick').forEach(function(s){s.style.borderColor='var(--line)';s.style.background='var(--surface)';var i=s.querySelector('.icc');if(i)i.style.background='var(--soft)';});el.style.borderColor='var(--accent)';el.style.background='linear-gradient(165deg,#fff,#FFF4EA)';}
+var HABITS={
+ biz:{name:'Бизнес',items:['План на день с вечера','1 главное дело до 12:00','Учёт денег каждый день','30 минут на развитие','3 звонка или контакта','Без соцсетей до обеда'],on:[0,1,2]},
+ sport:{name:'Спорт',items:['Тренировка 30 минут','10 000 шагов','Зарядка 10 минут','20 отжиманий','Пробежка 15 минут','Растяжка вечером'],on:[0,1,2]},
+ health:{name:'Здоровье',items:['Стакан воды с утра','Сон до 23:30','Без еды после 20:00','Прогулка на воздухе','День без сахара','Овощи в каждый приём'],on:[0,1,2]},
+ regime:{name:'Режим дня',items:['Подъём в одно время','План на день с вечера','Утренний ритуал 15 минут','Отбой в одно время','Час без телефона утром','Итоги дня вечером'],on:[0,1,3]}
+};
+var CHECK='<div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>';
+function renderHabits(cat){
+  var c=HABITS[cat]||HABITS.sport;
+  document.getElementById('catName').textContent=c.name;
+  var h='';
+  c.items.forEach(function(x,i){h+='<div class="t'+(c.on.indexOf(i)>=0?' on':'')+'" onclick="multi(this)">'+CHECK+'<span class="lbl">'+x+'</span></div>';});
+  h+='<div class="t add" onclick="addCustom()"><div class="plus">+</div><span class="lbl">Добавить своё действие</span></div>';
+  document.getElementById('habitList').innerHTML=h;
+}
+function pickCat(el,cat){
+  el.parentElement.querySelectorAll('.pick').forEach(function(s){s.style.borderColor='var(--line)';s.style.background='var(--surface)';});
+  el.style.borderColor='var(--accent)';el.style.background='linear-gradient(165deg,#fff,#FFF4EA)';
+  setTimeout(function(){renderHabits(cat);go('minimum');},280);
+}
+function addCustom(){
+  var n=prompt('Твоё действие на каждый день:');
+  if(!n)return;
+  var add=document.querySelector('#habitList .t.add');
+  var d=document.createElement('div');d.className='t on';d.setAttribute('onclick','multi(this)');
+  d.innerHTML=CHECK+'<span class="lbl">'+n.replace(/[<>&]/g,'')+'</span>';
+  add.parentNode.insertBefore(d,add);
+  toast('Добавлено: '+n+' ✓','ok');
+}
 function multi(el){el.classList.toggle('on');}
 function addPts(n,msg){pts+=n;['ptsTop','ptsBig'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=pts;});if(msg)toast(msg,'pts');}
 function tapHabit(el){
@@ -641,7 +673,7 @@ function tapHabit(el){
   if(done>=tot){r.setAttribute('stroke','#1AA06A');}else{r.setAttribute('stroke','#F0792F');}
   var st=document.getElementById('dayState');
   if(done>=tot){st.textContent='всё сделано — красава! 🔥';st.className='small grn';}
-  else{st.textContent='отметь привычки ниже ↓';st.className='small dim';}
+  else{st.textContent='отметь действия ниже ↓';st.className='small dim';}
   if(!was){addPts(20,'+20 баллов · наставник видит 🔥');}
 }
 var tT;
@@ -656,7 +688,8 @@ function toast(msg,ic){
   var t=document.getElementById('toast');t.classList.add('show');clearTimeout(tT);tT=setTimeout(function(){t.classList.remove('show');},2700);
 }
 function seg(btn,i){btn.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');document.querySelectorAll('.screen[data-s="path"] .pane').forEach(function(p){p.style.display=(p.dataset.p==i)?'block':'none';});}
-(function(){var h=(location.hash||'').replace('#','');
+(function(){renderHabits('sport');
+ var h=(location.hash||'').replace('#','');
  if(h==='rewards'){go('path');seg(document.querySelectorAll('.seg button')[1],1);return;}
  if(h==='challenges'){go('path');seg(document.querySelectorAll('.seg button')[2],2);return;}
  if(h&&document.querySelector('.screen[data-s="'+h+'"]'))go(h);})();
