@@ -40,7 +40,28 @@ body{font-family:Manrope,-apple-system,'SF Pro Text',Roboto,sans-serif;
 .screen{position:absolute;inset:0;padding:56px 18px 96px;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;animation:fade .34s ease;}
 .screen::-webkit-scrollbar{width:0;}
 .screen.active{display:flex;}
-@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes glowp{0%,100%{box-shadow:var(--sh-btn)}50%{box-shadow:0 10px 30px rgba(240,121,47,.55)}}
+.screen[data-s="splash"].active>*{animation:rise .55s cubic-bezier(.2,.8,.3,1) backwards;}
+.screen[data-s="splash"].active>*:nth-child(2){animation-delay:.07s}
+.screen[data-s="splash"].active>*:nth-child(3){animation-delay:.14s}
+.screen[data-s="splash"].active>*:nth-child(4){animation-delay:.2s}
+.screen[data-s="splash"].active>*:nth-child(5){animation-delay:.26s}
+.screen[data-s="splash"].active>*:nth-child(6){animation-delay:.32s}
+.screen[data-s="splash"].active>*:nth-child(7){animation-delay:.38s}
+.t.done .box{animation:pop .32s cubic-bezier(.2,.8,.3,1);}
+.t.on .box{animation:pop .32s cubic-bezier(.2,.8,.3,1);}
+#dayRing.full{filter:drop-shadow(0 0 7px rgba(26,160,106,.55));}
+.btn-amber{animation:none;}
+.splashcta{animation:glowp 2.6s ease-in-out infinite;}
+#fx{position:absolute;inset:0;pointer-events:none;z-index:70;}
+.med:not(.lock):active{transform:scale(.96);}
+.med{transition:transform .12s;}
+.nav a{transition:transform .15s;}
+.nav a.on{transform:translateY(-2px);}
+.nav a.on svg{filter:drop-shadow(0 3px 6px rgba(240,121,47,.35));}
 .screen.full{padding-bottom:22px;}
 h1{font-family:Unbounded;font-size:27px;font-weight:700;letter-spacing:-.4px;line-height:1.12;}
 h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
@@ -206,7 +227,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <h1 style="margin-top:16px;">Ставь цели —<br>ты сможешь.</h1>
     <p class="mut" style="font-size:15.5px;line-height:1.5;margin-top:9px;"><b style="color:var(--txt)">Простые действия = большие результаты.</b> Окружение и наставник сделают максимум для твоей победы.</p>
 
-    <button class="btn btn-amber" style="margin-top:18px;" onclick="go('pain')">Начать путь&nbsp;→</button>
+    <button class="btn btn-amber splashcta" style="margin-top:18px;" onclick="go('pain')">Начать путь&nbsp;→</button>
 
     <div class="vrow" style="margin-top:12px;">
       <div class="vcard" onclick="go('heroes')">
@@ -301,7 +322,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
     <div class="card" style="margin-top:12px;">
       <div class="row"><img class="av sm" src="img/mentor-1.jpg" alt=""><div><b class="small">Александр</b> <span class="dim small">· напутствие</span></div></div>
-      <p class="bubble" style="margin-top:9px;max-width:100%;">Доброе утро! Отличный день, чтобы стать на шаг ближе к цели. Закрой свой план — и день в плюс. Погнали 💪</p>
+      <p class="bubble" style="margin-top:9px;max-width:100%;" id="mentorNote">Отличный день, чтобы стать на шаг ближе к цели. Закрой свой план — и день в плюс. Погнали 💪</p>
       <div class="row" style="gap:9px;margin-top:11px;">
         <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="go('checkin')">Чек-ин дня</button>
         <button class="btn btn-amber btn-sm" style="flex:1;" onclick="go('mentorchat')">Ответить</button>
@@ -329,9 +350,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="row between" style="margin-top:18px;"><b class="small">Настроение</b><span class="amber num" id="v3">8</span></div>
       <input type="range" min="1" max="10" value="8" oninput="document.getElementById('v3').textContent=this.value">
     </div>
-    <div class="card" style="margin-top:12px;display:flex;gap:12px;align-items:center;justify-content:center;border-style:dashed;color:var(--mut);cursor:pointer;" onclick="toast('Фото-пруф прикреплён ✓','ok')">
+    <div class="card" style="margin-top:12px;display:flex;gap:12px;align-items:center;justify-content:center;border-style:dashed;color:var(--mut);cursor:pointer;" onclick="toast('Фото-пруфы появятся в приложении — скоро 📸','ok')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/></svg>
-      <span class="small">Прикрепить фото-пруф</span>
+      <span class="small">Фото-пруф <span class="chip neu" style="margin-left:4px;">скоро</span></span>
     </div>
     <input class="inp" id="ciComment" type="text" placeholder="Комментарий дня (необязательно)" style="margin-top:12px;">
     <button class="btn btn-amber" style="margin-top:12px;" onclick="sendCheckin()">Отправить наставнику</button>
@@ -378,7 +399,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
           <div><b class="num" style="font-size:26px;" id="shStreak">0</b><div class="tiny" style="opacity:.85;">дней подряд</div></div>
           <div><b class="num" style="font-size:26px;" id="shMed">0</b><div class="tiny" style="opacity:.85;">медалей</div></div>
         </div>
-        <button class="btn z" style="margin-top:16px;background:#fff;color:var(--accent-d);box-shadow:none;" onclick="toast('Карточка готова — публикуй в сторис 📲','share')">Поделиться достижением</button>
+        <button class="btn z" style="margin-top:16px;background:#fff;color:var(--accent-d);box-shadow:none;" onclick="sharePro('Мой путь: '+activeDays()+' дней в деле, '+pts()+' баллов, '+medalCount()+' медалей. Иду к цели 💪')">Поделиться достижением</button>
       </div>
 
       <div class="card" style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
@@ -434,7 +455,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       </div>
     </div>
     <div class="spacer" style="min-height:14px;"></div>
-    <div class="row" style="gap:10px;"><div class="card" style="flex:1;color:var(--mut);padding:15px;">Написать сообщение…</div><button class="btn btn-amber" style="width:54px;height:54px;border-radius:16px;flex:none;padding:0;" onclick="toast('Отправлено ✓','ok')">→</button></div>
+    <button class="btn btn-amber" onclick="tgMentor()">Написать наставнику</button>
+    <button class="btn btn-ghost" style="margin-top:10px;" onclick="go('checkin')">Отправить чек-ин дня</button>
   </section>
 
   <!-- 9. СРЕДА -->
@@ -442,14 +464,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <h2>Среда</h2>
     <p class="small mut">Окружение, которое тянет вверх: победы, поддержка, общий ритм. Вместе доходят быстрее.</p>
     <div class="card2" style="margin-top:14px;">
-      <div class="row between"><b>Команда «Рассвет»</b><span class="chip grn">6 из 8 в деле</span></div>
+      <div class="row between"><b>Команда «Рассвет»</b><span class="chip neu">так будет выглядеть твоя команда</span></div>
     </div>
     <div class="card feed" style="margin-top:12px;">
       <div class="f"><div class="av sm avtxt" style="background:linear-gradient(135deg,#1AA06A,#37C18A);">И</div><div><b class="small">Игорь</b> <span class="dim small">· 7:10</span><div class="small mut">Пробежал под дождём. Не хотел — побежал.</div><div class="chip" style="margin-top:7px;">🔥 12 · красава</div></div></div>
       <div class="f"><div class="av sm avtxt">М</div><div><b class="small">Марина</b> <span class="dim small">· 8:02</span><div class="small mut">Закрыла весь план недели — на 100% 💪</div><div class="chip grn" style="margin-top:7px;">+50 ⭐ за неделю</div></div></div>
       <div class="f"><div class="av sm avtxt" style="background:linear-gradient(135deg,#7C5CFF,#A78BFA);">Д</div><div><b class="small">Дмитрий</b> <span class="dim small">· 8:40</span><div class="small mut">11 дней подряд, держусь!</div><div class="chip neu" style="margin-top:7px;">👏 15 поддержали</div></div></div>
     </div>
-    <button class="btn btn-amber" style="margin-top:14px;" onclick="toast('Поддержка отправлена команде 🔥','ok')">Поддержать команду</button>
+    <button class="btn btn-amber" style="margin-top:14px;" onclick="invite()">Позвать друга в поток</button>
   </section>
 
   <!-- 10. ПРОФИЛЬ -->
@@ -651,6 +673,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     </div>
   </section>
 
+  <canvas id="fx"></canvas>
+
   <div class="toast" id="toast"><div class="ti" id="toastIc"></div><div class="small" id="toastMsg"></div></div>
 
   <nav class="nav" id="nav">
@@ -672,6 +696,31 @@ var FORM={
   action:'https://docs.google.com/forms/d/e/1FAIpQLScTiW9nXVdwSXBqOXC-cn6PVMI0gtmmMp-LRdo8FTCWYF8GzA/formResponse',
   f:{name:'entry.1145137964',contact:'entry.198936296',dir:'entry.1905420842',mode:'entry.1725192400'}
 };
+var TG_MENTOR=''; // ← ник наставника в Telegram без @ (подключим при старте потока)
+var SITE='https://про-путь.рф';
+function vibrate(p){try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
+function confetti(){
+  var cv=document.getElementById('fx'),phone=cv.parentElement;
+  cv.width=phone.clientWidth;cv.height=phone.clientHeight;
+  var x=cv.getContext('2d'),P=[],cols=['#F0792F','#F3A93C','#1AA06A','#F3C04A','#fff'];
+  for(var i=0;i<90;i++)P.push({x:cv.width/2+(Math.random()-0.5)*120,y:cv.height*0.42,vx:(Math.random()-0.5)*9,vy:-(4+Math.random()*8),g:0.25+Math.random()*0.15,s:4+Math.random()*5,c:cols[i%5],r:Math.random()*6.28,vr:(Math.random()-0.5)*0.3,life:70+Math.random()*40});
+  var n=0;(function tick(){
+    x.clearRect(0,0,cv.width,cv.height);var alive=false;
+    P.forEach(function(p){if(p.life<=0)return;alive=true;p.life--;p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=p.vr;
+      x.save();x.translate(p.x,p.y);x.rotate(p.r);x.globalAlpha=Math.min(1,p.life/30);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);x.restore();});
+    if(alive&&n++<160)requestAnimationFrame(tick);else x.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+function sharePro(text){
+  var data={title:'Мой путь',text:text,url:SITE};
+  if(navigator.share){navigator.share(data).catch(function(){});}
+  else{try{navigator.clipboard.writeText(text+' '+SITE);toast('Скопировано — вставь в сторис или чат 📲','share');}catch(e){toast(text,'share');}}
+}
+function invite(){sharePro('Я иду к цели в «Мой путь» — дисциплина с наставником. Погнали вместе!');}
+function tgMentor(){
+  if(TG_MENTOR){window.open('https://t.me/'+TG_MENTOR,'_blank');}
+  else{toast('Личный чат с наставником подключим при старте потока 👊','ok');}
+}
 var CIFORM={
   action:'https://docs.google.com/forms/d/e/1FAIpQLSdrawOjb4JB65afvuPJPAvq-sCjFys0SqUZrEN8l1uEstrX1w/formResponse',
   f:{name:'entry.240940753',contact:'entry.1010355921',done:'entry.461824531',sleep:'entry.2095299788',energy:'entry.1159838208',mood:'entry.1230465387',comment:'entry.50339692'}
@@ -808,9 +857,14 @@ function sendApply(){
 /* --- Сегодня --- */
 var DOW=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
 var MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+function greet(){
+  var h=new Date().getHours(),g=h<5?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер';
+  return g+(S.name?', '+S.name:'')+'!';
+}
 function renderToday(){
   var d=new Date();
   document.getElementById('todayDate').textContent=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
+  document.getElementById('mentorNote').textContent=greet()+' Отличный день, чтобы стать на шаг ближе к цели. Закрой свой план — и день в плюс. Погнали 💪';
   document.getElementById('quoteText').textContent='«'+quoteOfDay()+'»';
   if(!S.habits.length)S.habits=(HABITS[S.dir]||HABITS.sport).items.slice(0,3);
   var rec=dayRec(),h='';
@@ -829,6 +883,7 @@ function refreshDay(){
   r.style.transition='stroke-dashoffset .6s ease';
   r.style.strokeDashoffset=188-(188*Math.min(done/tot,1));
   r.setAttribute('stroke',done>=tot?'#1AA06A':'#F0792F');
+  r.classList.toggle('full',done>=tot);
   var st=document.getElementById('dayState');
   if(done>=tot){st.textContent='всё сделано — красава! 🔥';st.className='small grn';}
   else{st.textContent='отметь действия ниже ↓';st.className='small dim';}
@@ -838,7 +893,11 @@ function tapHabit(el){
   var name=el.querySelector('.lbl').textContent, rec=dayRec();
   var idx=rec.done.indexOf(name);
   if(idx>=0){rec.done.splice(idx,1);el.classList.remove('done');}
-  else{rec.done.push(name);el.classList.add('done');toast('+20 баллов ⭐','pts');}
+  else{
+    rec.done.push(name);el.classList.add('done');vibrate(15);
+    if(rec.done.length>=S.habits.length){confetti();vibrate([40,60,40]);toast('День закрыт на 100% — красава! 🔥','pts');}
+    else toast('+20 баллов ⭐','pts');
+  }
   save();refreshDay();
 }
 
@@ -886,7 +945,7 @@ function renderPath(){
   MEDALS.forEach(function(m){
     var got=m.st();
     var share='<div class="sh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8 11l8-5M8 13l8 5"/></svg></div>';
-    mg+='<div class="med '+(got?m.cls:'lock')+'" onclick="'+(got?"toast('Поделиться: «"+m.name+"» 📲','share')":"toast('Продолжай — медаль откроется 💪','pts')")+'">'
+    mg+='<div class="med '+(got?m.cls:'lock')+'" onclick="'+(got?"sharePro('Открыл медаль «"+m.name+"» в Мой путь 🏅')":"toast('Продолжай — медаль откроется 💪','pts')")+'">'
       +(got?share:'')
       +'<div class="medic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+m.icon+'</svg></div>'
       +'<b>'+m.name+'</b><span class="st">'+(got?'получено':m.prog())+'</span></div>';
