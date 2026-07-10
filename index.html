@@ -102,6 +102,13 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .cl img{width:100%;height:118px;object-fit:cover;display:block;}
 .cl span{position:absolute;left:8px;bottom:8px;background:rgba(255,255,255,.94);color:var(--txt);font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;}
 .t.add{color:var(--accent);font-weight:700;}
+.t .lblwrap{flex:1;display:flex;align-items:center;gap:13px;min-width:0;}
+.t .lbl{overflow:hidden;text-overflow:ellipsis;}
+.ops{display:flex;gap:1px;margin-left:auto;flex:none;}
+.op{width:27px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--dim);cursor:pointer;}
+.op:active{background:var(--surface2);color:var(--accent);}
+.op svg{width:15px;height:15px;}
+.op.dis{opacity:.25;pointer-events:none;}
 .t.add .plus{width:24px;height:24px;border-radius:8px;border:2px dashed var(--accent);flex:none;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;}
 .vrow{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
 .vcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:9px;cursor:pointer;box-shadow:var(--sh-card);transition:transform .1s;}
@@ -802,38 +809,89 @@ var HABITS={
  regime:{name:'Режим дня',items:['Подъём в одно время','План на день с вечера','Утренний ритуал 15 минут','Отбой в одно время','Час без телефона утром','Итоги дня вечером'],on:[0,1,3]}
 };
 var CHECK='<div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>';
+var OPS={
+ up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>',
+ down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>',
+ edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>',
+ del:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+};
+var draft=[];
+function esc(s){return s.replace(/[<>&"]/g,'');}
+function initDraft(cat,keepSaved){
+  var c=HABITS[cat]||HABITS.sport;
+  if(!S.pool)S.pool={};
+  var base=S.pool[cat] ? S.pool[cat].slice() : c.items.slice();
+  var saved=keepSaved?S.habits:[];
+  saved.forEach(function(x){ if(base.indexOf(x)<0) base.push(x); });
+  draft=base.map(function(txt,i){
+    var on = saved.length ? saved.indexOf(txt)>=0 : (S.pool[cat]?false:(c.on.indexOf(i)>=0));
+    return {txt:txt,on:on};
+  });
+}
+function persistPool(){ if(!S.pool)S.pool={}; S.pool[S.dir]=draft.map(function(d){return d.txt;}); save(); }
+function drawDraft(){
+  var h='';
+  draft.forEach(function(d,i){
+    h+='<div class="t'+(d.on?' on':'')+'">'
+      +'<div class="lblwrap" onclick="togH('+i+')">'+CHECK+'<span class="lbl">'+esc(d.txt)+'</span></div>'
+      +'<div class="ops">'
+      +'<span class="op'+(i===0?' dis':'')+'" onclick="moveH('+i+',-1)">'+OPS.up+'</span>'
+      +'<span class="op'+(i===draft.length-1?' dis':'')+'" onclick="moveH('+i+',1)">'+OPS.down+'</span>'
+      +'<span class="op" onclick="editH('+i+')">'+OPS.edit+'</span>'
+      +'<span class="op" onclick="delH('+i+')">'+OPS.del+'</span>'
+      +'</div></div>';
+  });
+  h+='<div class="t add" onclick="addCustom()"><div class="plus">+</div><span class="lbl">Добавить своё действие</span></div>';
+  document.getElementById('habitList').innerHTML=h;
+}
 function renderHabits(cat,keepSaved){
   var c=HABITS[cat]||HABITS.sport;
   document.getElementById('catName').textContent=c.name;
-  var saved=keepSaved?S.habits:[];
-  var h='';
-  c.items.forEach(function(x,i){
-    var on = saved.length ? saved.indexOf(x)>=0 : c.on.indexOf(i)>=0;
-    h+='<div class="t'+(on?' on':'')+'" onclick="multi(this)">'+CHECK+'<span class="lbl">'+x+'</span></div>';
-  });
-  saved.forEach(function(x){ if(c.items.indexOf(x)<0) h+='<div class="t on" onclick="multi(this)">'+CHECK+'<span class="lbl">'+x+'</span></div>'; });
-  h+='<div class="t add" onclick="addCustom()"><div class="plus">+</div><span class="lbl">Добавить своё действие</span></div>';
-  document.getElementById('habitList').innerHTML=h;
+  initDraft(cat,keepSaved);
+  drawDraft();
+}
+function togH(i){draft[i].on=!draft[i].on;drawDraft();}
+function moveH(i,dir){
+  var j=i+dir; if(j<0||j>=draft.length)return;
+  var tmp=draft[i];draft[i]=draft[j];draft[j]=tmp;
+  persistPool();drawDraft();
+}
+function editH(i){
+  var n=prompt('Название действия:',draft[i].txt);
+  if(!n||!n.trim())return;
+  n=n.trim();
+  if(draft.some(function(d,k){return k!==i&&d.txt===n;})){toast('Такое действие уже есть','ok');return;}
+  var old=draft[i].txt;
+  draft[i].txt=n;
+  var k=S.habits.indexOf(old); if(k>=0){S.habits[k]=n;}
+  persistPool();drawDraft();toast('Изменено ✓','ok');
+}
+function delH(i){
+  var d=draft[i];
+  if(!confirm('Удалить «'+d.txt+'» из списка?'))return;
+  draft.splice(i,1);
+  var k=S.habits.indexOf(d.txt); if(k>=0)S.habits.splice(k,1);
+  persistPool();drawDraft();toast('Удалено','ok');
 }
 function pickCat(el,cat){
   el.parentElement.querySelectorAll('.pick').forEach(function(s){s.style.borderColor='var(--line)';s.style.background='var(--surface)';});
   el.style.borderColor='var(--accent)';el.style.background='linear-gradient(165deg,#fff,#FFF4EA)';
   S.dir=cat;S.dirName=(HABITS[cat]||HABITS.sport).name;save();
   var fd=document.getElementById('fDir'); if(fd)fd.textContent=S.dirName;
-  setTimeout(function(){renderHabits(cat,false);go('minimum');},280);
+  setTimeout(function(){go('minimum');},280);
 }
 function addCustom(){
   var n=prompt('Твоё действие на каждый день:');
-  if(!n)return;
-  var add=document.querySelector('#habitList .t.add');
-  var d=document.createElement('div');d.className='t on';d.setAttribute('onclick','multi(this)');
-  d.innerHTML=CHECK+'<span class="lbl">'+n.replace(/[<>&]/g,'')+'</span>';
-  add.parentNode.insertBefore(d,add);
-  toast('Добавлено: '+n+' ✓','ok');
+  if(!n||!n.trim())return;
+  n=n.trim();
+  if(draft.some(function(d){return d.txt===n;})){toast('Такое действие уже есть в списке','ok');return;}
+  draft.push({txt:n,on:true});
+  persistPool();drawDraft();
+  toast('Добавлено: '+n.trim()+' ✓','ok');
 }
 function multi(el){el.classList.toggle('on');}
 function savePlan(){
-  var sel=[...document.querySelectorAll('#habitList .t.on .lbl')].map(function(e){return e.textContent;});
+  var sel=draft.filter(function(d){return d.on;}).map(function(d){return d.txt;});
   if(!sel.length){toast('Отметь хотя бы одно действие','ok');return;}
   S.habits=sel;save();
   if(S.applied){toast('План обновлён ✓','ok');go('today');}
