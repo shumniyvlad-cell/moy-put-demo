@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Мой путь</title>
+  <desc id="desc">Светлая стрелка ведёт к многограннику</desc>
+  <defs>
+    <linearGradient id="bg" x1="70" y1="40" x2="450" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0792F"/>
+      <stop offset="1" stop-color="#F3A93C"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path d="M104 394c35-92 91-145 168-177" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round"/>
+  <path d="m238 183 51 27-25 52" fill="none" stroke="#fff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="translate(344 132)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    <path d="M0-78 74-24 46 64h-92l-28-88z" stroke-width="14"/>
+    <path d="M0-35 34-10 21 30h-42l-13-40z" stroke-width="10"/>
+    <path d="M0-78v43M74-24 34-10M46 64 21 30M-46 64-21 30M-74-24-34-10" stroke-width="9"/>
+  </g>
+</svg>
