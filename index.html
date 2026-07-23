@@ -102,6 +102,20 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .cl{position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--sh-card);}
 .cl img{width:100%;height:118px;object-fit:cover;display:block;}
 .cl span{position:absolute;left:8px;bottom:8px;background:rgba(255,255,255,.94);color:var(--txt);font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;}
+.journey-quote{font-family:Unbounded;font-size:11px;line-height:1.45;color:var(--accent-d);text-align:center;margin:14px 12px 0;}
+.dodeca-hero{position:relative;height:338px;margin-top:7px;border-radius:28px;overflow:hidden;background:#FFF6EA;box-shadow:var(--sh-up);isolation:isolate;}
+.dodeca-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,251,245,.42),transparent 28%,transparent 74%,rgba(255,250,242,.35));pointer-events:none;}
+.dodeca-hero img{width:100%;height:100%;object-fit:cover;object-position:center 50%;display:block;transform:scale(1.08);}
+.facet{position:absolute;z-index:2;max-width:116px;padding:6px 8px;border:1px solid rgba(255,255,255,.8);border-radius:11px;background:rgba(255,251,244,.84);box-shadow:0 5px 16px rgba(145,74,18,.13);font-size:9.5px;line-height:1.2;font-weight:800;color:var(--accent-d);backdrop-filter:blur(7px);}
+.facet.top{top:18px;left:50%;transform:translateX(-50%);text-align:center;}
+.facet.left{top:115px;left:10px;}
+.facet.right{top:112px;right:10px;text-align:right;}
+.facet.bl{bottom:30px;left:30px;}
+.facet.br{bottom:30px;right:28px;text-align:right;}
+.dodeca-core{position:absolute;z-index:3;top:50%;left:50%;transform:translate(-50%,-48%);width:144px;text-align:center;color:#fff;text-shadow:0 2px 12px rgba(124,53,9,.45);}
+.dodeca-core b{display:block;font-family:Unbounded;font-size:18px;letter-spacing:.03em;}
+.dodeca-core span{display:block;margin-top:5px;font-size:9px;line-height:1.28;font-weight:700;}
+.journey-method{margin-top:12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,#FFF1E4,#FFF9F0);border:1px solid #F3D7BE;color:var(--accent-d);font-size:12px;line-height:1.45;text-align:center;font-weight:800;}
 .t.add{color:var(--accent);font-weight:700;}
 .t .lblwrap{flex:1;display:flex;align-items:center;gap:13px;min-width:0;}
 .t .lbl{overflow:hidden;text-overflow:ellipsis;}
@@ -272,30 +286,22 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <span class="wordmark">Мой&nbsp;путь</span>
     </div>
 
-    <div class="collage" style="margin-top:14px;">
-      <div class="cl"><img src="img/hero-4.jpg" alt="Бизнес"><span>Бизнес</span></div>
-      <div class="cl"><img src="img/splash-hero.jpg" alt="Спорт" style="object-position:center 20%;"><span>Спорт</span></div>
-      <div class="cl"><img src="img/hero-3.jpg" alt="Здоровье"><span>Здоровье</span></div>
-      <div class="cl"><img src="img/hero-5.jpg" alt="Режим дня"><span>Режим дня</span></div>
+    <p class="journey-quote">Жизнь — это игра в путешествие к счастью.</p>
+
+    <div class="dodeca-hero" aria-label="Карта пути к счастью">
+      <img src="img/dodecahedron-journey-v1.png" alt="Оранжевый многогранник пути">
+      <span class="facet top">Любимое дело<br>и наследие</span>
+      <span class="facet left">Отношения<br>и общение</span>
+      <span class="facet right">Спорт<br>и тело</span>
+      <span class="facet bl">Здоровье<br>и осознанность</span>
+      <span class="facet br">Достижения<br>и рост</span>
+      <div class="dodeca-core"><b>МЫ</b><span>Правильные привычки<br>и простые действия<br>= больше результатов</span></div>
     </div>
 
-    <h1 style="margin-top:16px;">Ставь цели —<br>ты сможешь.</h1>
-    <p class="mut" style="font-size:15.5px;line-height:1.5;margin-top:9px;"><b style="color:var(--txt)">Простые действия = большие результаты.</b> Окружение и наставник сделают максимум для твоей победы.</p>
+    <div class="journey-method">Наставники и окружение + простые направленные действия = ты сможешь.</div>
 
-    <button class="btn btn-amber splashcta" style="margin-top:18px;" onclick="go('pain')">Начать путь&nbsp;→</button>
-
-    <div class="vrow" style="margin-top:12px;">
-      <div class="vcard" onclick="go('heroes')">
-        <div class="avstack"><img src="img/hero-2.jpg" alt=""><img src="img/hero-1.jpg" alt=""><img src="img/hero-6.jpg" alt=""></div>
-        <div><b>Наши герои</b><div class="tiny dim">примеры метода</div></div>
-      </div>
-      <div class="vcard" onclick="go('mentors')">
-        <img src="img/mentor-1.jpg" alt="Александр" style="width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:center 18%;">
-        <div><b>Наставники</b><div class="tiny dim">кто рядом с тобой</div></div>
-      </div>
-    </div>
-
-    <p class="note" style="margin-top:14px;">Идёт набор в первый поток · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('today')">Превью приложения</span> · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('mentorlogin')">Вход наставника</span></p>
+    <button class="btn btn-amber splashcta" style="margin-top:14px;" onclick="go('pain')">Начать путь&nbsp;→</button>
+    <p class="note" style="margin-top:12px;">Идёт набор в первый поток · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('today')">Превью приложения</span> · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('mentorlogin')">Вход наставника</span></p>
   </section>
 
   <!-- 2. ВЫБОР НАПРАВЛЕНИЯ -->
