@@ -198,8 +198,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 .mode-top{display:flex;align-items:center;gap:11px;}.mode-top .icc{width:42px;height:42px;}.mode-top b{display:block;font-size:17px;}.mode-price{display:inline-block;margin-top:3px;color:var(--accent-d);font-size:12px;font-weight:800;background:var(--soft);padding:4px 8px;border-radius:999px;}
 .mode-points{display:flex;flex-direction:column;gap:7px;margin:12px 0 0;padding:0;list-style:none;}.mode-points li{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.35;color:var(--mut);}.mode-points li:before{content:'✓';display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--surface2);color:var(--txt);font-weight:800;flex:none;}.mode-option.selected .mode-points li:before{background:var(--accent);color:#fff;}
 .mode-note{margin:12px 4px 0;color:var(--mut);font-size:12px;line-height:1.4;}
-.journey-snapshot{margin-top:13px;padding:18px 14px 14px;border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--sh-card);text-align:center;}
-.journey-snapshot .goalring{width:128px;height:128px;margin:0 auto 12px;}.journey-snapshot .goalring:before{inset:10px;}.journey-snapshot .goalring span{font-family:Unbounded;font-size:20px;}.journey-title{font-size:17px;font-weight:800;line-height:1.25;}.journey-copy{margin-top:4px;color:var(--mut);font-size:13px;}.journey-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;border-top:1px solid var(--line);padding-top:13px;}.journey-stat{padding:0 4px;border-right:1px solid var(--line);}.journey-stat:last-child{border:0;}.journey-stat span{display:block;color:var(--dim);font-size:9px;font-weight:800;}.journey-stat b{display:block;margin-top:4px;color:var(--accent-d);font-family:Unbounded;font-size:16px;}
+.journey-snapshot{margin-top:14px;padding:14px 10px 12px;border:1px solid var(--line);border-radius:26px;background:radial-gradient(circle at 50% 44%,#FFF8F0 0%,#fff 60%);box-shadow:var(--sh-card);text-align:center;}
+.journey-map{display:grid;grid-template-columns:72px minmax(0,1fr) 72px;gap:8px;align-items:center;position:relative;}.journey-side{display:grid;gap:9px;position:relative;z-index:1;}.journey-stat-card{min-height:74px;padding:8px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.97);box-shadow:0 6px 17px rgba(120,90,60,.07);}.journey-stat-card span{color:var(--mut);font-size:10.5px;line-height:1.2;font-weight:700;}.journey-stat-card b{display:block;margin-top:6px;color:var(--accent);font-family:Unbounded;font-size:15px;line-height:1.15;letter-spacing:-.6px;}.journey-core{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;}.journey-core:before,.journey-core:after{content:"";position:absolute;top:50%;height:1px;width:18px;background:linear-gradient(90deg,var(--accent),transparent);opacity:.75;}.journey-core:before{right:100%;}.journey-core:after{left:100%;transform:scaleX(-1);}.journey-core .goalring{width:132px;height:132px;margin:0;box-shadow:0 10px 26px rgba(201,99,24,.12);}.journey-core .goalring:before{inset:10px;background:#fffdfa;}.journey-core .goalring span{font-family:Unbounded;font-size:25px;letter-spacing:-1px;}.journey-overall{position:absolute;top:82px;z-index:2;color:var(--mut);font-size:10px;font-weight:700;white-space:nowrap;}.journey-primary{margin:13px 4px 0;padding-top:11px;border-top:1px solid var(--line);}.journey-primary span{display:block;color:var(--dim);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}.journey-title{display:block;margin-top:4px;font-size:15px;font-weight:800;line-height:1.25;}.journey-copy{margin-top:3px;color:var(--mut);font-size:12px;}.journey-stats,.journey-stat{display:none;}
+@media(min-width:700px){.journey-snapshot{max-width:372px;}.journey-core .goalring{width:142px;height:142px;}.journey-overall{top:88px;}.journey-map{grid-template-columns:78px minmax(0,1fr) 78px;}}
 .focus-next{display:flex;gap:11px;align-items:center;margin-top:12px;padding:14px;border-radius:18px;border:1px solid #F3D7BE;background:linear-gradient(145deg,#FFF7EF,#FFFDF9);}.focus-next .icc{width:42px;height:42px;flex:none;}.focus-next b{display:block;font-size:14px;}.focus-next span{display:block;margin-top:3px;color:var(--mut);font-size:12px;line-height:1.35;}.path-more{margin-top:12px;border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:0 14px;box-shadow:var(--sh-card);}.path-more summary{padding:14px 0;cursor:pointer;font-size:13px;font-weight:800;color:var(--accent-d);}.path-more[open] summary{border-bottom:1px solid var(--line);}.path-more .inner{padding:12px 0 14px;}
 .knowledge-list{display:flex;flex-direction:column;gap:10px;margin-top:15px;}.knowledge-item{width:100%;display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--txt);font:inherit;text-align:left;box-shadow:var(--sh-card);cursor:pointer;}.knowledge-item .icc{width:42px;height:42px;flex:none;}.knowledge-item b{display:block;font-size:15px;}.knowledge-item span{display:block;margin-top:3px;color:var(--mut);font-size:12px;line-height:1.35;}.knowledge-item .chev{margin-left:auto;color:var(--dim);font-size:23px;}.knowledge-article{margin-top:15px;}
 .sectiontitle{display:flex;align-items:center;justify-content:space-between;margin:16px 2px 9px;}
@@ -342,7 +343,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div class="journey-method">Наставники и окружение + простые направленные действия = ты сможешь.</div>
 
     <button class="btn btn-amber splashcta" style="margin-top:14px;" onclick="go('pain')">Начать путь&nbsp;→</button>
-    <p class="note" style="margin-top:12px;">Идёт набор в первый поток · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('today')">Превью приложения</span> · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('mentorlogin')">Вход наставника</span></p>
+    <p class="note" style="margin-top:12px;">Идёт набор в первый поток · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('today')">Превью приложения</span> · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('mentorlogin')">Тестовый вход</span></p>
   </section>
 
   <!-- 2. ВЫБОР НАПРАВЛЕНИЯ -->
@@ -483,22 +484,28 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <h2 style="margin-top:16px;">Твой путь</h2>
 
     <div class="journey-snapshot">
-      <div class="goalring" id="goalRingPath"><span id="goalPctPath">0%</span></div>
-      <div class="journey-title" id="goalTitlePath">Твоя главная цель</div>
-      <div class="journey-copy" id="goalProgressPath">0 из 1</div>
-      <div class="goaltrack"><i id="goalBarPath"></i></div>
-      <div class="journey-stats">
-        <div class="journey-stat"><span>СЕГОДНЯ</span><b id="metricToday">0%</b></div>
-        <div class="journey-stat"><span>НЕДЕЛЯ</span><b id="metricWeek">0%</b></div>
-        <div class="journey-stat"><span>СЕРИЯ</span><b id="pathStreak">0 дн.</b></div>
+      <div class="journey-map">
+        <div class="journey-side">
+          <div class="journey-stat-card"><span>Сегодня</span><b id="metricToday">0/0</b></div>
+          <div class="journey-stat-card"><span>Главная цель</span><b id="metricGoal">0%</b></div>
+        </div>
+        <div class="journey-core">
+          <div class="goalring" id="goalRingPath"><span id="goalPctPath">0%</span></div>
+          <span class="journey-overall">Общий прогресс</span>
+        </div>
+        <div class="journey-side">
+          <div class="journey-stat-card"><span>Неделя</span><b id="metricWeek">0/0</b></div>
+          <div class="journey-stat-card"><span>Серия</span><b id="pathStreak">0 дн.</b></div>
+        </div>
       </div>
+      <div class="journey-primary"><span>Цель сейчас</span><b class="journey-title" id="goalTitlePath">Твоя главная цель</b><div class="journey-copy" id="goalProgressPath">0 из 1</div></div>
     </div>
 
     <div class="focus-next" id="pathFocus"></div>
     <button class="btn btn-ghost" style="margin-top:12px;" onclick="go('knowledge')">Открыть базу знаний</button>
 
     <details class="path-more">
-      <summary>Зафиксировать результат и посмотреть детали</summary>
+      <summary>Обновить результат по цели</summary>
       <div class="inner">
       <b id="goalSubmitTitle">Зафиксировать результат</b>
       <p class="small mut" style="margin-top:5px;" id="goalCurrentHelp">Внеси общий результат на текущий момент — это не прибавление. Приложение посчитает процент.</p>
@@ -588,11 +595,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="row" style="gap:11px;"><img class="av sm" id="mentorActivePhoto" src="img/mentor-1.jpg" alt=""><div><b id="mentorActiveName">Александр</b><div class="small grn">● на связи</div></div></div>
       <span class="chip neu" style="cursor:pointer;" onclick="go('mentors')">Все наставники →</span>
       </div>
-      <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px;">
-        <div class="bubble">Видел твой чек-ин — темп отличный. Как ощущения?</div>
-        <div class="bubble me">Всё по плану! Хочу закрыть неделю на 100%</div>
-        <div class="bubble">Красава. Держи фокус на главном деле — в пятницу подведём итоги и поднимем планку 👊</div>
-      </div>
+      <div id="mentorMessages" style="margin-top:18px;display:flex;flex-direction:column;gap:10px;"></div>
       <div class="card2" style="margin-top:14px;">
         <b class="small">План недели от наставника</b>
         <div class="tasks" style="margin-top:4px;">
@@ -602,7 +605,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         </div>
       </div>
       <div class="spacer" style="min-height:14px;"></div>
-      <button class="btn btn-amber" onclick="tgMentor()">Написать наставнику</button>
+      <div class="row" style="margin-top:14px;gap:8px;"><input class="inp" id="mentorMessageInput" placeholder="Написать наставнику" maxlength="700" style="margin:0;min-width:0;"><button class="btn btn-amber btn-sm" onclick="sendChatMessage()">Отправить</button></div>
       <button class="btn btn-ghost" style="margin-top:10px;" onclick="go('checkin')">Отправить чек-ин дня</button>
     </div>
   </section>
@@ -794,25 +797,26 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <button class="btn btn-ghost" style="margin-top:10px;" onclick="go('splash')">На главную</button>
   </section>
 
-  <!-- 16. ВХОД НАСТАВНИКА · ДЕМО -->
+  <!-- 16. ТЕСТОВЫЙ ВХОД -->
   <section class="screen full" data-s="mentorlogin">
     <div class="backbar" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg> Назад</div>
-    <div class="kick">Демо кабинета</div>
-    <h1 style="font-size:24px;margin-top:8px;">Вход для<br>наставника</h1>
-    <p class="mut small" style="margin-top:8px;">Здесь наставник видит участников, чек-ины и цели. Это презентационный вход: авторизации и реальных данных пока нет.</p>
+    <div class="kick">Тестовый доступ</div>
+    <h1 style="font-size:24px;margin-top:8px;">Войти в<br>«Мой путь»</h1>
+    <p class="mut small" style="margin-top:8px;">Данные тестовой пары сохраняются в общей базе. Мила ведёт маршрут, Саша видит прогресс и отвечает как наставник.</p>
     <div class="card" style="margin-top:18px;">
-      <label class="flabel" for="mentorLogin" style="margin-top:0;">Почта или Telegram</label>
-      <input class="inp" id="mentorLogin" type="text" value="mentor@myput.demo" autocomplete="username">
-      <label class="flabel" for="mentorPassword">Пароль</label>
-      <input class="inp" id="mentorPassword" type="password" value="demo1234" autocomplete="current-password">
+      <label class="flabel" for="testRole" style="margin-top:0;">Кто входит</label>
+      <select class="inp" id="testRole"><option value="participant">Мила · участник</option><option value="mentor">Саша · наставник</option></select>
+      <label class="flabel" for="testCode">Код доступа</label>
+      <input class="inp" id="testCode" type="password" autocomplete="current-password" placeholder="Введите код">
+      <p class="tiny dim" style="margin-top:9px;">Код выдаётся отдельно и не хранится в приложении.</p>
     </div>
     <div class="spacer"></div>
-    <button class="btn btn-amber" onclick="openMentorDesk()">Войти в демо-кабинет</button>
+    <button class="btn btn-amber" id="testLoginButton" onclick="loginTest()">Войти</button>
   </section>
 
-  <!-- 17. КАБИНЕТ НАСТАВНИКА · ДЕМО -->
+  <!-- 17. КАБИНЕТ НАСТАВНИКА -->
   <section class="screen" data-s="mentordesk">
-    <div class="row between"><div><div class="small amber" style="font-weight:800;">ДЕМО-КАБИНЕТ</div><h2>Участники</h2></div><button class="btn btn-ghost btn-sm" onclick="go('mentorlogin')">Выйти</button></div>
+    <div class="row between"><div><div class="small amber" style="font-weight:800;">КАБИНЕТ НАСТАВНИКА</div><h2>Участники</h2></div><button class="btn btn-ghost btn-sm" onclick="logoutTest()">Выйти</button></div>
     <div class="metrics" style="margin-top:14px;">
       <div class="metric"><span class="tiny dim">В РАБОТЕ</span><b>12</b></div>
       <div class="metric"><span class="tiny dim">ЧЕК-ИНЫ</span><b>4</b></div>
@@ -983,7 +987,45 @@ function load(){
   S.created=typeof S.created==='string'&&S.created?S.created:todayKey();
   save();
 }
-function save(){try{localStorage.setItem('mp_v1',JSON.stringify(S));}catch(e){}}
+var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false;
+function apiRequest(path,options){
+  options=options||{};options.credentials='same-origin';options.headers=Object.assign({'Content-Type':'application/json'},options.headers||{});
+  return fetch('/api/'+path,options).then(function(r){return r.json().catch(function(){return {};}).then(function(data){if(!r.ok)throw new Error(data.error||'Ошибка сервера');return data;});});
+}
+function scheduleStateSync(){
+  if(!AUTH||AUTH.role!=='participant')return;
+  clearTimeout(syncTimer);syncTimer=setTimeout(syncState,450);
+}
+function syncState(){
+  if(syncBusy||!AUTH||AUTH.role!=='participant')return Promise.resolve();
+  syncBusy=true;
+  return apiRequest('state',{method:'PUT',body:JSON.stringify({state:S})}).catch(function(error){console.warn('state sync',error);}).then(function(){syncBusy=false;});
+}
+function applySnapshot(data){
+  AUTH=data.profile||AUTH;REMOTE=data;
+  if(AUTH&&AUTH.role==='participant'&&data.state&&typeof data.state==='object'){
+    S=data.state;try{localStorage.setItem('mp_v1',JSON.stringify(S));}catch(e){}
+  }
+  var current=(location.hash||'').replace('#','');
+  if(current==='today')renderToday();if(current==='path')renderPath();if(current==='mentorchat')renderMentorChat();if(current==='mentordesk')renderMentorDesk();if(current==='mentorparticipant')renderMentorParticipant();
+}
+function refreshRemoteSnapshot(){
+  return apiRequest('snapshot').then(function(data){applySnapshot(data);return data;}).catch(function(error){if(error.message==='Нужен тестовый вход'){AUTH=null;REMOTE=null;}throw error;});
+}
+function loginTest(){
+  var role=document.getElementById('testRole').value,code=document.getElementById('testCode').value,btn=document.getElementById('testLoginButton');
+  if(!code){toast('Введи код доступа','ok');return;}
+  btn.disabled=true;btn.textContent='Входим…';
+  apiRequest('login',{method:'POST',body:JSON.stringify({role:role,code:code})}).then(function(data){
+    document.getElementById('testCode').value='';applySnapshot(data);
+    if(AUTH.role==='mentor'){go('mentordesk');toast('Кабинет наставника открыт','ok');}
+    else {if(!data.state)scheduleStateSync();go(S.habits.length?'today':'pain');toast('Маршрут Милы подключён к общей базе','ok');}
+  }).catch(function(error){toast(error.message,'ok');}).then(function(){btn.disabled=false;btn.textContent='Войти';});
+}
+function logoutTest(){
+  apiRequest('logout',{method:'POST',body:'{}'}).catch(function(){}).then(function(){AUTH=null;REMOTE=null;go('splash');toast('Вы вышли из тестового доступа','ok');});
+}
+function save(){try{localStorage.setItem('mp_v1',JSON.stringify(S));}catch(e){}scheduleStateSync();}
 function todayKey(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function dateFromKey(k){var p=String(k).split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
 function dayRec(k){k=k||todayKey();if(!S.days[k])S.days[k]={done:[]};return S.days[k];}
@@ -1083,9 +1125,9 @@ function go(id){
   if(id==='path')renderPath();
   if(id==='mentors')renderMentorCatalog();
   if(id==='mentorprofile')renderMentorProfile();
-  if(id==='mentorchat')renderMentorChat();
+  if(id==='mentorchat'){renderMentorChat();if(AUTH)refreshRemoteSnapshot().catch(function(){});}
   if(id==='mentorstart')renderMentorStart();
-  if(id==='mentordesk')renderMentorDesk();
+  if(id==='mentordesk'){renderMentorDesk();if(AUTH)refreshRemoteSnapshot().catch(function(){});}
   if(id==='mentorparticipant')renderMentorParticipant();
   if(id==='pain')renderDiagnostic();
   if(id==='goal')renderGoalForm();
@@ -1329,7 +1371,10 @@ function renderMentorProfile(){
     +'<div class="pricebox"><span class="small mut">Персональное сопровождение</span><strong>24 000 ₽ / 3 месяца</strong><p class="small mut" style="margin-top:6px;">Заявка не является оплатой. Сначала сверяем цель и формат.</p></div>'
     +'<button class="btn btn-amber" style="margin-top:14px;" onclick="chooseMode(\'С наставником\')">Выбрать '+m.name+'</button>';
 }
-function openMentorDesk(){go('mentordesk');}
+function openMentorDesk(){
+  if(AUTH&&AUTH.role==='mentor'){go('mentordesk');return;}
+  var role=document.getElementById('testRole');if(role)role.value='mentor';go('mentorlogin');
+}
 var DEMO_PARTICIPANTS={
   anna:{name:'Анна',goal:'Увеличить доход за месяц',progress:'50 000 из 100 000 ₽',status:'новый',checkin:'Нужен разбор предложения',done:'Сделано: 3 из 4 действий · энергия 7/10',proof:'Скриншот оплаты от клиента · 18 июля',comment:'Анна, на этой неделе не расширяем список задач. Сделай 3 предложения по текущим лидам и пришли результат в пятницу.'},
   igor:{name:'Игорь',goal:'Сделать 500 бёрпи за месяц',progress:'260 из 500 бёрпи',status:'новый',checkin:'Прислал чек-ин',done:'Сделано: 4 из 4 действий · сон 8 ч',comment:'Игорь, хороший темп. Оставь объём прежним и добавь день восстановления в субботу.'},
@@ -1337,17 +1382,41 @@ var DEMO_PARTICIPANTS={
 };
 var demoParticipantId='anna';
 function renderMentorDesk(){
+  if(AUTH&&AUTH.role==='mentor'){
+    var state=REMOTE&&REMOTE.state;
+    if(!state){document.getElementById('mentorDeskList').innerHTML='<div class="card"><b>Мила ещё не вошла</b><p class="small mut" style="margin-top:6px;">После первого входа Милы здесь появятся её цель, действия и чек-ин.</p></div>';return;}
+    var rec=state.days&&state.days[todayKey()]||{},done=(rec.done||[]).length,total=(state.habits||[]).length,goal=state.goal||{},pending=goal.pending;
+    document.getElementById('mentorDeskList').innerHTML='<div class="card"><div class="row between"><div><b>'+esc(state.name||'Мила')+'</b><div class="small mut" style="margin-top:3px;">'+esc(goal.title||'Главная цель')+'</div></div><span class="chip '+(pending?'neu':'')+'">'+(pending?'результат ждёт':'в работе')+'</span></div><div class="small amber" style="font-weight:800;margin-top:9px;">'+fmt(goal.current||0)+' из '+fmt(goal.target||0)+' '+esc(goal.unit||'')+'</div><p class="small mut" style="margin-top:5px;">Сегодня: '+done+' из '+total+' действий'+(rec.checkin?' · чек-ин заполнен':'')+'</p><button class="btn btn-ghost btn-sm" style="margin-top:10px;" onclick="openParticipant(\'mila\')">Открыть участника</button></div>';
+    return;
+  }
   document.getElementById('mentorDeskList').innerHTML=Object.keys(DEMO_PARTICIPANTS).map(function(id){var p=DEMO_PARTICIPANTS[id];return '<div class="card"><div class="row between"><div><b>'+p.name+'</b><div class="small mut" style="margin-top:3px;">'+p.goal+'</div></div><span class="chip '+(p.status==='внимание'?'neu':'')+'">'+p.status+'</span></div><div class="small amber" style="font-weight:800;margin-top:9px;">'+p.progress+'</div><p class="small mut" style="margin-top:5px;">'+p.checkin+'</p><button class="btn btn-ghost btn-sm" style="margin-top:10px;" onclick="openParticipant(\''+id+'\')">Открыть участника</button></div>';}).join('');
 }
-function openParticipant(id){if(!DEMO_PARTICIPANTS[id])return;demoParticipantId=id;go('mentorparticipant');}
+function openParticipant(id){if(id==='mila'&&AUTH&&AUTH.role==='mentor'){demoParticipantId='mila';go('mentorparticipant');return;}if(!DEMO_PARTICIPANTS[id])return;demoParticipantId=id;go('mentorparticipant');}
 function renderMentorParticipant(){
+  if(demoParticipantId==='mila'&&AUTH&&AUTH.role==='mentor'){
+    var state=REMOTE&&REMOTE.state;if(!state){document.getElementById('mentorParticipant').innerHTML='<p class="mut">Данные Милы пока не поступили.</p>';return;}
+    var goal=state.goal||{},rec=state.days&&state.days[todayKey()]||{},pending=goal.pending,proof=pending?'<div class="card" style="margin-top:12px;"><b class="small">Результат ждёт подтверждения</b><p class="small mut" style="margin-top:5px;">Участница заявила: '+fmt(pending.value)+' '+esc(goal.unit||'')+'</p><p class="tiny dim" style="margin-top:6px;">Подтверждение: '+esc(pending.evidence||'не добавлено')+'</p><button class="btn btn-amber btn-sm" style="margin-top:11px;" onclick="approveParticipantResult()">Подтвердить результат</button></div>':'';
+    var checkin=rec.checkin?'Сон '+esc(rec.checkin.sleep||'—')+' · энергия '+esc(rec.checkin.energy||'—')+' · настроение '+esc(rec.checkin.mood||'—'):'Сегодня чек-ин ещё не заполнен';
+    var doneText=(rec.done||[]).map(esc).join(', ')||'ещё не отмечены';
+    document.getElementById('mentorParticipant').innerHTML='<div class="kick">УЧАСТНИЦА ТЕСТА</div><h1 style="font-size:25px;margin-top:8px;">'+esc(state.name||'Мила')+'</h1><div class="card" style="margin-top:14px;"><div class="small mut">Главная цель</div><b style="display:block;margin-top:3px;">'+esc(goal.title||'Цель не выбрана')+'</b><div class="small amber" style="font-weight:800;margin-top:9px;">'+fmt(goal.current||0)+' из '+fmt(goal.target||0)+' '+esc(goal.unit||'')+'</div></div>'+proof+'<div class="card2" style="margin-top:12px;"><b class="small">Последний чек-ин</b><p class="small mut" style="margin-top:5px;">'+checkin+'</p><p class="small mut" style="margin-top:5px;">Действия: '+doneText+'</p><button class="btn btn-ghost btn-sm" style="margin-top:11px;" onclick="requestCheckin()">Запросить чек-ин</button></div><div class="card" style="margin-top:12px;"><label class="flabel" for="mentorComment" style="margin-top:0;">Сообщение Миле</label><textarea class="inp" id="mentorComment" rows="4" style="resize:vertical;" placeholder="Поддержка, фокус или вопрос"></textarea><button class="btn btn-amber" style="margin-top:12px;" onclick="sendMentorComment()">Отправить сообщение</button></div>';
+    return;
+  }
   var p=DEMO_PARTICIPANTS[demoParticipantId];
   var proof=p.proof?'<div class="card" style="margin-top:12px;"><b class="small">Результат ждёт подтверждения</b><p class="small mut" style="margin-top:5px;">Участник заявил: '+p.progress+'</p><p class="tiny dim" style="margin-top:6px;">Подтверждение: '+p.proof+'</p><button class="btn btn-amber btn-sm" style="margin-top:11px;" onclick="approveParticipantResult()">Подтвердить результат</button></div>':'';
   document.getElementById('mentorParticipant').innerHTML='<div class="kick">ДЕМО-УЧАСТНИК</div><h1 style="font-size:25px;margin-top:8px;">'+p.name+'</h1><div class="card" style="margin-top:14px;"><div class="small mut">Главная цель</div><b style="display:block;margin-top:3px;">'+p.goal+'</b><div class="small amber" style="font-weight:800;margin-top:9px;">'+p.progress+'</div></div>'+proof+'<div class="card2" style="margin-top:12px;"><b class="small">Последний чек-ин · заполняет участник</b><p class="small mut" style="margin-top:5px;">'+p.done+'</p><p class="small mut" style="margin-top:5px;">'+p.checkin+'</p><button class="btn btn-ghost btn-sm" style="margin-top:11px;" onclick="requestCheckin()">Запросить новый чек-ин</button></div><div class="card" style="margin-top:12px;"><label class="flabel" for="mentorComment" style="margin-top:0;">Комментарий наставника</label><textarea class="inp" id="mentorComment" rows="4" style="resize:vertical;">'+p.comment+'</textarea><p class="tiny dim" style="margin-top:8px;">Комментарий увидит участник в личном чате. Чек-ин он заполняет сам в своём приложении.</p><button class="btn btn-amber" style="margin-top:12px;" onclick="sendMentorComment()">Отправить комментарий</button></div>';
 }
-function sendMentorComment(){var p=DEMO_PARTICIPANTS[demoParticipantId];p.comment=document.getElementById('mentorComment').value.trim()||p.comment;toast('Демо: комментарий для '+p.name+' отправлен','ok');}
-function requestCheckin(){var p=DEMO_PARTICIPANTS[demoParticipantId];toast('Демо: запрос на чек-ин отправлен '+p.name,'ok');}
-function approveParticipantResult(){var p=DEMO_PARTICIPANTS[demoParticipantId];p.proof='';p.status='подтверждено';toast('Демо: результат '+p.name+' подтверждён','ok');renderMentorParticipant();}
+function sendMentorComment(){
+  if(demoParticipantId==='mila'&&AUTH&&AUTH.role==='mentor'){var text=document.getElementById('mentorComment').value.trim();if(!text){toast('Напиши сообщение','ok');return;}apiRequest('messages',{method:'POST',body:JSON.stringify({text:text})}).then(function(){document.getElementById('mentorComment').value='';return refreshRemoteSnapshot();}).then(function(){toast('Сообщение Миле отправлено','ok');}).catch(function(error){toast(error.message,'ok');});return;}
+  var p=DEMO_PARTICIPANTS[demoParticipantId];p.comment=document.getElementById('mentorComment').value.trim()||p.comment;toast('Демо: комментарий для '+p.name+' отправлен','ok');
+}
+function requestCheckin(){
+  if(demoParticipantId==='mila'&&AUTH&&AUTH.role==='mentor'){apiRequest('messages',{method:'POST',body:JSON.stringify({text:'Мила, пришли, пожалуйста, короткий чек-ин за сегодня: что сделала и где нужен фокус?'})}).then(function(){toast('Запрос чек-ина отправлен','ok');}).catch(function(error){toast(error.message,'ok');});return;}
+  var p=DEMO_PARTICIPANTS[demoParticipantId];toast('Демо: запрос на чек-ин отправлен '+p.name,'ok');
+}
+function approveParticipantResult(){
+  if(demoParticipantId==='mila'&&AUTH&&AUTH.role==='mentor'){var comment=window.prompt('Комментарий для Милы','Результат подтверждён. Хорошая работа — продолжаем в этом же ритме.');if(comment===null)return;apiRequest('reviews',{method:'POST',body:JSON.stringify({status:'approved',comment:comment})}).then(function(){return refreshRemoteSnapshot();}).then(function(){toast('Результат Милы подтверждён','ok');}).catch(function(error){toast(error.message,'ok');});return;}
+  var p=DEMO_PARTICIPANTS[demoParticipantId];p.proof='';p.status='подтверждено';toast('Демо: результат '+p.name+' подтверждён','ok');renderMentorParticipant();
+}
 function chooseMode(mode){
   S.mode=mode==='Сам'?'Сам':'С наставником';save();
   if(S.mode==='Сам'){S.mentorStatus='none';save();toast('Самостоятельный маршрут готов ✓','ok');go('today');return;}
@@ -1389,13 +1458,21 @@ function greet(){
 }
 function fmt(n){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(Number(n)||0);}
 function goalProgressText(){return fmt(S.goal.current)+' из '+fmt(S.goal.target)+' '+S.goal.unit;}
+function goalDirectionName(){
+  var source=((S.goal&&S.goal.title)||'')+' '+((S.goal&&S.goal.unit)||'');
+  if(/б[её]рпи|тренир|отжим|шаг|пробеж|спорт|тело/i.test(source))return 'Спорт';
+  if(/сон|здоров|энерг|питан|самочув|вода|восстанов/i.test(source))return 'Здоровье';
+  if(/режим|под[ъь]ём|отбой|день/i.test(source))return 'Режим дня';
+  if(/доход|выруч|заработ|₽|руб|бизнес/i.test(source))return 'Доход и бизнес';
+  return 'Твоя цель';
+}
 function goalCurrentCopy(){
   var unit=S.goal.unit||'ед.';
-  var isMoney=unit.indexOf('₽')>=0||/руб/i.test(unit)||/доход|выручк|заработ/i.test(S.goal.title||'');
-  if(isMoney){
-    return {label:'Доход за текущий месяц, '+unit,help:'Внеси общий доход за этот месяц — это не прибавление. Приложение посчитает процент от цели.',example:'Например: заработал 50 000 '+unit+' — введи 50 000. Следующая сумма заменяет предыдущую.'};
-  }
-  return {label:'Общий результат сейчас, '+unit,help:'Внеси общий факт на текущий момент — это не прибавление. Приложение посчитает процент от цели.',example:'Например: сделал 8 '+unit+' из '+fmt(S.goal.target)+' — введи 8. Следующая цифра заменяет предыдущую.'};
+  return {
+    label:'Фактический результат сейчас, '+unit,
+    help:'Внеси общий факт по цели «'+S.goal.title+'» на текущий момент. Это не прибавление: новая цифра заменит предыдущую, а приложение пересчитает прогресс.',
+    example:'Например: если сейчас '+fmt(S.goal.current||0)+' из '+fmt(S.goal.target)+' '+unit+', введи фактическое значение. Следующая цифра заменит предыдущую.'
+  };
 }
 function paintGoal(ringId,pctId,titleId,progressId,barId){
   var p=goalPct(),ring=document.getElementById(ringId),bar=document.getElementById(barId);
@@ -1504,6 +1581,10 @@ function sendCheckin(){
   var rec=dayRec(),firstCheckin=!rec.checkin;
   rec.checkin={sleep:document.getElementById('v1').textContent,energy:document.getElementById('v2').textContent,mood:document.getElementById('v3').textContent};
   save();
+  if(AUTH&&AUTH.role==='participant'){
+    syncState().then(function(){toast('Чек-ин сохранён и доступен наставнику'+(firstCheckin?' · +10 баллов':'')+' ✓','ok');go('today');}).catch(function(error){toast(error.message,'ok');});
+    return;
+  }
   if(!S.applied||!S.name||!S.contact){
     toast('Чек-ин сохранён'+(firstCheckin?' · +10 баллов':'')+'. Наставнику — после заявки.','ok');go('today');return;
   }
@@ -1551,11 +1632,16 @@ function renderPath(){
   var nm=S.name||'Ты';
   document.getElementById('profName').textContent=nm;
   document.getElementById('profAv').textContent=nm.charAt(0).toUpperCase();
-  document.getElementById('profDir').textContent=S.dirName;
-  paintGoal('goalRingPath','goalPctPath','goalTitlePath','goalProgressPath','goalBarPath');
+  document.getElementById('profDir').textContent=goalDirectionName();
   var today=dayRec(),todayPct=Math.min(100,Math.round(today.done.length/(S.habits.length||1)*100)),week=weekStats(),month=monthStats();
-  document.getElementById('metricToday').textContent=todayPct+'%';
-  document.getElementById('metricWeek').textContent=week.pct+'%';
+  var overall=Math.round((todayPct+week.pct+goalPct())/3),ring=document.getElementById('goalRingPath');
+  if(ring)ring.style.setProperty('--p',(overall*3.6)+'deg');
+  document.getElementById('goalPctPath').textContent=overall+'%';
+  document.getElementById('goalTitlePath').textContent=S.goal.title;
+  document.getElementById('goalProgressPath').textContent=goalProgressText();
+  document.getElementById('metricToday').textContent=today.done.length+'/'+(S.habits.length||0);
+  document.getElementById('metricWeek').textContent=week.full+'/'+week.elapsed;
+  document.getElementById('metricGoal').textContent=goalPct()+'%';
   document.getElementById('pathStreak').textContent=streak()+' дн.';
   var next=(S.habits||[]).filter(function(item){return today.done.indexOf(item)<0;})[0]||'Подведи итог дня и зафиксируй результат';
   var focus=document.getElementById('pathFocus');
@@ -1577,7 +1663,7 @@ function renderPath(){
   document.getElementById('goalCurrentHelp').textContent=currentCopy.help;
   document.getElementById('goalCurrentExample').textContent=currentCopy.example;
   document.getElementById('goalVerification').hidden=!needsReview;
-  document.getElementById('goalSubmitTitle').textContent=needsReview?'Отправить результат на проверку':'Зафиксировать результат';
+  document.getElementById('goalSubmitTitle').textContent=needsReview?'Отправить результат на проверку':'Зафиксировать результат по цели';
   document.getElementById('goalSubmitButton').textContent=needsReview?'Отправить на проверку':'Сохранить';
   var review=document.getElementById('goalReviewState'),input=document.getElementById('goalCurrentInput'),btn=document.getElementById('goalSubmitButton');
   if(needsReview&&pending){
@@ -1619,7 +1705,7 @@ function saveGoalProgress(){
   else toast('Результат обновлён: '+goalProgressText()+' ✓','ok');
 }
 function renderMentorChat(){
-  var active=S.mentorStatus==='active';
+  var active=(AUTH&&AUTH.role==='participant')||S.mentorStatus==='active';
   var m=mentor();
   document.getElementById('mentorLockedName').textContent=m.name;
   document.getElementById('mentorActiveName').textContent=m.name;
@@ -1631,7 +1717,17 @@ function renderMentorChat(){
     action.textContent=S.mentorStatus==='applied'?'Заявка отправлена — что дальше':'Выбрать наставника';
     action.onclick=S.mentorStatus==='applied'?function(){go('thanks');}:function(){go('mentors');};
     preview.hidden=!S.applied;
+  }else{
+    var box=document.getElementById('mentorMessages'),messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[];
+    if(!messages.length)messages=[{authorId:'sasha',body:'Я на связи. В конце дня пришли короткий чек-ин: что сделала и где нужен фокус.'}];
+    box.innerHTML=messages.map(function(message){return '<div class="bubble '+(message.authorId==='mila'?'me':'')+'">'+esc(message.body)+'</div>';}).join('');
   }
+}
+function sendChatMessage(){
+  if(!AUTH||AUTH.role!=='participant'){toast('Для личного чата нужен тестовый вход Милы','ok');return;}
+  var input=document.getElementById('mentorMessageInput'),text=input.value.trim();if(!text){toast('Напиши сообщение','ok');return;}
+  input.disabled=true;
+  apiRequest('messages',{method:'POST',body:JSON.stringify({text:text})}).then(function(){input.value='';return refreshRemoteSnapshot();}).then(function(){toast('Сообщение отправлено Саше','ok');}).catch(function(error){toast(error.message,'ok');}).then(function(){input.disabled=false;});
 }
 function renderMentorStart(){
   document.getElementById('mentorGoalPreview').textContent=S.goal.title;
@@ -1700,6 +1796,9 @@ function toast(msg,ic){
 }
 /* --- Старт --- */
 load();
+refreshRemoteSnapshot().then(function(data){
+  if(AUTH&&AUTH.role==='participant'&&!data.state)scheduleStateSync();
+}).catch(function(){});
 (function(){
  var h=(location.hash||'').replace('#','');
  renderHabits(S.dir,true);

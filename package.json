@@ -1,0 +1,15 @@
+{
+  "name": "moy-put-pilot",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2"
+  },
+  "scripts": {
+    "check": "node --check api/[...path].js"
+  }
+}
