@@ -43,6 +43,11 @@ async function ensureSchema() {
         state_json TEXT NOT NULL,
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`;
+      await sql`CREATE TABLE IF NOT EXISTS personal_states (
+        profile_id TEXT PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
+        state_json TEXT NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`;
       await sql`CREATE TABLE IF NOT EXISTS mentor_messages (
         id TEXT PRIMARY KEY,
         author_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -54,6 +59,13 @@ async function ensureSchema() {
         reviewer_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
         status TEXT NOT NULL CHECK (status IN ('approved', 'needs_clarification')),
         comment TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`;
+      await sql`CREATE TABLE IF NOT EXISTS mentor_feedback (
+        participant_id TEXT PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
+        mentor_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+        review TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`;
       await sql`INSERT INTO profiles (id, role, display_name) VALUES
@@ -114,20 +126,39 @@ async function currentProfile(req) {
   return rows[0] || null;
 }
 
-async function snapshot() {
+async function snapshot(profile) {
   const sql = getDb();
-  const [stateRows, messages, reviews] = await Promise.all([
+  const [stateRows, personalRows, messages, reviews, feedbackRows, mentorRows] = await Promise.all([
     sql`SELECT state_json AS "stateJson", updated_at AS "updatedAt" FROM participant_state WHERE participant_id = 'mila'`,
+    profile?.role === 'mentor'
+      ? sql`SELECT state_json AS "stateJson", updated_at AS "updatedAt" FROM personal_states WHERE profile_id = ${profile.id}`
+      : Promise.resolve([]),
     sql`SELECT m.author_id AS "authorId", p.display_name AS "authorName", m.body, m.created_at AS "createdAt"
       FROM mentor_messages m JOIN profiles p ON p.id = m.author_id ORDER BY m.created_at ASC LIMIT 80`,
-    sql`SELECT status, comment, created_at AS "createdAt" FROM result_reviews ORDER BY created_at DESC LIMIT 20`
+    sql`SELECT status, comment, created_at AS "createdAt" FROM result_reviews ORDER BY created_at DESC LIMIT 20`,
+    sql`SELECT rating, review, created_at AS "createdAt" FROM mentor_feedback WHERE participant_id = 'mila' AND mentor_id = 'sasha'`,
+    sql`SELECT display_name AS "displayName" FROM profiles WHERE id = 'sasha'`
   ]);
   let state = null;
+  let personalState = null;
   if (stateRows[0]) {
     try { state = JSON.parse(stateRows[0].stateJson); }
     catch { state = null; }
   }
-  return { state, updatedAt: stateRows[0]?.updatedAt || null, messages, reviews };
+  if (personalRows[0]) {
+    try { personalState = JSON.parse(personalRows[0].stateJson); }
+    catch { personalState = null; }
+  }
+  return {
+    state,
+    updatedAt: stateRows[0]?.updatedAt || null,
+    personalState,
+    personalUpdatedAt: personalRows[0]?.updatedAt || null,
+    messages,
+    reviews,
+    mentorFeedback: feedbackRows[0] || null,
+    mentorProfile: mentorRows[0] || { displayName: 'Саша' }
+  };
 }
 
 async function login(req, res) {
@@ -145,7 +176,7 @@ async function login(req, res) {
   await sql`DELETE FROM sessions WHERE expires_at <= NOW()`;
   await sql`INSERT INTO sessions (token, profile_id, expires_at) VALUES (${token}, ${profileId}, NOW() + INTERVAL '7 days')`;
   const profile = { id: profileId, role, displayName: saved.displayName, contact: saved.contact, registered: true };
-  return send(res, 200, { profile, ...(await snapshot()) }, { 'Set-Cookie': cookie(token) });
+  return send(res, 200, { profile, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(token) });
 }
 
 async function register(req, res) {
@@ -164,7 +195,7 @@ async function register(req, res) {
   await sql`DELETE FROM sessions WHERE expires_at <= NOW()`;
   await sql`INSERT INTO sessions (token, profile_id, expires_at) VALUES (${token}, ${profileId}, NOW() + INTERVAL '7 days')`;
   const profile = { id: profileId, role, displayName, contact, registered: true };
-  return send(res, 201, { profile, ...(await snapshot()) }, { 'Set-Cookie': cookie(token) });
+  return send(res, 201, { profile, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(token) });
 }
 
 async function saveState(req, res, profile) {
@@ -177,6 +208,19 @@ async function saveState(req, res, profile) {
   await sql`INSERT INTO participant_state (participant_id, state_json, updated_at)
     VALUES ('mila', ${packed}, NOW())
     ON CONFLICT (participant_id) DO UPDATE SET state_json = EXCLUDED.state_json, updated_at = NOW()`;
+  return send(res, 200, { ok: true });
+}
+
+async function savePersonalState(req, res, profile) {
+  if (profile.role !== 'mentor') return send(res, 403, { error: 'Личный маршрут наставника доступен только наставнику' });
+  const input = await readJson(req);
+  if (!input.state || typeof input.state !== 'object' || Array.isArray(input.state)) return send(res, 400, { error: 'Нет данных личного маршрута' });
+  const packed = JSON.stringify(input.state);
+  if (packed.length > 180_000) return send(res, 413, { error: 'Слишком большой маршрут' });
+  const sql = getDb();
+  await sql`INSERT INTO personal_states (profile_id, state_json, updated_at)
+    VALUES (${profile.id}, ${packed}, NOW())
+    ON CONFLICT (profile_id) DO UPDATE SET state_json = EXCLUDED.state_json, updated_at = NOW()`;
   return send(res, 200, { ok: true });
 }
 
@@ -216,6 +260,20 @@ async function reviewResult(req, res, profile) {
   return send(res, 200, { ok: true });
 }
 
+async function leaveMentorFeedback(req, res, profile) {
+  if (profile.role !== 'participant') return send(res, 403, { error: 'Отзыв может оставить только участник' });
+  const input = await readJson(req);
+  const rating = Number(input.rating);
+  const review = cleanText(input.review, 700);
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) return send(res, 400, { error: 'Поставь оценку от 1 до 5' });
+  if (review.length < 8) return send(res, 400, { error: 'Напиши отзыв минимум из 8 символов' });
+  const sql = getDb();
+  const exists = await sql`SELECT participant_id FROM mentor_feedback WHERE participant_id = ${profile.id} AND mentor_id = 'sasha'`;
+  if (exists[0]) return send(res, 409, { error: 'Отзыв уже оставлен и не редактируется в пилоте' });
+  await sql`INSERT INTO mentor_feedback (participant_id, mentor_id, rating, review) VALUES (${profile.id}, 'sasha', ${rating}, ${review})`;
+  return send(res, 201, { ok: true });
+}
+
 export default async function handler(req, res) {
   // On Vercel catch-all functions `req.query.path` differs between local dev
   // and production. The URL is the stable source of the requested API path.
@@ -229,10 +287,12 @@ export default async function handler(req, res) {
     if (req.method === 'POST' && route === '/logout') return send(res, 200, { ok: true }, { 'Set-Cookie': cookie('', 0) });
     const profile = await currentProfile(req);
     if (!profile) return send(res, 401, { error: 'Нужен тестовый вход' });
-    if (req.method === 'GET' && route === '/snapshot') return send(res, 200, { profile, ...(await snapshot()) });
+    if (req.method === 'GET' && route === '/snapshot') return send(res, 200, { profile, ...(await snapshot(profile)) });
     if (req.method === 'PUT' && route === '/state') return saveState(req, res, profile);
+    if (req.method === 'PUT' && route === '/personal-state') return savePersonalState(req, res, profile);
     if (req.method === 'POST' && route === '/messages') return addMessage(req, res, profile);
     if (req.method === 'POST' && route === '/reviews') return reviewResult(req, res, profile);
+    if (req.method === 'POST' && route === '/mentor-feedback') return leaveMentorFeedback(req, res, profile);
     return send(res, 404, { error: 'Маршрут не найден' });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Ошибка сервера';
