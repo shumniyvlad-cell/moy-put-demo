@@ -180,6 +180,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 .goaledit{margin-top:8px;padding:0;border:0;background:none;color:var(--accent-d);font-family:inherit;font-size:12px;font-weight:800;text-decoration:underline;text-underline-offset:2px;cursor:pointer;}
 .goaltrack{height:8px;background:var(--surface2);border-radius:999px;overflow:hidden;margin-top:9px;}
 .goaltrack i{display:block;height:100%;width:0;background:var(--grad-btn);border-radius:inherit;transition:width .4s ease;}
+.goal-rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:13px -18px 0;padding:0 18px 4px;overscroll-behavior-x:contain;}
+.goal-rail::-webkit-scrollbar{display:none;}
+.goal-slide{width:calc(100% - 32px);min-width:calc(100% - 32px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:15px;box-shadow:var(--sh-card);}
+.goal-slide .goalring{width:58px;height:58px;}.goal-slide .goalring:before{inset:7px;}.goal-slide .goalring span{font-size:10px;}
+.goal-slide .goal-title{font-size:16px;font-weight:800;line-height:1.22;}.goal-slide .goal-month{margin-top:5px;font-size:12px;line-height:1.35;color:var(--mut);}.goal-slide .goal-month b{color:var(--txt);}
+.goal-slide .goaltrack{margin-top:10px;}.goal-slide .goal-foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:11.5px;color:var(--dim);}
+.goal-dots{display:flex;justify-content:center;gap:7px;margin:9px 0 1px;}.goal-dots i{width:6px;height:6px;border-radius:50%;background:#E8E0D5;transition:width .2s,background .2s;}.goal-dots i.on{width:18px;background:var(--accent);}
+.swipehint{text-align:center;margin-top:4px;font-size:11px;color:var(--dim);}
+.action-focus{display:flex;align-items:center;gap:11px;margin-top:14px;padding:13px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--sh-card);}
+.action-focus .icc{width:42px;height:42px;}.action-focus b{display:block;font-size:14px;}.action-focus span{display:block;margin-top:3px;color:var(--mut);font-size:12px;line-height:1.3;}
+.mode-list{display:flex;flex-direction:column;gap:12px;margin-top:16px;}.mode-option{width:100%;padding:15px;border:1px solid var(--line);border-radius:20px;background:var(--surface);color:var(--txt);font:inherit;text-align:left;cursor:pointer;box-shadow:var(--sh-card);transition:border-color .16s,transform .1s,box-shadow .16s;}.mode-option:active{transform:scale(.99);}.mode-option.selected{border:2px solid var(--accent);box-shadow:var(--sh-up);}
+.mode-top{display:flex;align-items:center;gap:11px;}.mode-top .icc{width:42px;height:42px;}.mode-top b{display:block;font-size:17px;}.mode-price{display:inline-block;margin-top:3px;color:var(--accent-d);font-size:12px;font-weight:800;background:var(--soft);padding:4px 8px;border-radius:999px;}
+.mode-points{display:flex;flex-direction:column;gap:7px;margin:12px 0 0;padding:0;list-style:none;}.mode-points li{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.35;color:var(--mut);}.mode-points li:before{content:'✓';display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--surface2);color:var(--txt);font-weight:800;flex:none;}.mode-option.selected .mode-points li:before{background:var(--accent);color:#fff;}
+.mode-note{margin:12px 4px 0;color:var(--mut);font-size:12px;line-height:1.4;}
 .sectiontitle{display:flex;align-items:center;justify-content:space-between;margin:16px 2px 9px;}
 .sectiontitle b{font-size:15px;}
 .daysummary{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh-card);}
@@ -374,48 +388,29 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <!-- 4. ВЫБОР ДЕЙСТВИЙ -->
   <section class="screen full" data-s="minimum">
-    <div class="kick">Шаг 3 из 3 · <span id="catName">Спорт</span></div>
-    <h1 style="margin:9px 0 6px;">Выбери свои действия</h1>
-    <p class="mut small">Подсказки — под твоё направление. Отметь 3–4 пункта, которые будешь делать каждый день, или добавь свои.</p>
-    <div class="tasks card" style="margin-top:15px;" id="habitList"></div>
-    <div class="card2" style="margin-top:12px;">
-      <b class="amber small">Простые действия = большие результаты</b>
-      <p class="small mut" style="margin-top:5px;">Начни с того, что реально сделаешь каждый день. Войдёшь в ритм — поднимем планку. Так и приходят к большим целям.</p>
-    </div>
+    <div class="kick">Шаг 2 из 3</div>
+    <h1 style="margin:9px 0 6px;">Выбери действия,<br>которые приведут к результату</h1>
+    <p class="mut small">Маленькие шаги каждый день формируют привычки и приближают к цели.</p>
+    <div class="action-focus" id="actionFocus"></div>
+    <div class="sectiontitle"><b>Выбери действия</b></div>
+    <div class="tasks card" style="margin-top:3px;" id="habitList"></div>
+    <button class="goaledit" type="button" style="margin-top:12px;" onclick="addCustom()">Добавить своё действие</button>
     <div class="spacer" style="min-height:14px;"></div>
-    <button class="btn btn-amber" onclick="savePlan()">Закрепить план</button>
+    <button class="btn btn-amber" onclick="savePlan()">Продолжить</button>
   </section>
 
   <!-- 5. САМ / С НАСТАВНИКОМ -->
   <section class="screen full" data-s="mentor">
-    <div class="kick">Последний шаг</div>
-    <h1 style="margin:9px 0 6px;">Идёшь сам или<br>с наставником</h1>
-    <p class="mut small">Сам — бесплатно, в своём темпе. С наставником — персональное сопровождение и регулярная обратная связь.</p>
-
-    <div class="choice" style="margin-top:20px;">
-      <div class="ch" onclick="chooseMode('Сам')">
-        <div class="chic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 4-7 8-7s8 2.5 8 7"/></svg></div>
-        <b>Сам</b>
-        <div class="d">Свой темп,<br>свои правила</div>
-      </div>
-      <div class="ch rec" onclick="go('mentors')">
-        <span class="recbadge">24 000 ₽</span>
-        <img class="chph" src="img/mentor-1.jpg" alt="Александр">
-        <b>С наставником</b>
-        <div class="d">Александр рядом<br>и держит фокус</div>
-      </div>
+    <div class="kick">Шаг 3 из 3</div>
+    <h1 style="margin:9px 0 6px;">Как пойдёшь<br>к цели?</h1>
+    <p class="mut small">Оба пути работают. Выбери поддержку, которая нужна тебе сейчас.</p>
+    <div class="mode-list">
+      <button class="mode-option" id="modeSelf" type="button" onclick="selectMode('Сам')"><div class="mode-top"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 4-7 8-7s8 2.5 8 7"/></svg></span><div><b>Самостоятельно</b><span class="mode-price">Без оплаты</span></div></div><ul class="mode-points"><li>Свои действия и темп</li><li>Отмечаешь прогресс в приложении</li><li>Меняешь план сам</li></ul></button>
+      <button class="mode-option" id="modeMentor" type="button" onclick="selectMode('С наставником')"><div class="mode-top"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/></svg></span><div><b>С наставником</b><span class="mode-price">24 000 ₽ · 3 месяца</span></div></div><ul class="mode-points"><li>Диагностика и ясный план</li><li>План действий и рекомендации</li><li>Еженедельная корректировка</li><li>Поддержка команды, когда сложно</li><li>Личные чек-ины и сопровождение</li></ul></button>
     </div>
-
-    <div class="card" style="margin-top:16px;">
-      <div class="row"><img class="av" src="img/mentor-1.jpg" alt=""><div><b>Александр</b> <span class="chip">наставник</span><div class="small mut" style="margin-top:3px;">25 лет в дисциплине. Ставит цели — и доходит.</div></div></div>
-      <p class="small mut" style="margin-top:11px;border-top:1px solid var(--line);padding-top:11px;font-style:normal;">«Верю в систему и точные действия каждый день. Помогу держать ритм, разбирать срывы и корректировать план.»</p>
-    </div>
-    <div class="pricebox">
-      <span class="small mut">Стоимость сопровождения</span>
-      <strong>24 000 ₽</strong>
-      <p class="small mut" style="margin-top:6px;">Без оплаты внутри приложения. Сначала заявка и разговор об условиях, затем отдельное соглашение.</p>
-    </div>
-    <p class="note">Самостоятельный маршрут остаётся бесплатным. Переключиться можно позже.</p>
+    <p class="mode-note">Оплата — после обсуждения формата и договорённостей.</p>
+    <div class="spacer" style="min-height:14px;"></div>
+    <button class="btn btn-amber" onclick="continueMode()">Выбрать формат</button>
   </section>
 
   <!-- 6. СЕГОДНЯ -->
@@ -430,27 +425,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div><div class="tiny amber" style="font-weight:800;margin-bottom:3px;">НАПУТСТВИЕ ДНЯ</div><b id="quoteText">Твоя цель ближе, чем кажется</b></div>
     </div>
 
-    <div class="card goalcard" style="margin-top:12px;">
-      <div class="goalring" id="goalRingToday"><span id="goalPctToday">0%</span></div>
-      <div class="goalcopy">
-        <div class="small mut">Главная цель</div>
-        <b id="goalTitleToday">Твой результат</b>
-        <div class="small dim" id="goalProgressToday">0 из 1</div>
-        <div class="goaltrack"><i id="goalBarToday"></i></div>
-        <button class="goaledit" type="button" onclick="go('goal')">Изменить цель</button>
-      </div>
-    </div>
+    <div class="goal-rail" id="goalCarousel" aria-label="Цели на этот месяц"></div>
+    <div class="goal-dots" id="goalDots" aria-hidden="true"></div>
+    <div class="swipehint">← свайпни, чтобы посмотреть другие цели →</div>
 
-    <div class="card" style="margin-top:12px;">
-      <div class="row"><img class="av sm" src="img/mentor-1.jpg" alt=""><div><b class="small">Александр</b> <span class="dim small">· напутствие</span></div></div>
-      <p class="bubble" style="margin-top:9px;max-width:100%;" id="mentorNote">Отличный день, чтобы стать на шаг ближе к цели. Закрой свой план — и день в плюс. Погнали 💪</p>
-      <div class="row" style="gap:9px;margin-top:11px;">
-        <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="go('checkin')">Чек-ин дня</button>
-        <button class="btn btn-amber btn-sm" style="flex:1;" onclick="go('mentorchat')">Ответить</button>
-      </div>
-    </div>
-
-    <div class="sectiontitle"><b>Действия сегодня</b><span class="small dim">нажми, когда сделаешь</span></div>
+    <div class="sectiontitle" style="margin-top:17px;"><b>Действия на сегодня</b><span class="small dim">нажми, когда сделаешь</span></div>
     <div class="card tasks" id="dayList"></div>
 
     <div class="daysummary" style="margin-top:12px;">
@@ -460,11 +439,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     </div>
     <p class="note" id="dayState">Начни с одного простого действия.</p>
 
-    <div class="card2" style="margin-top:12px;display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="go('heroes')">
-      <div class="avstack"><img src="img/hero-1.jpg" alt="" style="width:32px;height:32px;border-radius:50%;border:2px solid #fff;object-fit:cover;object-position:center 12%;"><img src="img/hero-4.jpg" alt="" style="width:32px;height:32px;border-radius:50%;border:2px solid #fff;object-fit:cover;object-position:center 12%;margin-left:-9px;"><img src="img/hero-5.jpg" alt="" style="width:32px;height:32px;border-radius:50%;border:2px solid #fff;object-fit:cover;object-position:center 12%;margin-left:-9px;"></div>
-      <div style="flex:1;"><b class="small">Истории героев</b><div class="tiny dim">было → стало · заряжает</div></div>
-      <span class="amber" style="font-weight:700;">→</span>
-    </div>
   </section>
 
   <!-- 6. ЧЕК-ИН -->
@@ -575,7 +549,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <h2>Наставник</h2>
       <p class="small mut" style="margin-top:7px;">Личный чат, еженедельный план и разбор чек-инов открываются после согласования и оплаты сопровождения.</p>
       <div class="card" style="margin-top:16px;">
-        <div class="row"><img class="av sm" src="img/mentor-1.jpg" alt=""><div><b id="mentorLockedName">Александр</b><div class="small mut" style="margin-top:3px;">Персональное сопровождение · 24 000 ₽</div></div></div>
+        <div class="row"><img class="av sm" src="img/mentor-1.jpg" alt=""><div><b id="mentorLockedName">Александр</b><div class="small mut" style="margin-top:3px;">Персональное сопровождение · 24 000 ₽ / 3 месяца</div></div></div>
         <p class="small mut" style="margin-top:12px;">Сначала заявка и короткий созвон: сверяем цель, формат работы и договорённости. Затем присылаем ссылку на оплату. После подтверждения открываем сопровождение.</p>
       </div>
       <button class="btn btn-amber" style="margin-top:14px;" id="mentorLockedAction" onclick="go('mentors')">Выбрать наставника</button>
@@ -728,7 +702,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
     <div class="pricebox" id="applyPriceBox">
       <span class="small mut">Стоимость сопровождения</span>
-      <strong>24 000 ₽</strong>
+      <strong>24 000 ₽ / 3 месяца</strong>
       <p class="small mut" style="margin-top:6px;">Сначала заявка. Оплата и соглашение — только после обсуждения формата.</p>
     </div>
 
@@ -764,7 +738,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div class="card steps" style="margin-top:16px;">
       <b class="small">Что дальше</b>
       <div class="st" style="margin-top:6px;"><div class="stn">1</div><div class="small">Свяжемся и уточним запрос</div></div>
-      <div class="st"><div class="stn">2</div><div class="small">Согласуем формат, условия и стоимость 24 000 ₽</div></div>
+      <div class="st"><div class="stn">2</div><div class="small">Согласуем формат, условия и стоимость 24 000 ₽ за 3 месяца</div></div>
       <div class="st"><div class="stn">3</div><div class="small">Пришлём договорённости и ссылку на оплату</div></div>
       <div class="st"><div class="stn">4</div><div class="small">После подтверждения оплаты откроем личный чат и план от наставника</div></div>
     </div>
@@ -1094,6 +1068,7 @@ function go(id){
   if(id==='pain')renderDiagnostic();
   if(id==='goal')renderGoalForm();
   if(id==='minimum')renderHabits(S.dir,true);
+  if(id==='mentor')renderModeChoice();
   if(id==='checkin'){
     var cb=document.getElementById('checkinSubmit');
     if(cb)cb.textContent=S.applied?'Отправить наставнику':'Сохранить на устройстве';
@@ -1137,18 +1112,18 @@ function drawDraft(){
   draft.forEach(function(d,i){
     h+='<div class="t'+(d.on?' on':'')+'">'
       +'<div class="lblwrap" onclick="togH('+i+')">'+CHECK+'<span class="lbl">'+esc(d.txt)+'</span></div>'
-      +'<div class="ops">'
-      +'<span class="op" onclick="editH('+i+')">'+OPS.edit+'</span>'
-      +'<span class="op" onclick="delH('+i+')">'+OPS.del+'</span>'
-      +'<span class="op grab" onpointerdown="dragStart(event,'+i+')">'+OPS.grip+'</span>'
-      +'</div></div>';
+      +'</div>';
   });
-  h+='<div class="t add" onclick="addCustom()"><div class="plus">+</div><span class="lbl">Добавить своё действие</span></div>';
   document.getElementById('habitList').innerHTML=h;
 }
 function renderHabits(cat,keepSaved){
   var c=HABITS[cat]||HABITS.sport;
-  document.getElementById('catName').textContent=c.name;
+  var selected=(S.diagnosticAreas||[]).filter(function(id){return DIAGNOSTIC_AREAS[id]&&DIAGNOSTIC_AREAS[id].dir===cat;});
+  var id=selected[0]||({biz:'biz',sport:'sport',health:'health',regime:'health'}[cat]||'sport');
+  var area=DIAGNOSTIC_AREAS[id]||{name:c.name};
+  var monthly=(S.diagnosticGoals||{})[id]||S.goal.title||'Цель на этот месяц';
+  var focus=document.getElementById('actionFocus');
+  if(focus)focus.innerHTML='<span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M22 12h-3M12 22v-3M2 12h3"/></svg></span><div><b>'+esc(area.name)+'</b><span>Цель на месяц: '+esc(monthly)+'</span></div>';
   initDraft(cat,keepSaved);
   drawDraft();
 }
@@ -1286,6 +1261,17 @@ function savePlan(){
   if(S.applied){toast('План обновлён ✓','ok');go('today');}
   else go('mentor');
 }
+function renderModeChoice(){
+  var mode=S.mode==='С наставником'?'С наставником':'Сам';
+  var self=document.getElementById('modeSelf'),mentorEl=document.getElementById('modeMentor');
+  if(self)self.classList.toggle('selected',mode==='Сам');
+  if(mentorEl)mentorEl.classList.toggle('selected',mode==='С наставником');
+}
+function selectMode(mode){
+  S.mode=mode==='С наставником'?'С наставником':'Сам';
+  renderModeChoice();
+}
+function continueMode(){chooseMode(S.mode);}
 function mentor(){return MENTORS[S.mentorId]||MENTORS.alex;}
 function renderMentorCatalog(){
   var h='';
@@ -1317,7 +1303,7 @@ function renderMentorProfile(){
     +'<div class="metric"><span class="tiny dim">ОПЫТ</span><b style="font-size:14px;line-height:1.25;">'+m.experience+'</b></div></div>'
     +'<div class="card2" style="margin-top:12px;"><b class="small">Формат работы</b><p class="small mut" style="margin-top:5px;">'+m.format+'</p></div>'
     +'<div class="card2" style="margin-top:12px;"><b class="small">Кейс</b><p class="small mut" style="margin-top:5px;">'+m.case+'</p><p class="small" style="margin-top:9px;font-style:italic;">'+m.review+'</p></div>'
-    +'<div class="pricebox"><span class="small mut">Персональное сопровождение</span><strong>24 000 ₽</strong><p class="small mut" style="margin-top:6px;">Заявка не является оплатой. Сначала сверяем цель и формат.</p></div>'
+    +'<div class="pricebox"><span class="small mut">Персональное сопровождение</span><strong>24 000 ₽ / 3 месяца</strong><p class="small mut" style="margin-top:6px;">Заявка не является оплатой. Сначала сверяем цель и формат.</p></div>'
     +'<button class="btn btn-amber" style="margin-top:14px;" onclick="chooseMode(\'С наставником\')">Выбрать '+m.name+'</button>';
 }
 function openMentorDesk(){go('mentordesk');}
@@ -1396,13 +1382,48 @@ function paintGoal(ringId,pctId,titleId,progressId,barId){
   document.getElementById(titleId).textContent=S.goal.title;
   document.getElementById(progressId).textContent=goalProgressText();
 }
+function goalCarouselCards(){
+  var selected=(S.diagnosticAreas||[]).slice();
+  if(!selected.length){
+    var fallback={biz:'biz',sport:'sport',health:'health',regime:'health'}[S.dir]||'sport';
+    selected=[fallback];
+  }
+  return selected.map(function(id,index){
+    var area=DIAGNOSTIC_AREAS[id]||{name:S.dirName||'Моя цель'};
+    var monthly=(S.diagnosticGoals||{})[id]||((index===0&&S.goal&&S.goal.title)?S.goal.title:'Цель на этот месяц');
+    var primary=index===0;
+    return {id:id,name:area.name,monthly:monthly,primary:primary,pct:primary?goalPct():0};
+  });
+}
+function renderGoalCarousel(){
+  var rail=document.getElementById('goalCarousel'),dots=document.getElementById('goalDots');
+  if(!rail||!dots)return;
+  var cards=goalCarouselCards(),h='';
+  cards.forEach(function(card){
+    var p=Math.max(0,Math.min(100,card.pct));
+    h+='<article class="goal-slide"><div class="row" style="align-items:center;"><div class="goalring" style="--p:'+(p*3.6)+'deg"><span>'+p+'%</span></div><div style="min-width:0;flex:1;"><div class="goal-title">'+esc(card.name)+'</div><div class="goal-month">Цель на месяц<br><b>'+esc(card.monthly)+'</b></div></div></div><div class="goaltrack"><i style="width:'+p+'%"></i></div><div class="goal-foot"><span>'+ (card.primary?esc(goalProgressText()):'Результат ещё не зафиксирован') +'</span><button class="goaledit" type="button" onclick="openDiagnosticGoal(\''+card.id+'\')">Изменить</button></div></article>';
+  });
+  rail.innerHTML=h;
+  dots.innerHTML=cards.map(function(_,i){return '<i'+(i===0?' class="on"':'')+'></i>';}).join('');
+  dots.hidden=cards.length<2;
+  var hint=document.querySelector('.swipehint');if(hint)hint.hidden=cards.length<2;
+  rail.scrollLeft=0;
+  rail.onscroll=function(){
+    var first=rail.querySelector('.goal-slide');if(!first)return;
+    var index=Math.max(0,Math.min(cards.length-1,Math.round(rail.scrollLeft/(first.offsetWidth+12))));
+    [].forEach.call(dots.children,function(dot,i){dot.classList.toggle('on',i===index);});
+  };
+}
+function openDiagnosticGoal(id){
+  go('pain');
+  setTimeout(function(){var input=document.getElementById('diag-'+id);if(input)input.focus();},40);
+}
 function renderToday(){
   var d=new Date();
   document.getElementById('todayDate').textContent=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
-  document.getElementById('mentorNote').textContent=greet()+' Одно действие за другим. Не гонись за идеалом — держи ритм. Я рядом 💪';
   document.getElementById('quoteText').textContent=quoteOfDay();
   if(!S.habits.length)S.habits=(HABITS[S.dir]||HABITS.sport).items.slice(0,3);
-  paintGoal('goalRingToday','goalPctToday','goalTitleToday','goalProgressToday','goalBarToday');
+  renderGoalCarousel();
   var rec=dayRec(),h='';
   S.habits.forEach(function(x){
     var done=rec.done.indexOf(x)>=0;
