@@ -799,19 +799,30 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <!-- 16. ТЕСТОВЫЙ ВХОД -->
   <section class="screen full" data-s="mentorlogin">
-    <div class="backbar" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg> Назад</div>
-    <div class="kick">Тестовый доступ</div>
-    <h1 style="font-size:24px;margin-top:8px;">Войти в<br>«Мой путь»</h1>
-    <p class="mut small" style="margin-top:8px;">Данные тестовой пары сохраняются в общей базе. Мила ведёт маршрут, Саша видит прогресс и отвечает как наставник.</p>
-    <div class="card" style="margin-top:18px;">
+    <div class="kick">Пилотный доступ</div>
+    <h1 style="font-size:24px;margin-top:8px;">Твой профиль<br>в «Мой путь»</h1>
+    <p class="mut small" style="margin-top:8px;">Сначала зарегистрируйся по своему коду. Данные Милы и Саши сохраняются в общей базе, доступ к маршруту появляется только после входа.</p>
+    <div class="seg" style="margin-top:16px;"><button class="segbtn on" id="entryRegisterTab" onclick="setTestEntryMode('register')">Первый вход</button><button class="segbtn" id="entryLoginTab" onclick="setTestEntryMode('login')">Уже есть профиль</button></div>
+    <div class="card" id="testRegisterForm" style="margin-top:14px;">
       <label class="flabel" for="testRole" style="margin-top:0;">Кто входит</label>
       <select class="inp" id="testRole"><option value="participant">Мила · участник</option><option value="mentor">Саша · наставник</option></select>
+      <label class="flabel" for="testName">Имя</label>
+      <input class="inp" id="testName" autocomplete="name" placeholder="Как к тебе обращаться">
+      <label class="flabel" for="testContact">Telegram или телефон</label>
+      <input class="inp" id="testContact" autocomplete="tel" placeholder="@username или +7…">
       <label class="flabel" for="testCode">Код доступа</label>
-      <input class="inp" id="testCode" type="password" autocomplete="current-password" placeholder="Введите код">
-      <p class="tiny dim" style="margin-top:9px;">Код выдаётся отдельно и не хранится в приложении.</p>
+      <input class="inp" id="testCode" type="password" autocomplete="one-time-code" placeholder="Введите личный код">
+      <p class="tiny dim" style="margin-top:9px;">Имя и контакт нужны только для этого пилота. Код выдаётся отдельно и не сохраняется в приложении.</p>
+    </div>
+    <div class="card" id="testLoginForm" hidden style="margin-top:14px;">
+      <label class="flabel" for="testLoginRole" style="margin-top:0;">Кто входит</label>
+      <select class="inp" id="testLoginRole"><option value="participant">Мила · участник</option><option value="mentor">Саша · наставник</option></select>
+      <label class="flabel" for="testLoginCode">Код доступа</label>
+      <input class="inp" id="testLoginCode" type="password" autocomplete="current-password" placeholder="Введите личный код">
     </div>
     <div class="spacer"></div>
-    <button class="btn btn-amber" id="testLoginButton" onclick="loginTest()">Войти</button>
+    <button class="btn btn-amber" id="testRegisterButton" onclick="registerTest()">Зарегистрироваться</button>
+    <button class="btn btn-amber" id="testLoginButton" hidden onclick="loginTest()">Войти</button>
   </section>
 
   <!-- 17. КАБИНЕТ НАСТАВНИКА -->
@@ -987,7 +998,7 @@ function load(){
   S.created=typeof S.created==='string'&&S.created?S.created:todayKey();
   save();
 }
-var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false;
+var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false,TEST_ENTRY_MODE='register';
 function apiRequest(path,options){
   options=options||{};options.credentials='same-origin';options.headers=Object.assign({'Content-Type':'application/json'},options.headers||{});
   return fetch('/api/'+path,options).then(function(r){return r.json().catch(function(){return {};}).then(function(data){if(!r.ok)throw new Error(data.error||'Ошибка сервера');return data;});});
@@ -1012,14 +1023,37 @@ function applySnapshot(data){
 function refreshRemoteSnapshot(){
   return apiRequest('snapshot').then(function(data){applySnapshot(data);return data;}).catch(function(error){if(error.message==='Нужен тестовый вход'){AUTH=null;REMOTE=null;}throw error;});
 }
+function setTestEntryMode(mode){
+  TEST_ENTRY_MODE=mode==='login'?'login':'register';
+  var registering=TEST_ENTRY_MODE==='register';
+  document.getElementById('testRegisterForm').hidden=!registering;
+  document.getElementById('testLoginForm').hidden=registering;
+  document.getElementById('testRegisterButton').hidden=!registering;
+  document.getElementById('testLoginButton').hidden=registering;
+  document.getElementById('entryRegisterTab').classList.toggle('on',registering);
+  document.getElementById('entryLoginTab').classList.toggle('on',!registering);
+}
+function openTestWorkspace(data,notice){
+  applySnapshot(data);
+  if(AUTH.role==='mentor'){go('mentordesk');if(notice)toast(notice,'ok');return;}
+  if(!data.state){S=defState();S.name=AUTH.displayName||'';save();scheduleStateSync();}
+  go(S.habits.length?'today':'pain');
+  if(notice)toast(notice,'ok');
+}
+function registerTest(){
+  var role=document.getElementById('testRole').value,name=document.getElementById('testName').value.trim(),contact=document.getElementById('testContact').value.trim(),code=document.getElementById('testCode').value,btn=document.getElementById('testRegisterButton');
+  if(!name||!contact||!code){toast('Заполни имя, контакт и код','ok');return;}
+  btn.disabled=true;btn.textContent='Сохраняем…';
+  apiRequest('register',{method:'POST',body:JSON.stringify({role:role,name:name,contact:contact,code:code})}).then(function(data){
+    document.getElementById('testCode').value='';openTestWorkspace(data,'Профиль создан и подключён к общей базе');
+  }).catch(function(error){toast(error.message,'ok');}).then(function(){btn.disabled=false;btn.textContent='Зарегистрироваться';});
+}
 function loginTest(){
-  var role=document.getElementById('testRole').value,code=document.getElementById('testCode').value,btn=document.getElementById('testLoginButton');
+  var role=document.getElementById('testLoginRole').value,code=document.getElementById('testLoginCode').value,btn=document.getElementById('testLoginButton');
   if(!code){toast('Введи код доступа','ok');return;}
   btn.disabled=true;btn.textContent='Входим…';
   apiRequest('login',{method:'POST',body:JSON.stringify({role:role,code:code})}).then(function(data){
-    document.getElementById('testCode').value='';applySnapshot(data);
-    if(AUTH.role==='mentor'){go('mentordesk');toast('Кабинет наставника открыт','ok');}
-    else {if(!data.state)scheduleStateSync();go(S.habits.length?'today':'pain');toast('Маршрут Милы подключён к общей базе','ok');}
+    document.getElementById('testLoginCode').value='';openTestWorkspace(data,AUTH&&AUTH.role==='mentor'?'Кабинет наставника открыт':'Маршрут подключён к общей базе');
   }).catch(function(error){toast(error.message,'ok');}).then(function(){btn.disabled=false;btn.textContent='Войти';});
 }
 function logoutTest(){
@@ -1105,6 +1139,7 @@ function quoteOfDay(){var d=new Date(),n=Math.floor((d-new Date(d.getFullYear(),
 
 /* --- Навигация --- */
 function go(id){
+  if(!AUTH&&id!=='mentorlogin')id='mentorlogin';
   if(id==='profile')id='path';
   var cur=document.querySelector('.screen.active');
   if(cur){var c=cur.dataset.s; if(OVER.indexOf(c)<0) prev=c;}
@@ -1798,10 +1833,12 @@ function toast(msg,ic){
 load();
 refreshRemoteSnapshot().then(function(data){
   if(AUTH&&AUTH.role==='participant'&&!data.state)scheduleStateSync();
+  if(AUTH&&(location.hash===''||(location.hash||'').replace('#','')==='mentorlogin'))openTestWorkspace(data);
 }).catch(function(){});
 (function(){
  var h=(location.hash||'').replace('#','');
  renderHabits(S.dir,true);
+ if(!AUTH){go('mentorlogin');return;}
  if(['rewards','challenges','profile'].indexOf(h)>=0){go('path');return;}
  if(h&&document.querySelector('.screen[data-s="'+h+'"]')){go(h);return;}
  if(S.habits.length){go('today');} // возвращающийся пользователь — сразу в свой день

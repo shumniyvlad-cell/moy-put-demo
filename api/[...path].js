@@ -26,8 +26,12 @@ async function ensureSchema() {
         id TEXT PRIMARY KEY,
         role TEXT NOT NULL CHECK (role IN ('participant', 'mentor')),
         display_name TEXT NOT NULL,
+        contact TEXT NOT NULL DEFAULT '',
+        registered_at TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`;
+      await sql`ALTER TABLE profiles ADD COLUMN IF NOT EXISTS contact TEXT NOT NULL DEFAULT ''`;
+      await sql`ALTER TABLE profiles ADD COLUMN IF NOT EXISTS registered_at TIMESTAMPTZ`;
       await sql`CREATE TABLE IF NOT EXISTS sessions (
         token TEXT PRIMARY KEY,
         profile_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -103,7 +107,8 @@ async function currentProfile(req) {
   const token = parseCookie(req.headers.cookie)[COOKIE_NAME];
   if (!token || token.length > 180) return null;
   const sql = getDb();
-  const rows = await sql`SELECT p.id, p.role, p.display_name AS "displayName"
+  const rows = await sql`SELECT p.id, p.role, p.display_name AS "displayName", p.contact,
+    (p.registered_at IS NOT NULL) AS "registered"
     FROM sessions s JOIN profiles p ON p.id = s.profile_id
     WHERE s.token = ${token} AND s.expires_at > NOW()`;
   return rows[0] || null;
@@ -131,12 +136,35 @@ async function login(req, res) {
   const expected = role === 'mentor' ? process.env.SASHA_TEST_CODE : process.env.MILA_TEST_CODE;
   if (!role || !isSameSecret(input.code, expected)) return send(res, 401, { error: 'Неверный код доступа' });
   const profileId = role === 'mentor' ? 'sasha' : 'mila';
-  const token = crypto.randomBytes(32).toString('base64url');
   const sql = getDb();
+  const profileRows = await sql`SELECT display_name AS "displayName", contact,
+    (registered_at IS NOT NULL) AS "registered" FROM profiles WHERE id = ${profileId}`;
+  const saved = profileRows[0];
+  if (!saved?.registered) return send(res, 403, { error: 'Сначала пройди предрегистрацию' });
+  const token = crypto.randomBytes(32).toString('base64url');
   await sql`DELETE FROM sessions WHERE expires_at <= NOW()`;
   await sql`INSERT INTO sessions (token, profile_id, expires_at) VALUES (${token}, ${profileId}, NOW() + INTERVAL '7 days')`;
-  const profile = { id: profileId, role, displayName: role === 'mentor' ? 'Саша' : 'Мила' };
+  const profile = { id: profileId, role, displayName: saved.displayName, contact: saved.contact, registered: true };
   return send(res, 200, { profile, ...(await snapshot()) }, { 'Set-Cookie': cookie(token) });
+}
+
+async function register(req, res) {
+  const input = await readJson(req);
+  const role = input.role === 'mentor' ? 'mentor' : input.role === 'participant' ? 'participant' : '';
+  const expected = role === 'mentor' ? process.env.SASHA_TEST_CODE : process.env.MILA_TEST_CODE;
+  const displayName = cleanText(input.name, 60);
+  const contact = cleanText(input.contact, 100);
+  if (!role || !isSameSecret(input.code, expected)) return send(res, 401, { error: 'Неверный код доступа' });
+  if (displayName.length < 2) return send(res, 400, { error: 'Укажи имя минимум из 2 символов' });
+  if (contact.length < 3) return send(res, 400, { error: 'Укажи Telegram или телефон' });
+  const profileId = role === 'mentor' ? 'sasha' : 'mila';
+  const sql = getDb();
+  await sql`UPDATE profiles SET display_name = ${displayName}, contact = ${contact}, registered_at = NOW() WHERE id = ${profileId}`;
+  const token = crypto.randomBytes(32).toString('base64url');
+  await sql`DELETE FROM sessions WHERE expires_at <= NOW()`;
+  await sql`INSERT INTO sessions (token, profile_id, expires_at) VALUES (${token}, ${profileId}, NOW() + INTERVAL '7 days')`;
+  const profile = { id: profileId, role, displayName, contact, registered: true };
+  return send(res, 201, { profile, ...(await snapshot()) }, { 'Set-Cookie': cookie(token) });
 }
 
 async function saveState(req, res, profile) {
@@ -196,6 +224,7 @@ export default async function handler(req, res) {
   try {
     await ensureSchema();
     if (req.method === 'GET' && route === '/health') return send(res, 200, { ok: true, storage: 'neon-postgres' });
+    if (req.method === 'POST' && route === '/register') return register(req, res);
     if (req.method === 'POST' && route === '/login') return login(req, res);
     if (req.method === 'POST' && route === '/logout') return send(res, 200, { ok: true }, { 'Set-Cookie': cookie('', 0) });
     const profile = await currentProfile(req);
