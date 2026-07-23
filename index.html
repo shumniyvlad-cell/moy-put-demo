@@ -105,34 +105,16 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .journey-quote{font-family:Unbounded;font-size:11px;line-height:1.45;color:var(--accent-d);text-align:center;margin:14px 12px 0;}
 .dodeca-hero{position:relative;height:338px;margin-top:5px;border-radius:28px;overflow:hidden;background:#FFF6EA;box-shadow:var(--sh-up);isolation:isolate;}
 .dodeca-hero:after{content:"";position:absolute;z-index:1;inset:0;background:linear-gradient(180deg,rgba(255,251,245,.42),transparent 28%,transparent 74%,rgba(255,250,242,.35));pointer-events:none;}
-.dodeca-hero img{position:absolute;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 50%;display:block;transform:scale(1.08);transform-origin:50% 54%;animation:dodeca-float 10s ease-in-out infinite;}
-.figure-motion{position:absolute;z-index:1;inset:0;overflow:hidden;pointer-events:none;}
-.figure-motion img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none;object-fit:cover;object-position:center 50%;opacity:.5;filter:saturate(1.08) contrast(1.03);will-change:transform;transform:scale(1.08);transition:transform .9s cubic-bezier(.25,.8,.25,1);animation:none!important;}
-.figure-motion.work{clip-path:polygon(36% 18%,64% 18%,70% 34%,62% 46%,38% 46%,30% 34%);}
-.figure-motion.relations{clip-path:polygon(4% 33%,33% 29%,43% 40%,37% 57%,6% 55%);}
-.figure-motion.sport{clip-path:polygon(65% 30%,96% 33%,95% 56%,63% 57%,58% 41%);}
-.figure-motion.health{clip-path:polygon(10% 55%,39% 54%,51% 69%,44% 89%,17% 87%,5% 69%);}
-.figure-motion.growth{clip-path:polygon(53% 55%,87% 55%,96% 69%,84% 89%,57% 87%,48% 69%);}
-.dodeca-hero.motion-shift .figure-motion.work img{transform:scale(1.14) translate3d(10px,-7px,0);}
-.dodeca-hero.motion-shift .figure-motion.relations img{transform:scale(1.14) translate3d(11px,-6px,0);}
-.dodeca-hero.motion-shift .figure-motion.sport img{transform:scale(1.15) translate3d(-12px,-8px,0);}
-.dodeca-hero.motion-shift .figure-motion.health img{transform:scale(1.14) translate3d(10px,-8px,0);}
-.dodeca-hero.motion-shift .figure-motion.growth img{transform:scale(1.14) translate3d(-11px,-8px,0);}
-.journey-orbit{position:absolute;z-index:2;inset:26px 23px 22px;border:1px solid rgba(255,252,246,.78);border-radius:48% 52% 47% 53%;box-shadow:inset 0 0 22px rgba(255,245,226,.2);pointer-events:none;}
-.journey-orbit i{position:absolute;top:-5px;left:50%;width:11px;height:11px;margin-left:-5px;border-radius:50%;background:#FFF9F1;box-shadow:0 0 0 5px rgba(255,184,74,.32),0 0 18px 5px rgba(255,249,241,.92);transition:top .95s cubic-bezier(.25,.8,.25,1),left .95s cubic-bezier(.25,.8,.25,1),background .95s ease;}
-.dodeca-hero.motion-shift .journey-orbit i{top:74%;left:88%;background:#FFB043;}
-.facet{position:absolute;z-index:2;max-width:116px;padding:6px 8px;border:1px solid rgba(255,255,255,.8);border-radius:11px;background:rgba(255,251,244,.84);box-shadow:0 5px 16px rgba(145,74,18,.13);font-size:9.5px;line-height:1.2;font-weight:800;color:var(--accent-d);backdrop-filter:blur(7px);animation:facet-breathe 4.8s ease-in-out infinite;}
+.dodeca-hero img{position:absolute;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 50%;display:block;transform:scale(1.08);transform-origin:50% 54%;}
+.facet{position:absolute;z-index:2;max-width:116px;padding:6px 8px;border:1px solid rgba(255,255,255,.8);border-radius:11px;background:rgba(255,251,244,.84);box-shadow:0 5px 16px rgba(145,74,18,.13);font-size:9.5px;line-height:1.2;font-weight:800;color:var(--accent-d);backdrop-filter:blur(7px);}
 .facet.top{top:9px;left:50%;transform:translateX(-50%);white-space:nowrap;}
 .facet.left{top:115px;left:10px;animation-delay:-1.2s;}
 .facet.right{top:112px;right:10px;text-align:right;animation-delay:-2.4s;}
 .facet.bl{bottom:30px;left:30px;animation-delay:-3.6s;}
 .facet.br{bottom:30px;right:28px;text-align:right;animation-delay:-4.8s;}
-.dodeca-core{position:absolute;z-index:3;top:50%;left:50%;transform:translate(-50%,-48%);width:154px;padding:10px 9px 11px;border:1px solid rgba(255,255,255,.92);border-radius:16px;background:linear-gradient(145deg,rgba(255,253,249,.96),rgba(255,237,214,.94));box-shadow:0 8px 22px rgba(130,57,8,.28);text-align:center;color:var(--accent-d);animation:dodeca-core-pulse 5.4s ease-in-out infinite;}
+.dodeca-core{position:absolute;z-index:3;top:50%;left:50%;transform:translate(-50%,-48%);width:154px;padding:10px 9px 11px;border:1px solid rgba(255,255,255,.92);border-radius:16px;background:linear-gradient(145deg,rgba(255,253,249,.96),rgba(255,237,214,.94));box-shadow:0 8px 22px rgba(130,57,8,.28);text-align:center;color:var(--accent-d);}
 .dodeca-core b{display:block;font-family:Unbounded;font-size:19px;letter-spacing:.03em;line-height:1.1;}
 .dodeca-core span{display:block;margin-top:6px;font-size:9.5px;line-height:1.3;font-weight:800;color:#8B3B0E;text-shadow:none;}
-@keyframes dodeca-float{0%,100%{transform:scale(1.08) translate3d(0,0,0) rotate(0deg)}50%{transform:scale(1.105) translate3d(0,-5px,0) rotate(.35deg)}}
-@keyframes facet-breathe{0%,100%{opacity:.98;filter:brightness(1)}50%{opacity:.64;filter:brightness(1.1)}}
-@keyframes dodeca-core-pulse{0%,100%{translate:0 0;box-shadow:0 8px 22px rgba(130,57,8,.28)}50%{translate:0 -3px;box-shadow:0 12px 27px rgba(130,57,8,.36)}}
 .journey-method{margin-top:12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,#FFF1E4,#FFF9F0);border:1px solid #F3D7BE;color:var(--accent-d);font-size:12px;line-height:1.45;text-align:center;font-weight:800;}
 .t.add{color:var(--accent);font-weight:700;}
 .t .lblwrap{flex:1;display:flex;align-items:center;gap:13px;min-width:0;}
@@ -308,12 +290,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
     <div class="dodeca-hero" aria-label="Карта пути к счастью">
       <img src="img/dodecahedron-journey-v1.png" alt="Оранжевый многогранник пути">
-      <span class="figure-motion work" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
-      <span class="figure-motion relations" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
-      <span class="figure-motion sport" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
-      <span class="figure-motion health" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
-      <span class="figure-motion growth" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
-      <span class="journey-orbit" aria-hidden="true"><i></i></span>
       <span class="facet top">Дело жизни</span>
       <span class="facet left">Отношения<br>и общение</span>
       <span class="facet right">Спорт<br>и тело</span>
@@ -1586,12 +1562,6 @@ window.addEventListener('hashchange',function(){
   if(h&&document.querySelector('.screen[data-s="'+h+'"]'))go(h);
 });
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
-(function(){
-  var hero=document.querySelector('.dodeca-hero');
-  if(!hero)return;
-  hero.classList.add('motion-shift');
-  setInterval(function(){hero.classList.toggle('motion-shift');},1550);
-})();
 </script>
 </body>
 </html>
