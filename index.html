@@ -257,6 +257,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 .nav a.on{color:var(--accent);}
 .nav svg{width:23px;height:23px;}
 .inp{width:100%;padding:14px 15px;border:1px solid var(--line);border-radius:14px;font-family:inherit;font-size:15px;background:#fff;color:var(--txt);outline:none;transition:border .15s;}
+.diag-list{display:flex;flex-direction:column;gap:9px;margin-top:16px;}
+.diag-area{border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--sh-card);overflow:hidden;transition:border-color .18s,box-shadow .18s;}
+.diag-area.selected{border-color:var(--accent);box-shadow:var(--sh-up);}
+.diag-head{width:100%;display:flex;align-items:center;gap:11px;padding:11px 12px;border:0;background:none;color:var(--txt);font:inherit;text-align:left;cursor:pointer;}
+.diag-head .icc{width:39px;height:39px;border-radius:13px;font-size:0;flex:none;}
+.diag-head .icc svg{width:21px;height:21px;}
+.diag-copy{min-width:0;flex:1;}
+.diag-copy b{display:block;font-size:15px;line-height:1.16;}
+.diag-copy span{display:block;margin-top:2px;font-size:11px;line-height:1.25;color:var(--mut);}
+.diag-check{width:23px;height:23px;border:1.7px solid var(--line);border-radius:8px;display:grid;place-items:center;flex:none;color:#fff;transition:background .18s,border-color .18s;}
+.diag-check svg{width:15px;height:15px;opacity:0;}
+.diag-area.selected .diag-check{background:var(--accent);border-color:var(--accent);}.diag-area.selected .diag-check svg{opacity:1;}
+.diag-goal{display:none;margin:0 12px 12px;padding:10px 11px;border-radius:12px;background:var(--soft);border:1px solid #F4D8BF;}
+.diag-area.selected .diag-goal{display:block;}
+.diag-goal label{display:block;margin:0 0 5px;font-size:10.5px;font-weight:800;color:var(--accent-d);}
+.diag-goal input{width:100%;border:0;border-bottom:1px solid #EFCBAC;background:transparent;padding:2px 0 5px;border-radius:0;font:inherit;font-size:13px;color:var(--txt);outline:none;}
+.life-goal{margin-top:13px;padding:14px;border-radius:18px;background:linear-gradient(145deg,#FFF5EB,#FFFDF9);border:1px solid #F3D7BE;box-shadow:var(--sh-card);}
+.life-goal b{display:block;font-size:15px;}.life-goal .inp{margin-top:8px;padding:11px 12px;font-size:13px;}
+.diagnostic-quote{margin:14px 16px 0;text-align:center;color:var(--mut);font-size:12px;line-height:1.45;font-style:italic;}
 .inp:focus{border-color:var(--accent);}
 .inp::placeholder{color:var(--dim);}
 .flabel{font-size:13px;font-weight:700;color:var(--mut);margin:14px 2px 7px;display:block;}
@@ -307,15 +326,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
   <!-- 2. ВЫБОР НАПРАВЛЕНИЯ -->
   <section class="screen full" data-s="pain">
     <div class="kick">Шаг 1 из 3</div>
-    <h1 style="margin:9px 0 6px;">Чего хочешь достичь?</h1>
-    <p class="mut small">Выбери направление — и сразу перейдёшь к выбору действий. Один тап.</p>
-    <div style="margin-top:16px;display:flex;flex-direction:column;gap:11px;">
-      <div class="card pick cat" onclick="pickCat(this,'biz')"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></div><div><b>Бизнес</b><div class="small mut">Доход, дело, рост. Точные действия каждый день.</div></div></div>
-      <div class="card pick cat" onclick="pickCat(this,'sport')"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l3 8 4-16 3 8h5"/></svg></div><div><b>Спорт</b><div class="small mut">Форма, сила, энергия. Тело, в котором уверенно.</div></div></div>
-      <div class="card pick cat" onclick="pickCat(this,'health')"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 16.5 3 13.2 3 9.3 3 6.4 5.2 4 8 4c1.6 0 3.1.8 4 2.1C12.9 4.8 14.4 4 16 4c2.8 0 5 2.4 5 5.3 0 3.9-4 7.2-9 11.7z"/></svg></div><div><b>Здоровье</b><div class="small mut">Самочувствие, питание, сон. Фундамент всего.</div></div></div>
-      <div class="card pick cat" onclick="pickCat(this,'regime')"><div class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div><div><b>Режим дня</b><div class="small mut">Подъём, план, порядок. День под твоим контролем.</div></div></div>
+    <h1 style="margin:9px 0 6px;">Ты — архитектор<br>своей жизни</h1>
+    <p class="mut small">Что будем улучшать? Отметь столько направлений, сколько сейчас важно.</p>
+    <div class="diag-list" id="diagnosticList">
+      <div class="diag-area" data-area="health"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('health')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 16.5 3 13.2 3 9.3 3 6.4 5.2 4 8 4c1.6 0 3.1.8 4 2.1C12.9 4.8 14.4 4 16 4c2.8 0 5 2.4 5 5.3 0 3.9-4 7.2-9 11.7z"/><path d="M7 12h2l1.2-2.5L12.6 15l1.7-3H17"/></svg></span><span class="diag-copy"><b>Энергия и здоровье</b><span>Состояние, сон, питание</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-health">Цель на этот месяц</label><input id="diag-health" maxlength="90" placeholder="Например: высыпаться 5 дней в неделю" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('health',this.value)"></div></div>
+      <div class="diag-area" data-area="sport"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('sport')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l3 8 4-16 3 8h5"/></svg></span><span class="diag-copy"><b>Спорт и тело</b><span>Сила, форма, движение</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-sport">Цель на этот месяц</label><input id="diag-sport" maxlength="90" placeholder="Например: 12 тренировок за месяц" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('sport',this.value)"></div></div>
+      <div class="diag-area" data-area="biz"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('biz')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span><span class="diag-copy"><b>Доход и бизнес</b><span>Дело, клиенты, рост</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-biz">Цель на этот месяц</label><input id="diag-biz" maxlength="90" placeholder="Например: найти 5 новых клиентов" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('biz',this.value)"></div></div>
+      <div class="diag-area" data-area="life"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('life')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V7h14v12M9 7V4h6v3M9 12h6M9 16h4"/></svg></span><span class="diag-copy"><b>Дело жизни</b><span>Призвание и наследие</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-life">Цель на этот месяц</label><input id="diag-life" maxlength="90" placeholder="Например: завершить первый проект" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('life',this.value)"></div></div>
+      <div class="diag-area" data-area="relations"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('relations')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2.2c0-2.1 1.8-3.8 4-3.8h4c2.2 0 4 1.7 4 3.8V20M16 8a3 3 0 0 1 0 6M19 14c1.2.5 2 1.6 2 3v3"/></svg></span><span class="diag-copy"><b>Отношения и окружение</b><span>Близкие, друзья, команда</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-relations">Цель на этот месяц</label><input id="diag-relations" maxlength="90" placeholder="Например: один вечер в неделю с близкими" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('relations',this.value)"></div></div>
     </div>
-    <p class="note">Дальше подскажем действия под твоё направление — или добавишь свои.</p>
+    <div class="life-goal"><b>Главная цель жизни сейчас</b><input class="inp" id="lifeGoal" maxlength="120" placeholder="Самая важная цель, о которой ты думаешь"></div>
+    <p class="diagnostic-quote">«Привычка — это когда сложное не делать становится сложнее.»</p>
+    <button class="btn btn-amber" style="margin-top:14px;" onclick="continueDiagnostic()">Продолжить</button>
   </section>
 
   <!-- 3. ГЛАВНАЯ ЦЕЛЬ -->
@@ -895,8 +917,15 @@ var GOAL_PRESETS={
   health:{title:'30 дней заботы о здоровье',target:30,unit:'дней',hint:'Пример: «30 дней заботы о здоровье» · 30 · дней'},
   regime:{title:'21 день соблюдать режим',target:21,unit:'дней',hint:'Пример: «21 день соблюдать режим» · 21 · дней'}
 };
+var DIAGNOSTIC_AREAS={
+  health:{dir:'health',name:'Энергия и здоровье'},
+  sport:{dir:'sport',name:'Спорт и тело'},
+  biz:{dir:'biz',name:'Доход и бизнес'},
+  life:{dir:'biz',name:'Дело жизни'},
+  relations:{dir:'health',name:'Отношения и окружение'}
+};
 function defaultGoal(dir){var p=GOAL_PRESETS[dir]||GOAL_PRESETS.sport;return {title:p.title,target:p.target,current:0,unit:p.unit,deadline:'',pending:null};}
-function defState(){return {v:4,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),habits:[],days:{},rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',created:todayKey()};}
+function defState(){return {v:5,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),diagnosticAreas:[],diagnosticGoals:{},lifeGoal:'',habits:[],days:{},rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',created:todayKey()};}
 function cleanStrings(value){
   if(!Array.isArray(value))return [];
   return value.filter(function(x){return typeof x==='string'&&x.trim();})
@@ -916,7 +945,11 @@ function load(){
   rawVersion=Number(raw.v)||1;
   S=Object.assign(base,raw);
   if(!dirNames[S.dir])S.dir='sport';
-  S.v=4;S.dirName=dirNames[S.dir];
+  S.v=5;S.dirName=dirNames[S.dir];
+  S.diagnosticAreas=cleanStrings(S.diagnosticAreas).filter(function(id){return !!DIAGNOSTIC_AREAS[id];});
+  S.diagnosticGoals=S.diagnosticGoals&&typeof S.diagnosticGoals==='object'&&!Array.isArray(S.diagnosticGoals)?S.diagnosticGoals:{};
+  Object.keys(S.diagnosticGoals).forEach(function(id){if(!DIAGNOSTIC_AREAS[id]||typeof S.diagnosticGoals[id]!=='string')delete S.diagnosticGoals[id];else S.diagnosticGoals[id]=S.diagnosticGoals[id].trim().slice(0,90);});
+  S.lifeGoal=typeof S.lifeGoal==='string'?S.lifeGoal.trim().slice(0,120):'';
   S.name=typeof S.name==='string'?S.name:'';
   S.contact=typeof S.contact==='string'?S.contact:'';
   S.mode=S.mode==='Сам'?'Сам':'С наставником';
@@ -1058,6 +1091,7 @@ function go(id){
   if(id==='mentorstart')renderMentorStart();
   if(id==='mentordesk')renderMentorDesk();
   if(id==='mentorparticipant')renderMentorParticipant();
+  if(id==='pain')renderDiagnostic();
   if(id==='goal')renderGoalForm();
   if(id==='minimum')renderHabits(S.dir,true);
   if(id==='checkin'){
@@ -1180,6 +1214,41 @@ function pickCat(el,cat){
   var fd=document.getElementById('fDir'); if(fd)fd.textContent=S.dirName;
   setTimeout(function(){go('goal');},280);
 }
+function renderDiagnostic(){
+  var selected=S.diagnosticAreas||[],goals=S.diagnosticGoals||{};
+  document.querySelectorAll('.diag-area').forEach(function(area){
+    var id=area.dataset.area,on=selected.indexOf(id)>=0;
+    area.classList.toggle('selected',on);
+    area.querySelector('.diag-head').setAttribute('aria-pressed',on?'true':'false');
+    var input=area.querySelector('input');if(input)input.value=goals[id]||'';
+  });
+  var life=document.getElementById('lifeGoal');if(life)life.value=S.lifeGoal||'';
+}
+function toggleDiagnosticArea(id){
+  if(!DIAGNOSTIC_AREAS[id])return;
+  var list=S.diagnosticAreas||[],at=list.indexOf(id);
+  if(at>=0)list.splice(at,1);else list.push(id);
+  S.diagnosticAreas=list;save();renderDiagnostic();
+}
+function updateDiagnosticGoal(id,value){
+  if(!DIAGNOSTIC_AREAS[id])return;
+  if(!S.diagnosticGoals||typeof S.diagnosticGoals!=='object')S.diagnosticGoals={};
+  S.diagnosticGoals[id]=String(value||'').slice(0,90);save();
+}
+function continueDiagnostic(){
+  var selected=S.diagnosticAreas||[];
+  if(!selected.length){toast('Выбери хотя бы одно направление','ok');return;}
+  var life=document.getElementById('lifeGoal');S.lifeGoal=life?life.value.trim().slice(0,120):'';
+  var primary=DIAGNOSTIC_AREAS[selected[0]].dir;
+  if(S.dir!==primary){S.dir=primary;S.dirName=(HABITS[primary]||HABITS.sport).name;S.goal=defaultGoal(primary);S.habits=[];}
+  save();renderHabits(S.dir,true);go('minimum');
+}
+function diagnosticSummary(){
+  var selected=S.diagnosticAreas||[],goals=S.diagnosticGoals||[];
+  var parts=selected.map(function(id){var area=DIAGNOSTIC_AREAS[id],goal=goals[id];return area.name+(goal?' — '+goal:'');});
+  if(S.lifeGoal)parts.push('Главная цель жизни: '+S.lifeGoal);
+  return parts.join('; ');
+}
 function renderGoalForm(){
   var p=GOAL_PRESETS[S.dir]||GOAL_PRESETS.sport,g=S.goal||defaultGoal(S.dir);
   document.getElementById('goalCatName').textContent=S.dirName;
@@ -1289,7 +1358,7 @@ function sendApply(){
   if(!document.getElementById('fConsent').classList.contains('on')){toast('Отметь согласие с политикой','ok');return;}
   var d=new FormData();
   d.append(FORM.f.name,n);d.append(FORM.f.contact,c);
-  d.append(FORM.f.dir,S.dirName+' · Цель: '+S.goal.title+' · '+S.goal.target+' '+S.goal.unit);
+  d.append(FORM.f.dir,(diagnosticSummary()||S.dirName)+' · Цель: '+S.goal.title+' · '+S.goal.target+' '+S.goal.unit);
   d.append(FORM.f.mode,S.mode+(S.mode==='С наставником'?' · '+MENTORS[S.mentorId].name+' · '+fmt(MENTOR_PRICE)+' ₽':''));
   var btn=document.getElementById('applySubmit');
   applySending=true;btn.disabled=true;btn.textContent='Отправляем…';
