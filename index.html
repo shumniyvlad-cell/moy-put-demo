@@ -182,6 +182,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 .goaltrack i{display:block;height:100%;width:0;background:var(--grad-btn);border-radius:inherit;transition:width .4s ease;}
 .goal-rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:13px -18px 0;padding:0 18px 4px;overscroll-behavior-x:contain;}
 .goal-rail::-webkit-scrollbar{display:none;}
+.goal-carousel{position:relative;}
+.goal-arrow{position:absolute;top:50%;z-index:3;width:32px;height:32px;border:1px solid var(--line);border-radius:50%;background:rgba(255,255,255,.96);color:var(--accent-d);display:none;place-items:center;box-shadow:var(--sh-card);cursor:pointer;transform:translateY(-50%);}
+.goal-arrow svg{width:17px;height:17px;}.goal-arrow.prev{left:-9px;}.goal-arrow.next{right:-9px;}
+@media(hover:hover) and (pointer:fine){.goal-carousel.has-many .goal-arrow{display:grid;}.goal-rail{cursor:grab;}.goal-rail.dragging{cursor:grabbing;scroll-snap-type:none;user-select:none;}}
 .goal-slide{width:calc(100% - 32px);min-width:calc(100% - 32px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:15px;box-shadow:var(--sh-card);}
 .goal-slide .goalring{width:58px;height:58px;}.goal-slide .goalring:before{inset:7px;}.goal-slide .goalring span{font-size:10px;}
 .goal-slide .goal-title{font-size:16px;font-weight:800;line-height:1.22;}.goal-slide .goal-month{margin-top:5px;font-size:12px;line-height:1.35;color:var(--mut);}.goal-slide .goal-month b{color:var(--txt);}
@@ -194,6 +198,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 .mode-top{display:flex;align-items:center;gap:11px;}.mode-top .icc{width:42px;height:42px;}.mode-top b{display:block;font-size:17px;}.mode-price{display:inline-block;margin-top:3px;color:var(--accent-d);font-size:12px;font-weight:800;background:var(--soft);padding:4px 8px;border-radius:999px;}
 .mode-points{display:flex;flex-direction:column;gap:7px;margin:12px 0 0;padding:0;list-style:none;}.mode-points li{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.35;color:var(--mut);}.mode-points li:before{content:'✓';display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--surface2);color:var(--txt);font-weight:800;flex:none;}.mode-option.selected .mode-points li:before{background:var(--accent);color:#fff;}
 .mode-note{margin:12px 4px 0;color:var(--mut);font-size:12px;line-height:1.4;}
+.journey-snapshot{margin-top:13px;padding:18px 14px 14px;border:1px solid var(--line);border-radius:24px;background:var(--surface);box-shadow:var(--sh-card);text-align:center;}
+.journey-snapshot .goalring{width:128px;height:128px;margin:0 auto 12px;}.journey-snapshot .goalring:before{inset:10px;}.journey-snapshot .goalring span{font-family:Unbounded;font-size:20px;}.journey-title{font-size:17px;font-weight:800;line-height:1.25;}.journey-copy{margin-top:4px;color:var(--mut);font-size:13px;}.journey-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;border-top:1px solid var(--line);padding-top:13px;}.journey-stat{padding:0 4px;border-right:1px solid var(--line);}.journey-stat:last-child{border:0;}.journey-stat span{display:block;color:var(--dim);font-size:9px;font-weight:800;}.journey-stat b{display:block;margin-top:4px;color:var(--accent-d);font-family:Unbounded;font-size:16px;}
+.focus-next{display:flex;gap:11px;align-items:center;margin-top:12px;padding:14px;border-radius:18px;border:1px solid #F3D7BE;background:linear-gradient(145deg,#FFF7EF,#FFFDF9);}.focus-next .icc{width:42px;height:42px;flex:none;}.focus-next b{display:block;font-size:14px;}.focus-next span{display:block;margin-top:3px;color:var(--mut);font-size:12px;line-height:1.35;}.path-more{margin-top:12px;border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:0 14px;box-shadow:var(--sh-card);}.path-more summary{padding:14px 0;cursor:pointer;font-size:13px;font-weight:800;color:var(--accent-d);}.path-more[open] summary{border-bottom:1px solid var(--line);}.path-more .inner{padding:12px 0 14px;}
+.knowledge-list{display:flex;flex-direction:column;gap:10px;margin-top:15px;}.knowledge-item{width:100%;display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--txt);font:inherit;text-align:left;box-shadow:var(--sh-card);cursor:pointer;}.knowledge-item .icc{width:42px;height:42px;flex:none;}.knowledge-item b{display:block;font-size:15px;}.knowledge-item span{display:block;margin-top:3px;color:var(--mut);font-size:12px;line-height:1.35;}.knowledge-item .chev{margin-left:auto;color:var(--dim);font-size:23px;}.knowledge-article{margin-top:15px;}
 .sectiontitle{display:flex;align-items:center;justify-content:space-between;margin:16px 2px 9px;}
 .sectiontitle b{font-size:15px;}
 .daysummary{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh-card);}
@@ -425,7 +433,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div><div class="tiny amber" style="font-weight:800;margin-bottom:3px;">НАПУТСТВИЕ ДНЯ</div><b id="quoteText">Твоя цель ближе, чем кажется</b></div>
     </div>
 
-    <div class="goal-rail" id="goalCarousel" aria-label="Цели на этот месяц"></div>
+    <div class="goal-carousel" id="goalCarouselWrap">
+      <button class="goal-arrow prev" type="button" onclick="moveGoalCarousel(-1)" aria-label="Предыдущая цель"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="goal-rail" id="goalCarousel" aria-label="Цели на этот месяц"></div>
+      <button class="goal-arrow next" type="button" onclick="moveGoalCarousel(1)" aria-label="Следующая цель"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
     <div class="goal-dots" id="goalDots" aria-hidden="true"></div>
     <div class="swipehint">← свайпни, чтобы посмотреть другие цели →</div>
 
@@ -468,24 +480,26 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="av avtxt" id="profAv">Т</div>
       <div><h2 id="profName">Ты</h2><div class="small mut"><span id="profDir">Спорт</span> · твой маршрут</div></div>
     </div>
-    <h2 style="margin-top:16px;">Твой результат</h2>
+    <h2 style="margin-top:16px;">Твой путь</h2>
 
-    <div class="card goalcard" style="margin-top:12px;">
+    <div class="journey-snapshot">
       <div class="goalring" id="goalRingPath"><span id="goalPctPath">0%</span></div>
-      <div class="goalcopy">
-        <b id="goalTitlePath">Твоя главная цель</b>
-        <div class="small dim" id="goalProgressPath">0 из 1</div>
-        <div class="goaltrack"><i id="goalBarPath"></i></div>
+      <div class="journey-title" id="goalTitlePath">Твоя главная цель</div>
+      <div class="journey-copy" id="goalProgressPath">0 из 1</div>
+      <div class="goaltrack"><i id="goalBarPath"></i></div>
+      <div class="journey-stats">
+        <div class="journey-stat"><span>СЕГОДНЯ</span><b id="metricToday">0%</b></div>
+        <div class="journey-stat"><span>НЕДЕЛЯ</span><b id="metricWeek">0%</b></div>
+        <div class="journey-stat"><span>СЕРИЯ</span><b id="pathStreak">0 дн.</b></div>
       </div>
     </div>
 
-    <div class="metrics" style="margin-top:12px;">
-      <div class="metric"><span class="tiny dim">СЕГОДНЯ</span><b id="metricToday">0%</b></div>
-      <div class="metric"><span class="tiny dim">НЕДЕЛЯ</span><b id="metricWeek">0%</b></div>
-      <div class="metric"><span class="tiny dim">МЕСЯЦ</span><b id="metricMonth">0%</b></div>
-    </div>
+    <div class="focus-next" id="pathFocus"></div>
+    <button class="btn btn-ghost" style="margin-top:12px;" onclick="go('knowledge')">Открыть базу знаний</button>
 
-    <div class="card" style="margin-top:12px;">
+    <details class="path-more">
+      <summary>Зафиксировать результат и посмотреть детали</summary>
+      <div class="inner">
       <b id="goalSubmitTitle">Зафиксировать результат</b>
       <p class="small mut" style="margin-top:5px;" id="goalCurrentHelp">Внеси общий результат на текущий момент — это не прибавление. Приложение посчитает процент.</p>
       <div class="planbox" style="margin-top:11px;">
@@ -507,9 +521,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <button class="btn btn-ghost btn-sm" onclick="go('goal')">Изменить цель</button>
         <button class="btn btn-ghost btn-sm" onclick="go('minimum')">Изменить действия</button>
       </div>
-    </div>
+      </div>
+    </details>
 
-    <div class="sharecard" id="resultCard" style="margin-top:12px;">
+    <details class="path-more">
+      <summary>Неделя, награды и баллы пути</summary>
+      <div class="inner">
+    <div class="sharecard" id="resultCard">
       <div class="row between z"><b style="font-family:Unbounded;">Неделя в плюс</b><span class="chip" style="background:rgba(255,255,255,.24);color:#fff;"><span id="shareWeekPct">0</span>%</span></div>
       <span class="sharelead z"><span id="shareFullDays">0</span> из <span id="shareElapsedDays">1</span> дней</span>
       <div class="sharestats">
@@ -540,7 +558,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
     <div class="sectiontitle"><b>Мои награды</b><span class="small dim" id="medalSummary">0 открыто</span></div>
     <div class="medals" id="medalGrid"></div>
-    <button class="btn btn-ghost" style="margin-top:12px;" onclick="go('splash')">Открыть знакомство заново</button>
+      </div>
+    </details>
+  </section>
+
+  <!-- 9. БАЗА ЗНАНИЙ -->
+  <section class="screen" data-s="knowledge">
+    <div class="backbar" onclick="go('path')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg> Путь</div>
+    <h2>База знаний</h2>
+    <p class="small mut" style="margin-top:7px;">Короткие ориентиры, которые помогают не усложнять путь.</p>
+    <div class="knowledge-list" id="knowledgeList"></div>
+    <div class="card2 knowledge-article" id="knowledgeArticle" hidden></div>
   </section>
 
   <!-- 8. ЧАТ НАСТАВНИКА -->
@@ -549,7 +577,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <h2>Наставник</h2>
       <p class="small mut" style="margin-top:7px;">Личный чат, еженедельный план и разбор чек-инов открываются после согласования и оплаты сопровождения.</p>
       <div class="card" style="margin-top:16px;">
-        <div class="row"><img class="av sm" src="img/mentor-1.jpg" alt=""><div><b id="mentorLockedName">Александр</b><div class="small mut" style="margin-top:3px;">Персональное сопровождение · 24 000 ₽ / 3 месяца</div></div></div>
+        <div class="row"><img class="av sm" src="img/mentor-1.jpg" alt=""><div><b id="mentorLockedName">Александр</b><div class="small mut" style="margin-top:3px;">Персональное сопровождение</div></div></div>
         <p class="small mut" style="margin-top:12px;">Сначала заявка и короткий созвон: сверяем цель, формат работы и договорённости. Затем присылаем ссылку на оплату. После подтверждения открываем сопровождение.</p>
       </div>
       <button class="btn btn-amber" style="margin-top:14px;" id="mentorLockedAction" onclick="go('mentors')">Выбрать наставника</button>
@@ -700,12 +728,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <h1 style="font-size:25px;margin-top:8px;">Начни свой путь</h1>
     <p class="mut small" style="margin-top:8px;">Запускаем первый поток. С тобой будет работать <span id="applyMentorName">Александр</span>. Сверим цель, формат и договорённости до оплаты.</p>
 
-    <div class="pricebox" id="applyPriceBox">
-      <span class="small mut">Стоимость сопровождения</span>
-      <strong>24 000 ₽ / 3 месяца</strong>
-      <p class="small mut" style="margin-top:6px;">Сначала заявка. Оплата и соглашение — только после обсуждения формата.</p>
-    </div>
-
     <div class="card" style="margin-top:14px;">
       <label class="flabel" for="fName" style="margin-top:0;">Имя</label>
       <input class="inp" id="fName" type="text" placeholder="Как к тебе обращаться" autocomplete="name">
@@ -738,7 +760,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div class="card steps" style="margin-top:16px;">
       <b class="small">Что дальше</b>
       <div class="st" style="margin-top:6px;"><div class="stn">1</div><div class="small">Свяжемся и уточним запрос</div></div>
-      <div class="st"><div class="stn">2</div><div class="small">Согласуем формат, условия и стоимость 24 000 ₽ за 3 месяца</div></div>
+      <div class="st"><div class="stn">2</div><div class="small">Согласуем формат и условия сопровождения</div></div>
       <div class="st"><div class="stn">3</div><div class="small">Пришлём договорённости и ссылку на оплату</div></div>
       <div class="st"><div class="stn">4</div><div class="small">После подтверждения оплаты откроем личный чат и план от наставника</div></div>
     </div>
@@ -840,7 +862,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 <script>
 /* ================== МОЙ ПУТЬ · веб-MVP ================== */
 var MAIN=['today','path','mentorchat','team'], prev='splash';
-var OVER=['heroes','mentors','mentorprofile','checkin','apply','thanks','mentorstart','mentorlogin','mentordesk','mentorparticipant','privacy'];
+var OVER=['heroes','mentors','mentorprofile','checkin','apply','thanks','mentorstart','mentorlogin','mentordesk','mentorparticipant','privacy','knowledge'];
 var MENTOR_PRICE=24000;
 var MENTORS={
   alex:{id:'alex',name:'Александр',photo:'img/mentor-1.jpg',focus:'Спорт · дисциплина',rating:'4.9',reviews:86,experience:'12 лет практики',clients:'148 сопровождений',format:'Личный чат · недельный фокус · 1 созвон в неделю',about:'Помогает выстроить устойчивую дисциплину без жёстких запретов: цель, минимум на каждый день и разбор срывов.',case:'Антон: с 0 до 12 тренировок в месяц за 8 недель',review:'«Не давит, а возвращает в план. Наконец-то перестал бросать на второй неделе.»'},
@@ -1069,6 +1091,7 @@ function go(id){
   if(id==='goal')renderGoalForm();
   if(id==='minimum')renderHabits(S.dir,true);
   if(id==='mentor')renderModeChoice();
+  if(id==='knowledge')renderKnowledge();
   if(id==='checkin'){
     var cb=document.getElementById('checkinSubmit');
     if(cb)cb.textContent=S.applied?'Отправить наставнику':'Сохранить на устройстве';
@@ -1406,6 +1429,7 @@ function renderGoalCarousel(){
   rail.innerHTML=h;
   dots.innerHTML=cards.map(function(_,i){return '<i'+(i===0?' class="on"':'')+'></i>';}).join('');
   dots.hidden=cards.length<2;
+  var wrap=document.getElementById('goalCarouselWrap');if(wrap)wrap.classList.toggle('has-many',cards.length>1);
   var hint=document.querySelector('.swipehint');if(hint)hint.hidden=cards.length<2;
   rail.scrollLeft=0;
   rail.onscroll=function(){
@@ -1413,6 +1437,18 @@ function renderGoalCarousel(){
     var index=Math.max(0,Math.min(cards.length-1,Math.round(rail.scrollLeft/(first.offsetWidth+12))));
     [].forEach.call(dots.children,function(dot,i){dot.classList.toggle('on',i===index);});
   };
+  var down=false,startX=0,startScroll=0;
+  rail.onpointerdown=function(event){
+    if(event.pointerType!=='mouse')return;
+    down=true;startX=event.clientX;startScroll=rail.scrollLeft;rail.classList.add('dragging');rail.setPointerCapture(event.pointerId);
+  };
+  rail.onpointermove=function(event){if(!down)return;rail.scrollLeft=startScroll-(event.clientX-startX);};
+  rail.onpointerup=rail.onpointercancel=function(){down=false;rail.classList.remove('dragging');};
+}
+function moveGoalCarousel(direction){
+  var rail=document.getElementById('goalCarousel'),first=rail&&rail.querySelector('.goal-slide');
+  if(!rail||!first)return;
+  rail.scrollBy({left:direction*(first.offsetWidth+12),behavior:'smooth'});
 }
 function openDiagnosticGoal(id){
   go('pain');
@@ -1487,6 +1523,28 @@ function sendCheckin(){
   });
 }
 
+/* --- База знаний --- */
+var KNOWLEDGE=[
+  {id:'training',title:'Тренировки',copy:'Как начать без перегруза и удержать ритм.',text:'Начни с минимума, который точно сделаешь. Лучше 10 минут три раза в неделю, чем идеальный план, который закончится через два дня.'},
+  {id:'energy',title:'Сон и энергия',copy:'Сон, питание и восстановление как основа результата.',text:'Сначала стабилизируй время подъёма и отхода ко сну. Когда энергии мало, уменьшай план, но не обнуляй действие.'},
+  {id:'focus',title:'Фокус и дисциплина',copy:'Как выбрать главное и не распылиться.',text:'На день достаточно одного главного действия. Выбери его заранее и сделай до того, как откроешь мессенджеры и мелкие задачи.'},
+  {id:'mentor',title:'Как общаться с наставником',copy:'Что отправлять, чтобы получать точную помощь.',text:'В чек-ине пиши факт: что сделал, что не получилось и где застрял. Наставник быстрее поможет, когда видит конкретную ситуацию.'}
+];
+function knowledgeIcon(id){
+  var paths={training:'<path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/>',energy:'<path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5z"/><path d="M17 5v4M15 7h4"/>',focus:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M22 12h-3M12 22v-3M2 12h3"/>',mentor:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/>'};
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+paths[id]+'</svg>';
+}
+function renderKnowledge(){
+  var list=document.getElementById('knowledgeList');if(!list)return;
+  list.innerHTML=KNOWLEDGE.map(function(item){return '<button type="button" class="knowledge-item" onclick="openKnowledge(\''+item.id+'\')"><span class="icc">'+knowledgeIcon(item.id)+'</span><span><b>'+item.title+'</b><span>'+item.copy+'</span></span><span class="chev">›</span></button>';}).join('');
+}
+function openKnowledge(id){
+  var item=KNOWLEDGE.filter(function(x){return x.id===id;})[0];if(!item)return;
+  var article=document.getElementById('knowledgeArticle');
+  article.hidden=false;article.innerHTML='<b>'+item.title+'</b><p class="small mut" style="margin-top:7px;">'+item.text+'</p>';
+  article.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
 /* --- Путь: цель, сводка, награды --- */
 function renderPath(){
   maybeAwardWeek();
@@ -1498,7 +1556,10 @@ function renderPath(){
   var today=dayRec(),todayPct=Math.min(100,Math.round(today.done.length/(S.habits.length||1)*100)),week=weekStats(),month=monthStats();
   document.getElementById('metricToday').textContent=todayPct+'%';
   document.getElementById('metricWeek').textContent=week.pct+'%';
-  document.getElementById('metricMonth').textContent=month.pct+'%';
+  document.getElementById('pathStreak').textContent=streak()+' дн.';
+  var next=(S.habits||[]).filter(function(item){return today.done.indexOf(item)<0;})[0]||'Подведи итог дня и зафиксируй результат';
+  var focus=document.getElementById('pathFocus');
+  if(focus)focus.innerHTML='<span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.6 6 .6-4.5 4 1.3 6-5.4-2.6-5.4 2.6 1.3-6-4.5-4 6-.6z"/></svg></span><div><b>Следующий простой шаг</b><span>'+esc(next)+'</span></div>';
   document.getElementById('shareWeekPct').textContent=week.pct;
   document.getElementById('shareFullDays').textContent=week.full;
   document.getElementById('shareElapsedDays').textContent=week.elapsed;
