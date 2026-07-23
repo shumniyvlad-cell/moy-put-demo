@@ -103,13 +103,25 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .cl img{width:100%;height:118px;object-fit:cover;display:block;}
 .cl span{position:absolute;left:8px;bottom:8px;background:rgba(255,255,255,.94);color:var(--txt);font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;}
 .journey-quote{font-family:Unbounded;font-size:11px;line-height:1.45;color:var(--accent-d);text-align:center;margin:14px 12px 0;}
-.dodeca-hero{position:relative;height:338px;margin-top:7px;border-radius:28px;overflow:hidden;background:#FFF6EA;box-shadow:var(--sh-up);isolation:isolate;}
+.top-facet-name{margin:4px 0 0;text-align:center;color:#B94A0B;font-size:10px;line-height:1.2;font-weight:800;letter-spacing:.03em;}
+.dodeca-hero{position:relative;height:338px;margin-top:5px;border-radius:28px;overflow:hidden;background:#FFF6EA;box-shadow:var(--sh-up);isolation:isolate;}
 .dodeca-hero:after{content:"";position:absolute;z-index:1;inset:0;background:linear-gradient(180deg,rgba(255,251,245,.42),transparent 28%,transparent 74%,rgba(255,250,242,.35));pointer-events:none;}
 .dodeca-hero img{position:absolute;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 50%;display:block;transform:scale(1.08);transform-origin:50% 54%;animation:dodeca-float 10s ease-in-out infinite;}
-.journey-orbit{position:absolute;z-index:1;inset:26px 23px 22px;border:1px solid rgba(255,252,246,.58);border-radius:48% 52% 47% 53%;box-shadow:inset 0 0 22px rgba(255,245,226,.2);pointer-events:none;animation:journey-orbit 16s linear infinite;}
+.figure-motion{position:absolute;z-index:1;inset:0;overflow:hidden;pointer-events:none;}
+.figure-motion img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none;object-fit:cover;object-position:center 50%;opacity:.88;filter:saturate(1.08) contrast(1.03);will-change:transform;}
+.figure-motion.work{clip-path:polygon(36% 18%,64% 18%,70% 34%,62% 46%,38% 46%,30% 34%);}
+.figure-motion.relations{clip-path:polygon(4% 33%,33% 29%,43% 40%,37% 57%,6% 55%);}
+.figure-motion.sport{clip-path:polygon(65% 30%,96% 33%,95% 56%,63% 57%,58% 41%);}
+.figure-motion.health{clip-path:polygon(10% 55%,39% 54%,51% 69%,44% 89%,17% 87%,5% 69%);}
+.figure-motion.growth{clip-path:polygon(53% 55%,87% 55%,96% 69%,84% 89%,57% 87%,48% 69%);}
+.figure-motion.work img{animation:figure-work 3.8s ease-in-out infinite alternate both;}
+.figure-motion.relations img{animation:figure-relations 4.4s ease-in-out infinite alternate both;}
+.figure-motion.sport img{animation:figure-sport 3.2s ease-in-out infinite alternate both;}
+.figure-motion.health img{animation:figure-health 4.1s ease-in-out infinite alternate both;}
+.figure-motion.growth img{animation:figure-growth 3.6s ease-in-out infinite alternate both;}
+.journey-orbit{position:absolute;z-index:1;inset:26px 23px 22px;border:1px solid rgba(255,252,246,.78);border-radius:48% 52% 47% 53%;box-shadow:inset 0 0 22px rgba(255,245,226,.2);pointer-events:none;animation:journey-orbit 6s linear infinite;}
 .journey-orbit i{position:absolute;top:-5px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#FFF9F1;box-shadow:0 0 0 4px rgba(255,184,74,.24),0 0 15px 4px rgba(255,249,241,.86);}
-.facet{position:absolute;z-index:2;max-width:116px;padding:6px 8px;border:1px solid rgba(255,255,255,.8);border-radius:11px;background:rgba(255,251,244,.84);box-shadow:0 5px 16px rgba(145,74,18,.13);font-size:9.5px;line-height:1.2;font-weight:800;color:var(--accent-d);backdrop-filter:blur(7px);animation:facet-breathe 6s ease-in-out infinite;}
-.facet.top{top:18px;left:50%;transform:translateX(-50%);text-align:center;}
+.facet{position:absolute;z-index:2;max-width:116px;padding:6px 8px;border:1px solid rgba(255,255,255,.8);border-radius:11px;background:rgba(255,251,244,.84);box-shadow:0 5px 16px rgba(145,74,18,.13);font-size:9.5px;line-height:1.2;font-weight:800;color:var(--accent-d);backdrop-filter:blur(7px);animation:facet-breathe 4.8s ease-in-out infinite;}
 .facet.left{top:115px;left:10px;animation-delay:-1.2s;}
 .facet.right{top:112px;right:10px;text-align:right;animation-delay:-2.4s;}
 .facet.bl{bottom:30px;left:30px;animation-delay:-3.6s;}
@@ -119,9 +131,14 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .dodeca-core span{display:block;margin-top:6px;font-size:9.5px;line-height:1.3;font-weight:800;color:#8B3B0E;text-shadow:none;}
 @keyframes dodeca-float{0%,100%{transform:scale(1.08) translate3d(0,0,0) rotate(0deg)}50%{transform:scale(1.105) translate3d(0,-5px,0) rotate(.35deg)}}
 @keyframes journey-orbit{from{transform:rotate(-9deg)}to{transform:rotate(351deg)}}
-@keyframes facet-breathe{0%,100%{opacity:.97;filter:brightness(1)}50%{opacity:.72;filter:brightness(1.08)}}
+@keyframes facet-breathe{0%,100%{opacity:.98;filter:brightness(1)}50%{opacity:.64;filter:brightness(1.1)}}
 @keyframes dodeca-core-pulse{0%,100%{translate:0 0;box-shadow:0 8px 22px rgba(130,57,8,.28)}50%{translate:0 -3px;box-shadow:0 12px 27px rgba(130,57,8,.36)}}
-@media (prefers-reduced-motion:reduce){.dodeca-hero img,.journey-orbit,.facet,.dodeca-core{animation:none!important}}
+@keyframes figure-work{from{transform:scale(1.04) translate3d(-7px,4px,0)}to{transform:scale(1.095) translate3d(8px,-6px,0)}}
+@keyframes figure-relations{from{transform:scale(1.045) translate3d(-9px,3px,0)}to{transform:scale(1.1) translate3d(8px,-6px,0)}}
+@keyframes figure-sport{from{transform:scale(1.05) translate3d(9px,4px,0)}to{transform:scale(1.105) translate3d(-8px,-6px,0)}}
+@keyframes figure-health{from{transform:scale(1.04) translate3d(-8px,6px,0)}to{transform:scale(1.095) translate3d(8px,-6px,0)}}
+@keyframes figure-growth{from{transform:scale(1.045) translate3d(8px,6px,0)}to{transform:scale(1.1) translate3d(-8px,-6px,0)}}
+@media (prefers-reduced-motion:reduce){.dodeca-hero img,.journey-orbit,.facet,.dodeca-core,.figure-motion img{animation:none!important}}
 .journey-method{margin-top:12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,#FFF1E4,#FFF9F0);border:1px solid #F3D7BE;color:var(--accent-d);font-size:12px;line-height:1.45;text-align:center;font-weight:800;}
 .t.add{color:var(--accent);font-weight:700;}
 .t .lblwrap{flex:1;display:flex;align-items:center;gap:13px;min-width:0;}
@@ -294,11 +311,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     </div>
 
     <p class="journey-quote">Жизнь — это игра в путешествие к счастью.</p>
+    <p class="top-facet-name">Любимое дело и наследие</p>
 
     <div class="dodeca-hero" aria-label="Карта пути к счастью">
       <img src="img/dodecahedron-journey-v1.png" alt="Оранжевый многогранник пути">
+      <span class="figure-motion work" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
+      <span class="figure-motion relations" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
+      <span class="figure-motion sport" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
+      <span class="figure-motion health" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
+      <span class="figure-motion growth" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></span>
       <span class="journey-orbit" aria-hidden="true"><i></i></span>
-      <span class="facet top">Любимое дело<br>и наследие</span>
       <span class="facet left">Отношения<br>и общение</span>
       <span class="facet right">Спорт<br>и тело</span>
       <span class="facet bl">Здоровье<br>и осознанность</span>
