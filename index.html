@@ -830,6 +830,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
   <!-- 17. КАБИНЕТ НАСТАВНИКА -->
   <section class="screen" data-s="mentordesk">
     <div class="row between"><div><div class="small amber" style="font-weight:800;">КАБИНЕТ НАСТАВНИКА</div><h2>Участники</h2></div><button class="btn btn-ghost btn-sm" onclick="logoutTest()">Выйти</button></div>
+    <div id="mentorDeskChat" style="margin-top:14px;"></div>
     <div class="metrics" style="margin-top:14px;">
       <div class="metric"><span class="tiny dim">В РАБОТЕ</span><b>12</b></div>
       <div class="metric"><span class="tiny dim">ЧЕК-ИНЫ</span><b>4</b></div>
@@ -1476,6 +1477,8 @@ var demoParticipantId='anna';
 function renderMentorDesk(){
   if(AUTH&&AUTH.role==='mentor'){
     var own=REMOTE&&REMOTE.personalState,ownGoal=own&&own.goal||{},feedback=REMOTE&&REMOTE.mentorFeedback;
+    var messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[];
+    document.getElementById('mentorDeskChat').innerHTML='<div class="card"><div class="row between"><div><b>Диалог с Милой</b><div class="small mut" style="margin-top:3px;">Сообщения и запросы чек-ина</div></div><button class="btn btn-ghost btn-sm" onclick="openParticipant(\'mila\')">Открыть</button></div><div style="display:flex;flex-direction:column;gap:8px;margin-top:11px;">'+messageThreadHtml(messages,'sasha')+'</div></div>';
     document.getElementById('mentorPersonalPath').innerHTML='<div class="card"><div class="row between"><div><b>Мой личный путь</b><div class="small mut" style="margin-top:3px;">Твои цели и действия — отдельно от кабинета наставника</div></div><span class="chip">'+(ownGoal.title?Math.round(Math.min(100,Math.max(0,(Number(ownGoal.current)||0)/(Number(ownGoal.target)||1)*100)))+'%':'новый')+'</span></div>'+(ownGoal.title?'<p class="small amber" style="font-weight:800;margin-top:9px;">'+esc(ownGoal.title)+' · '+fmt(ownGoal.current||0)+' из '+fmt(ownGoal.target||0)+' '+esc(ownGoal.unit||'')+'</p>':'<p class="small mut" style="margin-top:9px;">Создай свою цель и ежедневные действия.</p>')+'<button class="btn btn-ghost btn-sm" style="margin-top:11px;" onclick="go(\'today\')">Открыть мой путь</button></div>'+(feedback?'<div class="card2" style="margin-top:10px;"><div class="row between"><b class="small">Оценка Милы</b><span class="chip">★ '+feedback.rating+' / 5</span></div><p class="small mut" style="margin-top:6px;">'+esc(feedback.review)+'</p></div>':'<div class="card2" style="margin-top:10px;"><b class="small">Оценка от Милы</b><p class="small mut" style="margin-top:5px;">Пока не оставлена.</p></div>');
     var state=REMOTE&&REMOTE.state;
     if(!state){document.getElementById('mentorDeskList').innerHTML='<div class="card"><b>Мила ещё не вошла</b><p class="small mut" style="margin-top:6px;">После первого входа Милы здесь появятся её цель, действия и чек-ин.</p></div>';return;}
@@ -1852,7 +1855,19 @@ function renderMentorFeedback(mentorName){
 function leaveMentorFeedback(){
   if(!AUTH||AUTH.role!=='participant'){toast('Оценку может оставить Мила','ok');return;}
   var rating=Number(document.getElementById('mentorRating').value),review=document.getElementById('mentorReview').value.trim();
-  apiRequest('mentor-feedback',{method:'POST',body:JSON.stringify({rating:rating,review:review})}).then(function(){return refreshRemoteSnapshot();}).then(function(){toast('Оценка и отзыв отправлены Саше','ok');}).catch(function(error){toast(error.message,'ok');});
+  apiRequest('mentor-feedback',{method:'POST',body:JSON.stringify({rating:rating,review:review})}).then(function(){
+    if(!REMOTE)REMOTE={};REMOTE.mentorFeedback={rating:rating,review:review};renderMentorFeedback((REMOTE.mentorProfile&&REMOTE.mentorProfile.displayName)||'Саша');
+    return refreshRemoteSnapshot();
+  }).then(function(){toast('Оценка и отзыв отправлены Саше','ok');}).catch(function(error){
+    if(error.message==='Отзыв уже оставлен и не редактируется в пилоте'){
+      refreshRemoteSnapshot().then(function(data){
+        if(data.mentorFeedback){toast('Твоя оценка уже сохранена','ok');return;}
+        toast(error.message,'ok');
+      }).catch(function(){toast(error.message,'ok');});
+      return;
+    }
+    toast(error.message,'ok');
+  });
 }
 function sendChatMessage(){
   if(!AUTH||AUTH.role!=='participant'){toast('Для личного чата нужен тестовый вход Милы','ok');return;}
