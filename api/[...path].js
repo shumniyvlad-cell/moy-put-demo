@@ -274,6 +274,15 @@ async function leaveMentorFeedback(req, res, profile) {
   return send(res, 201, { ok: true });
 }
 
+async function logout(req, res) {
+  const token = parseCookie(req.headers.cookie)[COOKIE_NAME];
+  if (token) {
+    const sql = getDb();
+    await sql`DELETE FROM sessions WHERE token = ${token}`;
+  }
+  return send(res, 200, { ok: true }, { 'Set-Cookie': cookie('', 0) });
+}
+
 export default async function handler(req, res) {
   // On Vercel catch-all functions `req.query.path` differs between local dev
   // and production. The URL is the stable source of the requested API path.
@@ -284,7 +293,7 @@ export default async function handler(req, res) {
     if (req.method === 'GET' && route === '/health') return send(res, 200, { ok: true, storage: 'neon-postgres' });
     if (req.method === 'POST' && route === '/register') return register(req, res);
     if (req.method === 'POST' && route === '/login') return login(req, res);
-    if (req.method === 'POST' && route === '/logout') return send(res, 200, { ok: true }, { 'Set-Cookie': cookie('', 0) });
+    if (req.method === 'POST' && route === '/logout') return logout(req, res);
     const profile = await currentProfile(req);
     if (!profile) return send(res, 401, { error: 'Нужен тестовый вход' });
     if (req.method === 'GET' && route === '/snapshot') return send(res, 200, { profile, ...(await snapshot(profile)) });
