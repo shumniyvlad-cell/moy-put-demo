@@ -119,6 +119,13 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .t.add{color:var(--accent);font-weight:700;}
 .t .lblwrap{flex:1;display:flex;align-items:center;gap:13px;min-width:0;}
 .t .lbl{overflow:hidden;text-overflow:ellipsis;}
+.t .lbl.editable{cursor:text;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;}
+.t .lbl.editable:active{color:var(--accent-d);text-decoration-color:currentColor;}
+.task-toggle{padding:0;border:0;background:transparent;color:inherit;display:flex;align-items:center;cursor:pointer;flex:none;}
+.task-remove{width:28px;height:28px;border:0;background:transparent;color:var(--dim);font:inherit;font-size:23px;line-height:1;cursor:pointer;flex:none;}
+.task-remove:active{color:var(--accent-d);}
+.area-tabs{display:flex;gap:7px;overflow-x:auto;margin-top:14px;padding-bottom:3px;scrollbar-width:none;}.area-tabs::-webkit-scrollbar{display:none;}
+.area-tab{white-space:nowrap;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--mut);font:inherit;font-size:12px;font-weight:800;padding:8px 11px;cursor:pointer;}.area-tab.on{background:var(--soft);color:var(--accent-d);border-color:#F1C79E;}
 .ops{display:flex;gap:1px;margin-left:auto;flex:none;}
 .op{width:27px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--dim);cursor:pointer;}
 .op:active{background:var(--surface2);color:var(--accent);}
@@ -400,6 +407,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div class="kick">Шаг 2 из 3</div>
     <h1 style="margin:9px 0 6px;">Выбери действия,<br>которые приведут к результату</h1>
     <p class="mut small">Маленькие шаги каждый день формируют привычки и приближают к цели.</p>
+    <div class="area-tabs" id="actionAreaTabs" aria-label="Направления"></div>
     <div class="action-focus" id="actionFocus"></div>
     <div class="sectiontitle"><b>Выбери действия</b></div>
     <div class="tasks card" style="margin-top:3px;" id="habitList"></div>
@@ -483,6 +491,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div><h2 id="profName">Ты</h2><div class="small mut"><span id="profDir">Спорт</span> · твой маршрут</div></div>
     </div>
     <h2 style="margin-top:16px;">Твой путь</h2>
+    <div class="area-tabs" id="pathAreaTabs" aria-label="Аналитика по направлениям"></div>
 
     <div class="journey-snapshot">
       <div class="journey-map">
@@ -596,7 +605,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="row" style="gap:11px;"><img class="av sm" id="mentorActivePhoto" src="img/mentor-1.jpg" alt=""><div><b id="mentorActiveName">Александр</b><div class="small grn">● на связи</div></div></div>
       <span class="chip neu" style="cursor:pointer;" onclick="go('mentors')">Все наставники →</span>
       </div>
-      <div id="mentorMessages" style="margin-top:18px;display:flex;flex-direction:column;gap:10px;"></div>
+      <div class="card" style="margin-top:16px;border-color:#F2C89F;">
+        <div class="row between"><div><b>Личный чат с наставником</b><div class="small mut" style="margin-top:3px;">Ответы, фокус и договорённости</div></div><span class="chip grn">на связи</span></div>
+        <div id="mentorMessages" style="margin-top:13px;display:flex;flex-direction:column;gap:10px;"></div>
+        <div class="row" style="margin-top:13px;gap:8px;"><input class="inp" id="mentorMessageInput" placeholder="Написать наставнику" maxlength="700" style="margin:0;min-width:0;"><button class="btn btn-amber btn-sm" onclick="sendChatMessage()">Отправить</button></div>
+        <button class="btn btn-ghost" style="margin-top:10px;" onclick="go('checkin')">Отправить один чек-ин за сегодня</button>
+      </div>
       <div class="card2" style="margin-top:14px;">
         <b class="small">План недели от наставника</b>
         <div class="tasks" style="margin-top:4px;">
@@ -606,9 +620,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         </div>
       </div>
       <div id="mentorFeedback" style="margin-top:14px;"></div>
-      <div class="spacer" style="min-height:14px;"></div>
-      <div class="row" style="margin-top:14px;gap:8px;"><input class="inp" id="mentorMessageInput" placeholder="Написать наставнику" maxlength="700" style="margin:0;min-width:0;"><button class="btn btn-amber btn-sm" onclick="sendChatMessage()">Отправить</button></div>
-      <button class="btn btn-ghost" style="margin-top:10px;" onclick="go('checkin')">Отправить чек-ин дня</button>
     </div>
   </section>
 
@@ -940,7 +951,23 @@ var DIAGNOSTIC_AREAS={
   relations:{dir:'health',name:'Отношения и окружение'}
 };
 function defaultGoal(dir){var p=GOAL_PRESETS[dir]||GOAL_PRESETS.sport;return {title:p.title,target:p.target,current:0,unit:p.unit,deadline:'',pending:null};}
-function defState(){return {v:5,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),diagnosticAreas:[],diagnosticGoals:{},lifeGoal:'',habits:[],days:{},rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',created:todayKey()};}
+function defState(){return {v:6,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),goalsByArea:{},actionsByArea:{},diagnosticAreas:[],diagnosticGoals:{},lifeGoal:'',habits:[],days:{},lastCheckinAt:'',rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',created:todayKey()};}
+function selectedAreaIds(){
+  var selected=(S&&S.diagnosticAreas||[]).filter(function(id){return !!DIAGNOSTIC_AREAS[id];});
+  if(selected.length)return selected;
+  return [{biz:'biz',sport:'sport',health:'health',regime:'health'}[S&&S.dir]||'sport'];
+}
+function goalPctFor(goal){return Math.min(100,Math.round((Number(goal&&goal.current)||0)/(Number(goal&&goal.target)||1)*100));}
+function goalForArea(id){
+  var goals=S.goalsByArea||{},area=DIAGNOSTIC_AREAS[id];
+  if(goals[id])return goals[id];
+  if(id===selectedAreaIds()[0]&&S.goal)return S.goal;
+  return area?goalFromDiagnostic(id):defaultGoal(S.dir);
+}
+function actionsForArea(id){return (S.actionsByArea&&Array.isArray(S.actionsByArea[id]))?S.actionsByArea[id]:[];}
+function taskKey(areaId,text){return areaId+'::'+text;}
+function taskLabel(key){var at=String(key).indexOf('::');return at>=0?String(key).slice(at+2):String(key);}
+function rebuildFlatHabits(){S.habits=selectedAreaIds().reduce(function(all,id){return all.concat(actionsForArea(id).map(function(text){return taskKey(id,text);}));},[]);}
 function cleanStrings(value){
   if(!Array.isArray(value))return [];
   return value.filter(function(x){return typeof x==='string'&&x.trim();})
@@ -960,7 +987,7 @@ function load(){
   rawVersion=Number(raw.v)||1;
   S=Object.assign(base,raw);
   if(!dirNames[S.dir])S.dir='sport';
-  S.v=5;S.dirName=dirNames[S.dir];
+  S.v=6;S.dirName=dirNames[S.dir];
   S.diagnosticAreas=cleanStrings(S.diagnosticAreas).filter(function(id){return !!DIAGNOSTIC_AREAS[id];});
   S.diagnosticGoals=S.diagnosticGoals&&typeof S.diagnosticGoals==='object'&&!Array.isArray(S.diagnosticGoals)?S.diagnosticGoals:{};
   Object.keys(S.diagnosticGoals).forEach(function(id){if(!DIAGNOSTIC_AREAS[id]||typeof S.diagnosticGoals[id]!=='string')delete S.diagnosticGoals[id];else S.diagnosticGoals[id]=S.diagnosticGoals[id].trim().slice(0,90);});
@@ -979,6 +1006,18 @@ function load(){
     pending:gp.pending&&typeof gp.pending==='object'&&isFinite(Number(gp.pending.value))&&Number(gp.pending.value)>=0?{value:Number(gp.pending.value),evidence:typeof gp.pending.evidence==='string'?gp.pending.evidence.slice(0,240):'',submittedAt:typeof gp.pending.submittedAt==='string'?gp.pending.submittedAt:''}:null
   };
   S.habits=cleanStrings(S.habits);
+  S.goalsByArea=S.goalsByArea&&typeof S.goalsByArea==='object'&&!Array.isArray(S.goalsByArea)?S.goalsByArea:{};
+  S.actionsByArea=S.actionsByArea&&typeof S.actionsByArea==='object'&&!Array.isArray(S.actionsByArea)?S.actionsByArea:{};
+  var selectedAreas=selectedAreaIds(),primaryArea=selectedAreas[0];
+  selectedAreas.forEach(function(id){
+    var oldGoal=S.goalsByArea[id],fallbackGoal=id===primaryArea?S.goal:goalFromDiagnostic(id);
+    if(!oldGoal||typeof oldGoal!=='object')oldGoal=fallbackGoal;
+    S.goalsByArea[id]={title:typeof oldGoal.title==='string'&&oldGoal.title.trim()?oldGoal.title.trim().slice(0,80):fallbackGoal.title,target:isFinite(Number(oldGoal.target))&&Number(oldGoal.target)>0?Number(oldGoal.target):fallbackGoal.target,current:isFinite(Number(oldGoal.current))&&Number(oldGoal.current)>=0?Number(oldGoal.current):0,unit:typeof oldGoal.unit==='string'&&oldGoal.unit.trim()?oldGoal.unit.trim().slice(0,24):fallbackGoal.unit,deadline:typeof oldGoal.deadline==='string'?oldGoal.deadline:'',pending:oldGoal.pending||null};
+    S.actionsByArea[id]=cleanStrings(S.actionsByArea[id]);
+  });
+  if(!S.actionsByArea[primaryArea].length&&S.habits.length)S.actionsByArea[primaryArea]=S.habits.map(taskLabel);
+  S.goal=S.goalsByArea[primaryArea];
+  rebuildFlatHabits();
   var pool={};
   if(S.pool&&typeof S.pool==='object'&&!Array.isArray(S.pool)){
     Object.keys(dirNames).forEach(function(k){if(S.pool[k])pool[k]=cleanStrings(S.pool[k]);});
@@ -988,7 +1027,7 @@ function load(){
   if(S.days&&typeof S.days==='object'&&!Array.isArray(S.days)){
     Object.keys(S.days).forEach(function(k){
       var rec=S.days[k];if(!rec||typeof rec!=='object'||Array.isArray(rec))return;
-      days[k]={done:cleanStrings(rec.done)};
+      days[k]={done:cleanStrings(rec.done).map(function(item){return item.indexOf('::')>=0?item:taskKey(primaryArea,item);})};
       if(rec.checkin&&typeof rec.checkin==='object'&&!Array.isArray(rec.checkin))days[k].checkin=rec.checkin;
     });
   }
@@ -1000,6 +1039,7 @@ function load(){
   S.applied=S.applied===true;
   S.mentorStatus=S.mentorStatus==='active'?'active':(S.applied&&S.mode==='С наставником'?'applied':'none');
   S.created=typeof S.created==='string'&&S.created?S.created:todayKey();
+  S.lastCheckinAt=typeof S.lastCheckinAt==='string'?S.lastCheckinAt:'';
   save();
 }
 var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false,liveSyncTimer=0,TEST_ENTRY_MODE='register';
@@ -1022,6 +1062,8 @@ function applySnapshot(data){
   var ownState=AUTH&&AUTH.role==='mentor'?data.personalState:data.state;
   if(AUTH&&ownState&&typeof ownState==='object'){
     S=ownState;try{localStorage.setItem('mp_v1',JSON.stringify(S));}catch(e){}
+    // Снимок базы тоже проходит миграцию: иначе старый профиль теряет новые цели и действия при входе.
+    load();
     // Ранние версии онбординга сохраняли выбранные направления, но оставляли
     // шаблонную цель. Меняем только нетронутую цель с нулевым прогрессом.
     if(AUTH.role==='participant'&&migrateDiagnosticGoal())scheduleStateSync();
@@ -1111,7 +1153,7 @@ function weekStats(d){
   var elapsed=((d.getDay()+6)%7)+1,stats=periodStats(monday,elapsed);stats.key=todayKey(monday);return stats;
 }
 function monthStats(d){d=d?new Date(d):new Date();return periodStats(new Date(d.getFullYear(),d.getMonth(),1),d.getDate());}
-function goalPct(){return Math.min(100,Math.round((S.goal.current||0)/(S.goal.target||1)*100));}
+function goalPct(goal){return goalPctFor(goal||S.goal);}
 function lastActiveBefore(k){return Object.keys(S.days).filter(function(x){return x<k&&(S.days[x].done||[]).length>0;}).sort().pop()||'';}
 function maybeAwardReturn(){
   var k=todayKey(),last=lastActiveBefore(k);if(!last||S.rewards.returns[k])return false;
@@ -1219,7 +1261,7 @@ var OPS={
  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>',
  del:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'
 };
-var draft=[];
+var draft=[],actionAreaId='',pathAreaId='';
 function esc(s){
   var map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
   return String(s).replace(/[&<>"']/g,function(ch){return map[ch];});
@@ -1227,34 +1269,38 @@ function esc(s){
 function initDraft(cat,keepSaved){
   var c=HABITS[cat]||HABITS.sport;
   if(!S.pool)S.pool={};
-  var base=S.pool[cat] ? S.pool[cat].slice() : c.items.slice();
-  var saved=keepSaved?S.habits:[];
+  var poolKey=actionAreaId||cat,base=S.pool[poolKey] ? S.pool[poolKey].slice() : c.items.slice();
+  var saved=keepSaved?actionsForArea(poolKey):[];
   saved.forEach(function(x){ if(base.indexOf(x)<0) base.push(x); });
   draft=base.map(function(txt,i){
     var on = saved.length ? saved.indexOf(txt)>=0 : (S.pool[cat]?false:(c.on.indexOf(i)>=0));
     return {txt:txt,on:on};
   });
 }
-function persistPool(){ if(!S.pool)S.pool={}; S.pool[S.dir]=draft.map(function(d){return d.txt;}); save(); }
+function persistPool(){if(!S.pool)S.pool={};S.pool[actionAreaId||S.dir]=draft.map(function(d){return d.txt;});rebuildFlatHabits();save();}
 function drawDraft(){
   var h='';
   draft.forEach(function(d,i){
     h+='<div class="t'+(d.on?' on':'')+'">'
-      +'<div class="lblwrap" onclick="togH('+i+')">'+CHECK+'<span class="lbl">'+esc(d.txt)+'</span></div>'
+      +'<div class="lblwrap"><button type="button" class="task-toggle" aria-label="'+(d.on?'Убрать':'Добавить')+' действие" aria-pressed="'+d.on+'" onclick="togH('+i+')">'+CHECK+'</button><span class="lbl editable" onclick="editH('+i+')">'+esc(d.txt)+'</span></div>'
+      +'<button type="button" class="task-remove" aria-label="Удалить действие" onclick="delH('+i+')">×</button>'
       +'</div>';
   });
   document.getElementById('habitList').innerHTML=h;
 }
+function renderActionAreaTabs(){
+  var box=document.getElementById('actionAreaTabs');if(!box)return;
+  var selected=selectedAreaIds();if(selected.indexOf(actionAreaId)<0)actionAreaId=selected[0];
+  box.innerHTML=selected.map(function(id){var area=DIAGNOSTIC_AREAS[id];return '<button type="button" class="area-tab '+(id===actionAreaId?'on':'')+'" onclick="setActionArea(\''+id+'\')">'+esc(area.name)+'</button>';}).join('');
+}
+function setActionArea(id){if(selectedAreaIds().indexOf(id)<0)return;actionAreaId=id;renderHabits(DIAGNOSTIC_AREAS[id].dir,true);}
 function renderHabits(cat,keepSaved){
-  var c=HABITS[cat]||HABITS.sport;
-  var selected=(S.diagnosticAreas||[]).filter(function(id){return DIAGNOSTIC_AREAS[id]&&DIAGNOSTIC_AREAS[id].dir===cat;});
-  var id=selected[0]||({biz:'biz',sport:'sport',health:'health',regime:'health'}[cat]||'sport');
-  var area=DIAGNOSTIC_AREAS[id]||{name:c.name};
-  var monthly=(S.diagnosticGoals||{})[id]||S.goal.title||'Цель на этот месяц';
+  var selected=selectedAreaIds();if(!actionAreaId||selected.indexOf(actionAreaId)<0)actionAreaId=selected[0];
+  var area=DIAGNOSTIC_AREAS[actionAreaId]||{dir:cat,name:(HABITS[cat]||HABITS.sport).name};cat=area.dir;
+  var monthly=(S.diagnosticGoals||{})[actionAreaId]||goalForArea(actionAreaId).title||'Цель на этот месяц';
   var focus=document.getElementById('actionFocus');
   if(focus)focus.innerHTML='<span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M22 12h-3M12 22v-3M2 12h3"/></svg></span><div><b>'+esc(area.name)+'</b><span>Цель на месяц: '+esc(monthly)+'</span></div>';
-  initDraft(cat,keepSaved);
-  drawDraft();
+  renderActionAreaTabs();initDraft(cat,keepSaved);drawDraft();
 }
 function togH(i){draft[i].on=!draft[i].on;drawDraft();}
 function dragStart(ev,i){
@@ -1299,14 +1345,14 @@ function editH(i){
   if(draft.some(function(d,k){return k!==i&&d.txt===n;})){toast('Такое действие уже есть','ok');return;}
   var old=draft[i].txt;
   draft[i].txt=n;
-  var k=S.habits.indexOf(old); if(k>=0){S.habits[k]=n;}
+  var actions=actionsForArea(actionAreaId),k=actions.indexOf(old);if(k>=0)actions[k]=n;
   persistPool();drawDraft();toast('Изменено ✓','ok');
 }
 function delH(i){
   var d=draft[i];
   if(!confirm('Удалить «'+d.txt+'» из списка?'))return;
   draft.splice(i,1);
-  var k=S.habits.indexOf(d.txt); if(k>=0)S.habits.splice(k,1);
+  var actions=actionsForArea(actionAreaId),k=actions.indexOf(d.txt);if(k>=0)actions.splice(k,1);
   persistPool();drawDraft();toast('Удалено','ok');
 }
 function pickCat(el,cat){
@@ -1372,7 +1418,11 @@ function continueDiagnostic(){
   if(!selected.length){toast('Выбери хотя бы одно направление','ok');return;}
   var life=document.getElementById('lifeGoal');S.lifeGoal=life?life.value.trim().slice(0,120):'';
   var primaryId=selected[0],primary=DIAGNOSTIC_AREAS[primaryId].dir;
-  S.dir=primary;S.dirName=(HABITS[primary]||HABITS.sport).name;S.goal=goalFromDiagnostic(primaryId);S.habits=[];
+  S.dir=primary;S.dirName=(HABITS[primary]||HABITS.sport).name;
+  if(!S.goalsByArea||typeof S.goalsByArea!=='object')S.goalsByArea={};
+  if(!S.actionsByArea||typeof S.actionsByArea!=='object')S.actionsByArea={};
+  selected.forEach(function(id){S.goalsByArea[id]=goalFromDiagnostic(id);if(!Array.isArray(S.actionsByArea[id]))S.actionsByArea[id]=[];});
+  S.goal=S.goalsByArea[primaryId];actionAreaId=primaryId;rebuildFlatHabits();
   save();renderHabits(S.dir,true);go('minimum');
 }
 function diagnosticSummary(){
@@ -1414,9 +1464,10 @@ function multi(el){el.classList.toggle('on');}
 function savePlan(){
   var sel=draft.filter(function(d){return d.on;}).map(function(d){return d.txt;});
   if(!sel.length){toast('Отметь хотя бы одно действие','ok');return;}
-  S.habits=sel;save();
-  if(S.applied){toast('План обновлён ✓','ok');go('today');}
-  else go('mentor');
+  S.actionsByArea[actionAreaId]=sel;rebuildFlatHabits();save();
+  var next=selectedAreaIds().filter(function(id){return id!==actionAreaId&&!actionsForArea(id).length;})[0];
+  if(next){actionAreaId=next;renderHabits(DIAGNOSTIC_AREAS[next].dir,true);toast('Действия сохранены. Теперь настрой «'+DIAGNOSTIC_AREAS[next].name+'»','ok');return;}
+  toast('Все цели и действия сохранены ✓','ok');go('today');
 }
 function renderModeChoice(){
   var mode=S.mode==='С наставником'?'С наставником':'Сам';
@@ -1565,21 +1616,23 @@ function greet(){
   return g+(S.name?', '+S.name:'')+'!';
 }
 function fmt(n){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(Number(n)||0);}
-function goalProgressText(){return fmt(S.goal.current)+' из '+fmt(S.goal.target)+' '+S.goal.unit;}
-function goalDirectionName(){
-  var source=((S.goal&&S.goal.title)||'')+' '+((S.goal&&S.goal.unit)||'');
+function goalProgressText(goal){goal=goal||S.goal;return fmt(goal.current)+' из '+fmt(goal.target)+' '+goal.unit;}
+function goalDirectionName(goal){
+  goal=goal||S.goal;
+  var source=((goal&&goal.title)||'')+' '+((goal&&goal.unit)||'');
   if(/б[её]рпи|тренир|отжим|шаг|пробеж|спорт|тело/i.test(source))return 'Спорт';
   if(/сон|здоров|энерг|питан|самочув|вода|восстанов/i.test(source))return 'Здоровье';
   if(/режим|под[ъь]ём|отбой|день/i.test(source))return 'Режим дня';
   if(/доход|выруч|заработ|₽|руб|бизнес/i.test(source))return 'Доход и бизнес';
   return 'Твоя цель';
 }
-function goalCurrentCopy(){
-  var unit=S.goal.unit||'ед.';
+function goalCurrentCopy(goal){
+  goal=goal||S.goal;
+  var unit=goal.unit||'ед.';
   return {
     label:'Фактический результат сейчас, '+unit,
-    help:'Внеси общий факт по цели «'+S.goal.title+'» на текущий момент. Это не прибавление: новая цифра заменит предыдущую, а приложение пересчитает прогресс.',
-    example:'Например: если сейчас '+fmt(S.goal.current||0)+' из '+fmt(S.goal.target)+' '+unit+', введи фактическое значение. Следующая цифра заменит предыдущую.'
+    help:'Внеси общий факт по цели «'+goal.title+'» на текущий момент. Это не прибавление: новая цифра заменит предыдущую, а приложение пересчитает прогресс.',
+    example:'Например: если сейчас '+fmt(goal.current||0)+' из '+fmt(goal.target)+' '+unit+', введи фактическое значение. Следующая цифра заменит предыдущую.'
   };
 }
 function paintGoal(ringId,pctId,titleId,progressId,barId){
@@ -1591,16 +1644,12 @@ function paintGoal(ringId,pctId,titleId,progressId,barId){
   document.getElementById(progressId).textContent=goalProgressText();
 }
 function goalCarouselCards(){
-  var selected=(S.diagnosticAreas||[]).slice();
-  if(!selected.length){
-    var fallback={biz:'biz',sport:'sport',health:'health',regime:'health'}[S.dir]||'sport';
-    selected=[fallback];
-  }
+  var selected=selectedAreaIds();
   return selected.map(function(id,index){
     var area=DIAGNOSTIC_AREAS[id]||{name:S.dirName||'Моя цель'};
-    var monthly=(S.diagnosticGoals||{})[id]||((index===0&&S.goal&&S.goal.title)?S.goal.title:'Цель на этот месяц');
+    var goal=goalForArea(id),monthly=(S.diagnosticGoals||{})[id]||goal.title||'Цель на этот месяц';
     var primary=index===0;
-    return {id:id,name:area.name,monthly:monthly,primary:primary,pct:primary?goalPct():0};
+    return {id:id,name:area.name,monthly:monthly,primary:primary,goal:goal,pct:goalPct(goal)};
   });
 }
 function renderGoalCarousel(){
@@ -1609,7 +1658,7 @@ function renderGoalCarousel(){
   var cards=goalCarouselCards(),h='';
   cards.forEach(function(card){
     var p=Math.max(0,Math.min(100,card.pct));
-    h+='<article class="goal-slide"><div class="row" style="align-items:center;"><div class="goalring" style="--p:'+(p*3.6)+'deg"><span>'+p+'%</span></div><div style="min-width:0;flex:1;"><div class="goal-title">'+esc(card.name)+'</div><div class="goal-month">Цель на месяц<br><b>'+esc(card.monthly)+'</b></div></div></div><div class="goaltrack"><i style="width:'+p+'%"></i></div><div class="goal-foot"><span>'+ (card.primary?esc(goalProgressText()):'Результат ещё не зафиксирован') +'</span><button class="goaledit" type="button" onclick="openDiagnosticGoal(\''+card.id+'\')">Изменить</button></div></article>';
+    h+='<article class="goal-slide"><div class="row" style="align-items:center;"><div class="goalring" style="--p:'+(p*3.6)+'deg"><span>'+p+'%</span></div><div style="min-width:0;flex:1;"><div class="goal-title">'+esc(card.name)+'</div><div class="goal-month">Цель на месяц<br><b>'+esc(card.monthly)+'</b></div></div></div><div class="goaltrack"><i style="width:'+p+'%"></i></div><div class="goal-foot"><span>'+esc(fmt(card.goal.current)+' из '+fmt(card.goal.target)+' '+card.goal.unit)+'</span><button class="goaledit" type="button" onclick="openDiagnosticGoal(\''+card.id+'\')">Изменить</button></div></article>';
   });
   rail.innerHTML=h;
   dots.innerHTML=cards.map(function(_,i){return '<i'+(i===0?' class="on"':'')+'></i>';}).join('');
@@ -1639,17 +1688,25 @@ function openDiagnosticGoal(id){
   go('pain');
   setTimeout(function(){var input=document.getElementById('diag-'+id);if(input)input.focus();},40);
 }
+function doneForArea(rec,id){return (rec.done||[]).filter(function(key){return String(key).indexOf(id+'::')===0;}).length;}
+function areaWeekStats(id,d){
+  d=d?new Date(d):new Date();var monday=new Date(d);monday.setHours(0,0,0,0);monday.setDate(d.getDate()-((d.getDay()+6)%7));
+  var elapsed=((d.getDay()+6)%7)+1,total=actionsForArea(id).length||1,sum=0,full=0;
+  for(var i=0;i<elapsed;i++){var day=new Date(monday);day.setDate(monday.getDate()+i);var rec=S.days[todayKey(day)]||{done:[]},done=doneForArea(rec,id);sum+=Math.min(done/total,1);if(done>=total)full++;}
+  return {full:full,elapsed:elapsed,pct:Math.round(sum/elapsed*100)};
+}
 function renderToday(){
   var d=new Date();
   document.getElementById('todayDate').textContent=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
   document.getElementById('quoteText').textContent=quoteOfDay();
   renderCheckinPrompt();
-  if(!S.habits.length)S.habits=(HABITS[S.dir]||HABITS.sport).items.slice(0,3);
+  if(!S.habits.length){var firstArea=selectedAreaIds()[0];S.actionsByArea[firstArea]=(HABITS[DIAGNOSTIC_AREAS[firstArea].dir]||HABITS.sport).items.slice(0,3);rebuildFlatHabits();save();}
   renderGoalCarousel();
   var rec=dayRec(),h='';
-  S.habits.forEach(function(x){
-    var done=rec.done.indexOf(x)>=0;
-    h+='<div class="t'+(done?' done':'')+'" onclick="tapHabit(this)">'+CHECK+'<span class="lbl">'+esc(x)+'</span></div>';
+  selectedAreaIds().forEach(function(id){
+    var area=DIAGNOSTIC_AREAS[id],tasks=actionsForArea(id);if(!tasks.length)return;
+    h+='<div class="tiny amber" style="font-weight:800;padding-top:10px;">'+esc(area.name)+'</div>';
+    tasks.forEach(function(text){var key=taskKey(id,text),done=rec.done.indexOf(key)>=0;h+='<div class="t'+(done?' done':'')+'" data-task="'+esc(key)+'" onclick="tapHabit(this)">'+CHECK+'<span class="lbl">'+esc(text)+'</span></div>';});
   });
   document.getElementById('dayList').innerHTML=h;
   refreshDay();
@@ -1657,7 +1714,8 @@ function renderToday(){
 function renderCheckinPrompt(){
   var box=document.getElementById('checkinPrompt');if(!box)return;
   var messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[];
-  var request=messages.slice().reverse().find(function(message){return message.authorId==='sasha'&&/чек-?ин/i.test(message.body||'');});
+  var answeredAt=Date.parse(S.lastCheckinAt||'')||0;
+  var request=messages.slice().reverse().find(function(message){return message.authorId==='sasha'&&/чек-?ин/i.test(message.body||'')&&((Date.parse(message.createdAt||'')||0)>answeredAt);});
   box.hidden=!request;
   if(!request){box.innerHTML='';return;}
   box.innerHTML='<div class="card2" style="margin-top:12px;border-color:#F2C89F;"><div class="tiny amber" style="font-weight:800;">НАСТАВНИК ЖДЁТ ЧЕК-ИН</div><p class="small mut" style="margin-top:5px;">'+esc(request.body)+'</p><button class="btn btn-amber btn-sm" style="margin-top:10px;" onclick="go(\'checkin\')">Заполнить чек-ин</button></div>';
@@ -1675,8 +1733,7 @@ function refreshDay(){
   var pt=document.getElementById('ptsTop');if(pt)pt.textContent=pts();
 }
 function tapHabit(el){
-  var name=el.querySelector('.lbl').textContent, rec=dayRec();
-  var idx=rec.done.indexOf(name);
+  var name=el.getAttribute('data-task')||el.querySelector('.lbl').textContent, rec=dayRec(),idx=rec.done.indexOf(name);
   if(idx>=0){rec.done.splice(idx,1);el.classList.remove('done');}
   else{
     var first=rec.done.length===0;
@@ -1697,6 +1754,7 @@ function sendCheckin(){
   if(checkinSending)return;
   var rec=dayRec(),firstCheckin=!rec.checkin;
   rec.checkin={sleep:document.getElementById('v1').textContent,energy:document.getElementById('v2').textContent,mood:document.getElementById('v3').textContent};
+  S.lastCheckinAt=new Date().toISOString();
   save();
   if(AUTH&&AUTH.role==='participant'){
     syncState().then(function(){toast('Чек-ин сохранён и доступен наставнику'+(firstCheckin?' · +10 баллов':'')+' ✓','ok');go('today');}).catch(function(error){toast(error.message,'ok');});
@@ -1707,7 +1765,7 @@ function sendCheckin(){
   }
   var d=new FormData();
   d.append(CIFORM.f.name,S.name||'—');d.append(CIFORM.f.contact,S.contact||'—');
-  d.append(CIFORM.f.done,rec.done.length+' из '+S.habits.length+(rec.done.length?' · '+rec.done.join(', '):''));
+  d.append(CIFORM.f.done,rec.done.length+' из '+S.habits.length+(rec.done.length?' · '+rec.done.map(taskLabel).join(', '):''));
   d.append(CIFORM.f.sleep,rec.checkin.sleep);d.append(CIFORM.f.energy,rec.checkin.energy);d.append(CIFORM.f.mood,rec.checkin.mood);
   d.append(CIFORM.f.comment,(document.getElementById('ciComment').value||'').trim());
   var btn=document.getElementById('checkinSubmit');
@@ -1744,23 +1802,32 @@ function openKnowledge(id){
 }
 
 /* --- Путь: цель, сводка, награды --- */
+function renderPathAreaTabs(){
+  var box=document.getElementById('pathAreaTabs');if(!box)return;
+  var selected=selectedAreaIds();if(selected.indexOf(pathAreaId)<0)pathAreaId=selected[0];
+  box.innerHTML=selected.map(function(id){var area=DIAGNOSTIC_AREAS[id];return '<button type="button" class="area-tab '+(id===pathAreaId?'on':'')+'" onclick="setPathArea(\''+id+'\')">'+esc(area.name)+'</button>';}).join('');
+}
+function setPathArea(id){if(selectedAreaIds().indexOf(id)<0)return;pathAreaId=id;renderPath();}
 function renderPath(){
   maybeAwardWeek();
+  var selected=selectedAreaIds();if(selected.indexOf(pathAreaId)<0)pathAreaId=selected[0];
+  var activeGoal=goalForArea(pathAreaId),activeActions=actionsForArea(pathAreaId),area=DIAGNOSTIC_AREAS[pathAreaId]||{name:'Твоя цель'};
   var nm=S.name||'Ты';
   document.getElementById('profName').textContent=nm;
   document.getElementById('profAv').textContent=nm.charAt(0).toUpperCase();
-  document.getElementById('profDir').textContent=goalDirectionName();
-  var today=dayRec(),todayPct=Math.min(100,Math.round(today.done.length/(S.habits.length||1)*100)),week=weekStats(),month=monthStats();
-  var overall=Math.round((todayPct+week.pct+goalPct())/3),ring=document.getElementById('goalRingPath');
+  document.getElementById('profDir').textContent=area.name;
+  renderPathAreaTabs();
+  var today=dayRec(),todayDone=doneForArea(today,pathAreaId),todayPct=Math.min(100,Math.round(todayDone/(activeActions.length||1)*100)),week=areaWeekStats(pathAreaId);
+  var overall=Math.round((todayPct+week.pct+goalPct(activeGoal))/3),ring=document.getElementById('goalRingPath');
   if(ring)ring.style.setProperty('--p',(overall*3.6)+'deg');
   document.getElementById('goalPctPath').textContent=overall+'%';
-  document.getElementById('goalTitlePath').textContent=S.goal.title;
-  document.getElementById('goalProgressPath').textContent=goalProgressText();
-  document.getElementById('metricToday').textContent=today.done.length+'/'+(S.habits.length||0);
+  document.getElementById('goalTitlePath').textContent=activeGoal.title;
+  document.getElementById('goalProgressPath').textContent=goalProgressText(activeGoal);
+  document.getElementById('metricToday').textContent=todayDone+'/'+activeActions.length;
   document.getElementById('metricWeek').textContent=week.full+'/'+week.elapsed;
-  document.getElementById('metricGoal').textContent=goalPct()+'%';
+  document.getElementById('metricGoal').textContent=goalPct(activeGoal)+'%';
   document.getElementById('pathStreak').textContent=streak()+' дн.';
-  var next=(S.habits||[]).filter(function(item){return today.done.indexOf(item)<0;})[0]||'Подведи итог дня и зафиксируй результат';
+  var next=activeActions.filter(function(item){return today.done.indexOf(taskKey(pathAreaId,item))<0;})[0]||'Подведи итог дня и зафиксируй результат';
   var focus=document.getElementById('pathFocus');
   if(focus)focus.innerHTML='<span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.6 6 .6-4.5 4 1.3 6-5.4-2.6-5.4 2.6 1.3-6-4.5-4 6-.6z"/></svg></span><div><b>Следующий простой шаг</b><span>'+esc(next)+'</span></div>';
   document.getElementById('shareWeekPct').textContent=week.pct;
@@ -1773,9 +1840,9 @@ function renderPath(){
   document.getElementById('lvlName2').textContent='Уровень '+lv.name;
   document.getElementById('lvlProg').textContent=p+(lv.next?' / '+lv.next[0]:'')+' ⭐';
   document.getElementById('lvlBar').style.width=lv.next?Math.min(100,Math.round(p/lv.next[0]*100))+'%':'100%';
-  var currentCopy=goalCurrentCopy();
-  var needsReview=S.mode==='С наставником',pending=S.goal.pending;
-  document.getElementById('goalCurrentInput').value=S.goal.current||0;
+  var currentCopy=goalCurrentCopy(activeGoal);
+  var needsReview=S.mode==='С наставником',pending=activeGoal.pending;
+  document.getElementById('goalCurrentInput').value=activeGoal.current||0;
   document.getElementById('goalCurrentLabel').textContent=currentCopy.label;
   document.getElementById('goalCurrentHelp').textContent=currentCopy.help;
   document.getElementById('goalCurrentExample').textContent=currentCopy.example;
@@ -1809,17 +1876,21 @@ function renderPath(){
   document.getElementById('medalSummary').textContent=medalCount()+' открыто';
 }
 function saveGoalProgress(){
-  var input=document.getElementById('goalCurrentInput'),value=Number(input.value),was=goalPct();
+  var activeId=pathAreaId||selectedAreaIds()[0],activeGoal=goalForArea(activeId),input=document.getElementById('goalCurrentInput'),value=Number(input.value),was=goalPct(activeGoal);
   if(!isFinite(value)||value<0){toast('Укажи результат от нуля','ok');return;}
   if(S.mode==='С наставником'){
     var evidence=document.getElementById('goalEvidence').value.trim(),confirmed=document.getElementById('goalFactConfirm').classList.contains('on');
     if(!evidence){toast('Добавь ссылку, скриншот или комментарий к результату','ok');return;}
     if(!confirmed){toast('Подтверди, что цифра соответствует факту','ok');return;}
-    S.goal.pending={value:value,evidence:evidence,submittedAt:new Date().toISOString()};save();renderPath();toast('Результат отправлен наставнику на проверку','ok');return;
+    activeGoal.pending={value:value,evidence:evidence,submittedAt:new Date().toISOString()};
+    S.goalsByArea[activeId]=activeGoal;if(activeId===selectedAreaIds()[0])S.goal=activeGoal;
+    save();renderPath();toast('Результат отправлен наставнику на проверку','ok');return;
   }
-  S.goal.current=value;save();renderPath();
-  if(was<100&&goalPct()>=100){confetti();toast('Цель достигнута — ты это сделал! 🏆','pts');}
-  else toast('Результат обновлён: '+goalProgressText()+' ✓','ok');
+  activeGoal.current=value;activeGoal.pending=null;
+  S.goalsByArea[activeId]=activeGoal;if(activeId===selectedAreaIds()[0])S.goal=activeGoal;
+  save();renderPath();
+  if(was<100&&goalPct(activeGoal)>=100){confetti();toast('Цель достигнута — ты это сделал! 🏆','pts');}
+  else toast('Результат обновлён: '+goalProgressText(activeGoal)+' ✓','ok');
 }
 function renderMentorChat(){
   var active=(AUTH&&AUTH.role==='participant')||S.mentorStatus==='active';
@@ -1941,20 +2012,19 @@ function toast(msg,ic){
   var t=document.getElementById('toast');t.classList.add('show');clearTimeout(tT);tT=setTimeout(function(){t.classList.remove('show');},2700);
 }
 /* --- Старт --- */
+function routeAfterBootstrap(data){
+  var h=(location.hash||'').replace('#','');
+  renderHabits(S.dir,true);
+  if(!AUTH){go('splash');return;}
+  if(data&&!((AUTH.role==='mentor'?data.personalState:data.state)))scheduleStateSync();
+  if(['rewards','challenges','profile'].indexOf(h)>=0){go('path');return;}
+  // Стартовая страница нужна только до регистрации: сохранённая сессия сразу возвращает в маршрут.
+  if(h&&h!=='splash'&&h!=='mentorlogin'&&document.querySelector('.screen[data-s="'+h+'"]')){go(h);return;}
+  openTestWorkspace(data||{});
+}
 load();
-refreshRemoteSnapshot().then(function(data){
-  if(AUTH&&!((AUTH.role==='mentor'?data.personalState:data.state)))scheduleStateSync();
-  if(AUTH&&(location.hash===''||(location.hash||'').replace('#','')==='mentorlogin'))openTestWorkspace(data);
-}).catch(function(){});
 startLiveSync();
-(function(){
- var h=(location.hash||'').replace('#','');
- renderHabits(S.dir,true);
- if(!AUTH){go('splash');return;}
- if(['rewards','challenges','profile'].indexOf(h)>=0){go('path');return;}
- if(h&&document.querySelector('.screen[data-s="'+h+'"]')){go(h);return;}
- if(S.habits.length){go('today');} // возвращающийся пользователь — сразу в свой день
-})();
+refreshRemoteSnapshot().then(routeAfterBootstrap).catch(function(){routeAfterBootstrap(null);});
 window.addEventListener('hashchange',function(){
   var h=(location.hash||'').replace('#','');
   if(['rewards','challenges','profile'].indexOf(h)>=0){go('path');return;}
