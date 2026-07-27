@@ -342,8 +342,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
     <div class="journey-method">Наставники и окружение + простые направленные действия = ты сможешь.</div>
 
-    <button class="btn btn-amber splashcta" style="margin-top:14px;" onclick="go('pain')">Начать путь&nbsp;→</button>
-    <p class="note" style="margin-top:12px;">Идёт набор в первый поток · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('today')">Превью приложения</span> · <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('mentorlogin')">Тестовый вход</span></p>
+    <button class="btn btn-amber splashcta" style="margin-top:14px;" onclick="go('mentorlogin')">Начать путь&nbsp;→</button>
+    <p class="note" style="margin-top:12px;">Идёт набор в первый поток · Уже есть профиль? <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('mentorlogin')">Войти</span></p>
   </section>
 
   <!-- 2. ВЫБОР НАПРАВЛЕНИЯ -->
@@ -1161,7 +1161,7 @@ function quoteOfDay(){var d=new Date(),n=Math.floor((d-new Date(d.getFullYear(),
 
 /* --- Навигация --- */
 function go(id){
-  if(!AUTH&&id!=='mentorlogin')id='mentorlogin';
+  if(!AUTH&&id!=='mentorlogin'&&id!=='splash')id='splash';
   if(id==='profile')id='path';
   var cur=document.querySelector('.screen.active');
   if(cur){var c=cur.dataset.s; if(OVER.indexOf(c)<0) prev=c;}
@@ -1950,7 +1950,7 @@ startLiveSync();
 (function(){
  var h=(location.hash||'').replace('#','');
  renderHabits(S.dir,true);
- if(!AUTH){go('mentorlogin');return;}
+ if(!AUTH){go('splash');return;}
  if(['rewards','challenges','profile'].indexOf(h)>=0){go('path');return;}
  if(h&&document.querySelector('.screen[data-s="'+h+'"]')){go(h);return;}
  if(S.habits.length){go('today');} // возвращающийся пользователь — сразу в свой день
