@@ -1043,9 +1043,25 @@ function load(){
   save();
 }
 var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false,liveSyncTimer=0,TEST_ENTRY_MODE='register';
+function pause(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
 function apiRequest(path,options){
-  options=options||{};options.credentials='same-origin';options.headers=Object.assign({'Content-Type':'application/json'},options.headers||{});
-  return fetch('/api/'+path,options).then(function(r){return r.json().catch(function(){return {};}).then(function(data){if(!r.ok)throw new Error(data.error||'Ошибка сервера');return data;});});
+  options=options||{};options.credentials='same-origin';options.cache='no-store';options.headers=Object.assign({'Content-Type':'application/json','Accept':'application/json'},options.headers||{});
+  function request(attempt){
+    return fetch('/api/'+path,options).then(function(response){
+      return response.text().then(function(raw){
+        var data=null;try{data=raw?JSON.parse(raw):{};}catch(e){}
+        var retryable=response.status===429||response.status>=500||(!data&&/vercel security checkpoint|we.?re verifying your browser/i.test(raw));
+        if(retryable&&attempt===0)return pause(700).then(function(){return request(1);});
+        if(!data){throw new Error('Сервис временно недоступен. Обнови страницу и повтори вход.');}
+        if(!response.ok)throw new Error(data.error||'Не удалось выполнить запрос');
+        return data;
+      });
+    }).catch(function(error){
+      if(attempt===0&&error&&/fetch|network/i.test(error.message||''))return pause(700).then(function(){return request(1);});
+      throw error;
+    });
+  }
+  return request(0);
 }
 function scheduleStateSync(){
   if(!AUTH||(AUTH.role!=='participant'&&AUTH.role!=='mentor'))return;
@@ -1097,7 +1113,9 @@ function setTestEntryMode(mode){
   document.getElementById('entryLoginTab').classList.toggle('on',!registering);
 }
 function openTestWorkspace(data,notice){
+  data=data||{};
   applySnapshot(data);
+  if(!AUTH){toast('Сессия не подтверждена. Обнови страницу и войди ещё раз.','ok');go('mentorlogin');return;}
   var ownState=AUTH.role==='mentor'?data.personalState:data.state;
   if(!ownState){S=defState();S.name=AUTH.displayName||'';save();scheduleStateSync();}
   if(AUTH.role==='mentor'){go('mentordesk');if(notice)toast(notice,'ok');return;}
