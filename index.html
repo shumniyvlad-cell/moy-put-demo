@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#F7F7F3">
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="img/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Мой путь">
-<title>Мой путь — дисциплина и цели с наставником</title>
+<meta name="apple-mobile-web-app-title" content="WAY A">
+<title>WAY — твой путь, твои правила, твой результат</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Montserrat:wght@600;700;800;900&amp;display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#FFFFFF;--surface:#FFFFFF;--surface2:#F6F6F4;--line:#E8E6E2;
@@ -384,35 +384,26 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 @media(max-width:460px){body{padding:0;}.phone{width:100vw;height:100dvh;border-radius:0;border:none;box-shadow:none;}.demoTag{display:none;}}
 @media(max-width:360px){.goalfields{grid-template-columns:1fr}.goalfields .wide{grid-column:auto}.sharestats{gap:11px}.nav a{font-size:7.5px}}
 </style>
+<link rel="stylesheet" href="way-a.css">
 </head>
-<body>
+<body class="theme-way-a">
 <div class="phone">
   <div class="notch"></div>
   <div class="statusbar"><span>9:41</span><span class="r">●&nbsp;&nbsp;▮▮▮&nbsp;&nbsp;<b>76</b></span></div>
 
   <!-- 1. SPLASH -->
   <section class="screen full active" data-s="splash">
-    <div class="brandrow">
-      <div class="logo"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 27c2.7-7.5 6.8-11.1 11.1-13.1"/><path d="M11.8 12.7l3.2 1.1-1.1 3.2"/><path d="M21 3.8l7 5.1-2.7 8.2h-8.6L14 8.9z"/><path d="M21 8.2l3.5 2.5-1.3 4.1h-4.4l-1.3-4.1z"/><path d="M21 3.8v4.4M28 8.9l-3.5 1.8M25.3 17.1l-2.1-2.3M16.7 17.1l2.1-2.3M14 8.9l3.5 1.8"/></svg></div>
-      <span class="wordmark">Мой&nbsp;путь</span>
+    <div class="way-splash">
+      <img src="img/way-a-splash-runner.png" alt="Бегущий человек поднимается по лестнице">
+      <div class="way-splash-copy">
+        <div class="way-wordmark">WAY</div>
+        <div class="way-splash-tag"><span>Твой путь.</span><span>Твои правила.</span><span>Твой результат.</span></div>
+      </div>
+      <button class="way-splash-arrow" type="button" onclick="go('mentorlogin')" aria-label="Начать путь">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 19 5M9 5h10v10"/></svg>
+      </button>
     </div>
-
-    <p class="journey-quote">Жизнь — это игра в путешествие к счастью.</p>
-
-    <div class="dodeca-hero" aria-label="Карта пути к счастью">
-      <img src="img/dodecahedron-journey-v1.png" alt="Оранжевый многогранник пути">
-      <span class="facet top">Смысл<br>и развитие</span>
-      <span class="facet left">Отношения<br>и окружение</span>
-      <span class="facet right">Спорт<br>и тело</span>
-      <span class="facet bl">Здоровье<br>и энергия</span>
-      <span class="facet br">Доход<br>и дело</span>
-      <div class="dodeca-core"><b>МЫ</b><span>Правильные привычки<br>и простые действия<br>= больше результатов</span></div>
-    </div>
-
-    <div class="journey-method">Наставники и окружение + простые направленные действия = ты сможешь.</div>
-
-    <button class="btn btn-amber splashcta" style="margin-top:14px;" onclick="go('mentorlogin')">Начать путь&nbsp;→</button>
-    <p class="note" style="margin-top:12px;">Идёт набор в первый поток · Уже есть профиль? <span class="amber" style="cursor:pointer;font-weight:700;" onclick="go('mentorlogin')">Войти</span></p>
+    <p class="way-splash-login">Уже есть профиль? <button type="button" onclick="go('mentorlogin')">Войти</button></p>
   </section>
 
   <!-- 2. ВЫБОР НАПРАВЛЕНИЯ -->
@@ -496,8 +487,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
   <section class="screen" data-s="today">
     <div class="home-head">
       <div class="home-brand">
-        <div class="logo"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 27c2.7-7.5 6.8-11.1 11.1-13.1"/><path d="M11.8 12.7l3.2 1.1-1.1 3.2"/><path d="M21 3.8l7 5.1-2.7 8.2h-8.6L14 8.9z"/><path d="M21 8.2l3.5 2.5-1.3 4.1h-4.4l-1.3-4.1z"/><path d="M21 3.8v4.4M28 8.9l-3.5 1.8M25.3 17.1l-2.1-2.3M16.7 17.1l2.1-2.3M14 8.9l3.5 1.8"/></svg></div>
-        <div><span class="wordmark">Мой&nbsp;путь</span><div class="home-date" id="todayDate">Сегодня</div></div>
+        <div><span class="wordmark">WAY</span><div class="home-date" id="todayDate">Сегодня</div></div>
       </div>
       <div class="chip" onclick="go('path')" style="cursor:pointer;"><svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.6 6.6 19.2l1.3-6-4.5-4 6-.6z"/></svg> <span class="num" id="ptsTop">0</span></div>
     </div>
@@ -514,10 +504,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div class="sectiontitle home-actions-title"><b>Сегодня</b><span class="small dim" id="homeActionsArea">действия по сфере</span></div>
     <div class="tasks home-actions" id="dayList"></div>
 
-    <div class="daysummary" style="margin-top:12px;">
-      <div style="min-width:84px;"><div class="tiny dim">ИТОГ ДНЯ</div><b><span class="num" id="doneN">0</span> из <span class="num" id="totN">3</span></b></div>
-      <div class="bar"><i id="dayBar"></i></div>
-      <b class="num amber" id="dayPercent">0%</b>
+    <div class="daysummary way-progress-card" style="margin-top:12px;">
+      <div class="way-progress-ring" id="dayRing"><strong id="dayPercent">0%</strong></div>
+      <div class="way-progress-copy">
+        <b>Твой прогресс сегодня</b>
+        <span><strong class="num" id="doneN">0</strong> из <strong class="num" id="totN">3</strong> действий выполнено</span>
+        <div class="bar"><i id="dayBar"></i></div>
+      </div>
+    </div>
+    <div class="way-quick-title">Быстрые действия</div>
+    <div class="way-quick-actions">
+      <button type="button" class="way-quick" onclick="go('checkin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v3M18 3v3M4 9h16M5 5h14v15H5z"/><path d="m8 14 2 2 5-5"/></svg>Чек-ин</button>
+      <button type="button" class="way-quick" onclick="go('minimum')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg>Действия</button>
+      <button type="button" class="way-quick" onclick="go('path')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="m16.8 7.2 3-3M17 4h3v3"/></svg>Прогресс</button>
+      <button type="button" class="way-quick" onclick="go('knowledge')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 0-3 3z"/><path d="M5 4.5V20a3 3 0 0 1 3-3h11"/></svg>База</button>
     </div>
     <p class="note" id="dayState">Начни с одного простого действия.</p>
     <div id="checkinPrompt" hidden></div>
@@ -548,29 +548,29 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <!-- 8. ПУТЬ + ПРОФИЛЬ -->
   <section class="screen" data-s="path">
-    <div class="resulthead">
+    <div class="resulthead" aria-hidden="true">
       <div class="av avtxt" id="profAv">Т</div>
-      <div><h2 id="profName">Ты</h2><div class="small mut"><span id="profDir">Спорт</span> · твой маршрут</div></div>
+      <div><h2 id="profName">Ты</h2><div class="small mut"><span id="profDir">Спорт</span></div></div>
     </div>
-    <h2 style="margin-top:16px;">Твой путь</h2>
+    <h2>Прогресс</h2>
     <div class="area-tabs" id="pathAreaTabs" aria-label="Аналитика по направлениям"></div>
+    <div class="way-period" aria-label="Период"><span>Неделя</span><span>Месяц</span><span>Год</span></div>
+    <div class="way-chart-card">
+      <div class="way-chart-head"><div><strong id="wayWeekPct">0%</strong><span> выполнено</span></div><span>Последние 7 дней</span></div>
+      <div class="way-week-chart" id="wayWeekChart" aria-label="Прогресс по дням недели"></div>
+    </div>
 
-    <div class="journey-snapshot">
-      <div class="journey-map">
-        <div class="journey-side">
-          <div class="journey-stat-card"><span>Сегодня</span><b id="metricToday">0/0</b></div>
-          <div class="journey-stat-card"><span>Главная цель</span><b id="metricGoal">0%</b></div>
-        </div>
-        <div class="journey-core">
-          <div class="goalring" id="goalRingPath"><span id="goalPctPath">0%</span></div>
-          <span class="journey-overall">Общий прогресс</span>
-        </div>
-        <div class="journey-side">
-          <div class="journey-stat-card"><span>Неделя</span><b id="metricWeek">0/0</b></div>
-          <div class="journey-stat-card"><span>Серия</span><b id="pathStreak">0 дн.</b></div>
-        </div>
+    <div class="way-path-summary">
+      <div class="way-path-main">
+        <div class="way-path-copy"><span>Активная цель</span><b id="goalTitlePath">Твоя главная цель</b><div id="goalProgressPath">0 из 1</div></div>
+        <div class="goalring" id="goalRingPath"><span id="goalPctPath">0%</span></div>
       </div>
-      <div class="journey-primary"><span>Цель сейчас</span><b class="journey-title" id="goalTitlePath">Твоя главная цель</b><div class="journey-copy" id="goalProgressPath">0 из 1</div></div>
+      <div class="way-metric-row">
+        <div><span>Сегодня</span><b id="metricToday">0/0</b></div>
+        <div><span>Неделя</span><b id="metricWeek">0/0</b></div>
+        <div><span>Цель</span><b id="metricGoal">0%</b></div>
+        <div><span>Серия</span><b id="pathStreak">0 дн.</b></div>
+      </div>
     </div>
 
     <div class="focus-next" id="pathFocus"></div>
@@ -888,8 +888,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <!-- 16. ТЕСТОВЫЙ ВХОД -->
   <section class="screen full" data-s="mentorlogin">
+    <div class="way-auth-brand"><span class="way-wordmark">WAY</span></div>
     <div class="kick">Пилотный доступ</div>
-    <h1 style="font-size:24px;margin-top:8px;">Твой профиль<br>в «Мой путь»</h1>
+    <h1 style="font-size:24px;margin-top:8px;">Вход в приложение</h1>
     <p class="mut small" style="margin-top:8px;">Сначала зарегистрируйся по своему коду. Данные Милы и Саши сохраняются в общей базе, доступ к маршруту появляется только после входа.</p>
     <div class="seg" style="margin-top:16px;"><button class="segbtn on" id="entryRegisterTab" onclick="setTestEntryMode('register')">Первый вход</button><button class="segbtn" id="entryLoginTab" onclick="setTestEntryMode('login')">Уже есть профиль</button></div>
     <div class="card" id="testRegisterForm" style="margin-top:14px;">
@@ -936,6 +937,27 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div id="mentorParticipant"></div>
   </section>
 
+  <!-- 18.1 ПРОФИЛЬ WAY -->
+  <section class="screen" data-s="profile">
+    <h2>Профиль</h2>
+    <div class="way-profile-head" style="margin-top:16px;">
+      <div class="way-profile-avatar" id="wayProfileAvatar">Т</div>
+      <div><b id="wayProfileName">Ты</b><span id="wayProfileRole">Участник WAY</span></div>
+    </div>
+    <div class="way-profile-stats">
+      <div class="way-profile-stat"><b id="wayProfileDays">0</b><span>дней в пути</span></div>
+      <div class="way-profile-stat"><b id="wayProfileHabits">0</b><span>действий</span></div>
+      <div class="way-profile-stat"><b id="wayProfileCheckins">0</b><span>чек-инов</span></div>
+    </div>
+    <div class="way-profile-menu">
+      <button type="button" class="way-profile-row" onclick="go('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/></svg>Команда и окружение<span>›</span></button>
+      <button type="button" class="way-profile-row" onclick="go('path')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 19V9M10 19V4M16 19v-7M22 19H2"/></svg>Мой прогресс<span>›</span></button>
+      <button type="button" class="way-profile-row" onclick="go('privacy')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5c0 4.6 2.9 8.1 7 10 4.1-1.9 7-5.4 7-10V6z"/><path d="m9 12 2 2 4-5"/></svg>Конфиденциальность<span>›</span></button>
+      <button type="button" class="way-profile-row" onclick="toast('Переключение темы появится после сравнения визуалов','ok')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>Тема оформления<span>›</span></button>
+    </div>
+    <button class="btn btn-ghost" style="margin-top:14px;" onclick="logoutTest()">Выйти из профиля</button>
+  </section>
+
   <!-- 19. ПОЛИТИКА ПДн -->
   <section class="screen full" data-s="privacy">
     <div class="backbar" onclick="back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg> Назад</div>
@@ -959,16 +981,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <nav class="nav" id="nav">
     <a href="#today" data-t="today" onclick="event.preventDefault();go('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Главная</a>
-    <a href="#path" data-t="path" onclick="event.preventDefault();go('path')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.6 6.6 19.2l1.3-6-4.5-4 6-.6z"/></svg>Путь</a>
-    <a id="navMentorLink" href="#mentorhub" data-t="mentorhub" onclick="event.preventDefault();openMentorArea()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 1-3.5-6.6L21 4l-1 4"/></svg>Наставничество</a>
-    <a href="#team" data-t="team" onclick="event.preventDefault();go('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/></svg>Команда</a>
-    <a href="#knowledge" data-t="knowledge" onclick="event.preventDefault();go('knowledge')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 0-3 3z"/><path d="M5 4.5V20a3 3 0 0 1 3-3h11"/><path d="M9 9h6M9 13h5"/></svg>База</a>
+    <a id="navMentorLink" href="#mentorhub" data-t="mentorhub" onclick="event.preventDefault();openMentorArea()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/></svg>Наставники</a>
+    <a href="#knowledge" data-t="knowledge" onclick="event.preventDefault();go('knowledge')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 0-3 3z"/><path d="M5 4.5V20a3 3 0 0 1 3-3h11"/><path d="M9 9h6M9 13h5"/></svg>База знаний</a>
+    <a href="#path" data-t="path" onclick="event.preventDefault();go('path')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V4M16 19v-7M22 19H2"/></svg>Прогресс</a>
+    <a href="#profile" data-t="profile" onclick="event.preventDefault();go('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/></svg>Профиль</a>
   </nav>
 </div>
 
 <script>
 /* ================== МОЙ ПУТЬ · веб-MVP ================== */
-var MAIN=['today','path','mentorhub','mentordesk','team','knowledge'], prev='splash';
+var MAIN=['today','path','mentorhub','mentordesk','team','knowledge','profile'], prev='splash';
 var OVER=['heroes','mentors','mentorprofile','mentorchat','checkin','apply','thanks','mentorstart','mentorlogin','mentordesk','mentorparticipant','privacy'];
 var MENTOR_PRICE=24000;
 var MENTORS={
@@ -1164,7 +1186,7 @@ function applySnapshot(data){
     if(AUTH.role==='participant'&&migrateDiagnosticGoal())scheduleStateSync();
   }
   var current=(location.hash||'').replace('#','');
-  if(current==='today')renderToday();if(current==='path')renderPath();if(current==='mentorhub')renderMentorHub();if(current==='mentorchat')renderMentorChat();if(current==='mentordesk')renderMentorDesk();if(current==='mentorparticipant')renderMentorParticipant();
+  if(current==='today')renderToday();if(current==='path')renderPath();if(current==='profile')renderProfile();if(current==='mentorhub')renderMentorHub();if(current==='mentorchat')renderMentorChat();if(current==='mentordesk')renderMentorDesk();if(current==='mentorparticipant')renderMentorParticipant();
 }
 function refreshRemoteSnapshot(){
   return apiRequest('snapshot').then(function(data){applySnapshot(data);return data;}).catch(function(error){if(error.message==='Нужен тестовый вход'){AUTH=null;REMOTE=null;}throw error;});
@@ -1301,14 +1323,14 @@ function quoteOfDay(){var d=new Date(),n=Math.floor((d-new Date(d.getFullYear(),
 /* --- Навигация --- */
 function go(id){
   if(!AUTH&&id!=='mentorlogin'&&id!=='splash')id='splash';
-  if(id==='profile')id='path';
   var cur=document.querySelector('.screen.active');
   if(cur){var c=cur.dataset.s; if(OVER.indexOf(c)<0) prev=c;}
   document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('active',s.dataset.s===id);});
   updateNavForRole();
   var nav=document.getElementById('nav'),isMain=MAIN.indexOf(id)>=0;
   nav.classList.toggle('show',isMain);
-  document.querySelectorAll('.nav a').forEach(function(a){a.classList.toggle('on',a.dataset.t===id);});
+  var navId=id==='team'?'profile':id;
+  document.querySelectorAll('.nav a').forEach(function(a){a.classList.toggle('on',a.dataset.t===navId);});
   var sc=document.querySelector('.screen[data-s="'+id+'"]'); if(sc)sc.scrollTop=0;
   if(id==='apply'){
     var fm=document.getElementById('fMode');if(fm)fm.textContent=S.mode;
@@ -1320,6 +1342,7 @@ function go(id){
   }
   if(id==='today')renderToday();
   if(id==='path')renderPath();
+  if(id==='profile')renderProfile();
   if(id==='knowledge')renderKnowledge();
   if(id==='mentors')renderMentorCatalog();
   if(id==='mentorprofile')renderMentorProfile();
@@ -1871,6 +1894,7 @@ function refreshDay(){
   document.getElementById('totN').textContent=tot;
   document.getElementById('dayPercent').textContent=p+'%';
   document.getElementById('dayBar').style.width=p+'%';
+  var dayRing=document.getElementById('dayRing');if(dayRing)dayRing.style.setProperty('--p',(p*3.6)+'deg');
   var st=document.getElementById('dayState');
   if(done>=tot){st.textContent='День закрыт на 100% — ты красавчик 🔥';st.className='note grn';}
   else if(done){st.textContent='Уже в движении. Осталось '+(tot-done)+'.';st.className='note amber';}
@@ -1974,6 +1998,15 @@ function renderPath(){
   document.getElementById('profDir').textContent=area.name;
   renderPathAreaTabs();
   var today=dayRec(),todayDone=doneForArea(today,pathAreaId),todayPct=Math.min(100,Math.round(todayDone/(activeActions.length||1)*100)),week=areaWeekStats(pathAreaId);
+  var chart=document.getElementById('wayWeekChart'),chartSum=0,chartHtml='',chartDays=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  for(var chartOffset=6;chartOffset>=0;chartOffset--){
+    var chartDate=new Date();chartDate.setHours(0,0,0,0);chartDate.setDate(chartDate.getDate()-chartOffset);
+    var chartRec=S.days[todayKey(chartDate)]||{done:[]},chartDone=doneForArea(chartRec,pathAreaId),chartPct=Math.min(100,Math.round(chartDone/(activeActions.length||1)*100));
+    chartSum+=chartPct;
+    chartHtml+='<div class="way-chart-day"><div class="way-chart-bar" style="height:'+Math.max(5,chartPct)+'%"></div><small>'+chartDays[chartDate.getDay()]+'</small></div>';
+  }
+  if(chart)chart.innerHTML=chartHtml;
+  var weekPctEl=document.getElementById('wayWeekPct');if(weekPctEl)weekPctEl.textContent=Math.round(chartSum/7)+'%';
   var overall=Math.round((todayPct+week.pct+goalPct(activeGoal))/3),ring=document.getElementById('goalRingPath');
   if(ring)ring.style.setProperty('--p',(overall*3.6)+'deg');
   document.getElementById('goalPctPath').textContent=overall+'%';
@@ -2030,6 +2063,15 @@ function renderPath(){
   });
   document.getElementById('medalGrid').innerHTML=mg;
   document.getElementById('medalSummary').textContent=medalCount()+' открыто';
+}
+function renderProfile(){
+  var name=(AUTH&&AUTH.displayName)||S.name||'Ты',role=AUTH&&AUTH.role==='mentor'?'Наставник WAY':'Участник WAY';
+  document.getElementById('wayProfileName').textContent=name;
+  document.getElementById('wayProfileAvatar').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('wayProfileRole').textContent=role;
+  document.getElementById('wayProfileDays').textContent=activeDays();
+  document.getElementById('wayProfileHabits').textContent=S.habits.length;
+  document.getElementById('wayProfileCheckins').textContent=checkinDays();
 }
 function saveGoalProgress(){
   var activeId=pathAreaId||selectedAreaIds()[0],activeGoal=goalForArea(activeId),input=document.getElementById('goalCurrentInput'),value=Number(input.value),was=goalPct(activeGoal);
@@ -2199,7 +2241,7 @@ function routeAfterBootstrap(data){
   renderHabits(S.dir,true);
   if(!AUTH){go('splash');return;}
   if(data&&!((AUTH.role==='mentor'?data.personalState:data.state)))scheduleStateSync();
-  if(['rewards','challenges','profile'].indexOf(h)>=0){go('path');return;}
+  if(['rewards','challenges'].indexOf(h)>=0){go('path');return;}
   // Стартовая страница нужна только до регистрации: сохранённая сессия сразу возвращает в маршрут.
   if(h&&h!=='splash'&&h!=='mentorlogin'&&document.querySelector('.screen[data-s="'+h+'"]')){go(h);return;}
   openTestWorkspace(data||{});
@@ -2209,7 +2251,7 @@ startLiveSync();
 refreshRemoteSnapshot().then(routeAfterBootstrap).catch(function(){routeAfterBootstrap(null);});
 window.addEventListener('hashchange',function(){
   var h=(location.hash||'').replace('#','');
-  if(['rewards','challenges','profile'].indexOf(h)>=0){go('path');return;}
+  if(['rewards','challenges'].indexOf(h)>=0){go('path');return;}
   if(h&&document.querySelector('.screen[data-s="'+h+'"]'))go(h);
 });
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
