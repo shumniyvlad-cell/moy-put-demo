@@ -223,6 +223,16 @@ h2{font-size:21px;line-height:1.18;letter-spacing:-.35px;}
   text-align:center;
 }
 .screen[data-s="mentorlogin"] .way-auth-brand .way-wordmark{font-size:38px;}
+.screen[data-s="mentorlogin"] [hidden]{display:none!important;}
+.way-auth-tabs{gap:6px;padding:5px;}
+.way-auth-tabs .segbtn{border-radius:9px;}
+.way-auth-actions{
+  display:grid;
+  gap:12px;
+  margin-top:22px;
+  padding-bottom:max(6px,env(safe-area-inset-bottom));
+}
+.way-auth-actions .btn{margin:0;}
 .diag-list{gap:8px;margin-top:14px;}
 .diag-area{
   border-radius:14px;

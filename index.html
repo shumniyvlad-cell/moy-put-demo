@@ -891,8 +891,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div class="way-auth-brand"><span class="way-wordmark">WAY</span></div>
     <div class="kick">Пилотный доступ</div>
     <h1 style="font-size:24px;margin-top:8px;">Вход в приложение</h1>
-    <p class="mut small" style="margin-top:8px;">Сначала зарегистрируйся по своему коду. Данные Милы и Саши сохраняются в общей базе, доступ к маршруту появляется только после входа.</p>
-    <div class="seg" style="margin-top:16px;"><button class="segbtn on" id="entryRegisterTab" onclick="setTestEntryMode('register')">Первый вход</button><button class="segbtn" id="entryLoginTab" onclick="setTestEntryMode('login')">Уже есть профиль</button></div>
+    <p class="mut small" id="entryModeHint" style="margin-top:8px;">Первый вход: укажи имя, контакт и личный код. После регистрации данные сохранятся в общей базе.</p>
+    <div class="seg way-auth-tabs" style="margin-top:16px;"><button type="button" class="segbtn on" id="entryRegisterTab" aria-selected="true" onclick="setTestEntryMode('register')">Первый вход</button><button type="button" class="segbtn" id="entryLoginTab" aria-selected="false" onclick="setTestEntryMode('login')">Уже есть профиль</button></div>
     <div class="card" id="testRegisterForm" style="margin-top:14px;">
       <label class="flabel" for="testRole" style="margin-top:0;">Кто входит</label>
       <select class="inp" id="testRole"><option value="participant">Мила · участник</option><option value="mentor">Саша · наставник</option></select>
@@ -901,18 +901,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <label class="flabel" for="testContact">Telegram или телефон</label>
       <input class="inp" id="testContact" autocomplete="tel" placeholder="@username или +7…">
       <label class="flabel" for="testCode">Код доступа</label>
-      <input class="inp" id="testCode" type="password" autocomplete="one-time-code" placeholder="Введите личный код">
+      <input class="inp" id="testCode" type="password" autocomplete="one-time-code" placeholder="Введите личный код" onkeydown="if(event.key==='Enter')registerTest()">
       <p class="tiny dim" style="margin-top:9px;">Имя и контакт нужны только для этого пилота. Код выдаётся отдельно и не сохраняется в приложении.</p>
     </div>
     <div class="card" id="testLoginForm" hidden style="margin-top:14px;">
       <label class="flabel" for="testLoginRole" style="margin-top:0;">Кто входит</label>
       <select class="inp" id="testLoginRole"><option value="participant">Мила · участник</option><option value="mentor">Саша · наставник</option></select>
       <label class="flabel" for="testLoginCode">Код доступа</label>
-      <input class="inp" id="testLoginCode" type="password" autocomplete="current-password" placeholder="Введите личный код">
+      <input class="inp" id="testLoginCode" type="password" autocomplete="current-password" placeholder="Введите личный код" onkeydown="if(event.key==='Enter')loginTest()">
     </div>
-    <div class="spacer"></div>
-    <button class="btn btn-amber" id="testRegisterButton" onclick="registerTest()">Зарегистрироваться</button>
-    <button class="btn btn-amber" id="testLoginButton" hidden onclick="loginTest()">Войти</button>
+    <div class="way-auth-actions">
+      <button type="button" class="btn btn-amber" id="testRegisterButton" onclick="registerTest()">Зарегистрироваться</button>
+      <button type="button" class="btn btn-amber" id="testLoginButton" hidden onclick="loginTest()">Войти</button>
+    </div>
   </section>
 
   <!-- 17. КАБИНЕТ НАСТАВНИКА -->
@@ -1210,8 +1211,14 @@ function setTestEntryMode(mode){
   document.getElementById('testLoginForm').hidden=registering;
   document.getElementById('testRegisterButton').hidden=!registering;
   document.getElementById('testLoginButton').hidden=registering;
-  document.getElementById('entryRegisterTab').classList.toggle('on',registering);
-  document.getElementById('entryLoginTab').classList.toggle('on',!registering);
+  var registerTab=document.getElementById('entryRegisterTab'),loginTab=document.getElementById('entryLoginTab');
+  registerTab.classList.toggle('on',registering);
+  loginTab.classList.toggle('on',!registering);
+  registerTab.setAttribute('aria-selected',registering?'true':'false');
+  loginTab.setAttribute('aria-selected',registering?'false':'true');
+  document.getElementById('entryModeHint').textContent=registering
+    ?'Первый вход: укажи имя, контакт и личный код. После регистрации данные сохранятся в общей базе.'
+    :'Вход в профиль: выбери свою роль и введи тот же личный код, который использовался при регистрации.';
 }
 function openTestWorkspace(data,notice){
   data=data||{};
