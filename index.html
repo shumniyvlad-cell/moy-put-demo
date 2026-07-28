@@ -115,6 +115,7 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .dodeca-core{position:absolute;z-index:3;top:50%;left:50%;transform:translate(-50%,-48%);width:154px;padding:10px 9px 11px;border:1px solid rgba(255,255,255,.92);border-radius:16px;background:linear-gradient(145deg,rgba(255,253,249,.96),rgba(255,237,214,.94));box-shadow:0 8px 22px rgba(130,57,8,.28);text-align:center;color:var(--accent-d);}
 .dodeca-core b{display:block;font-family:Unbounded;font-size:19px;letter-spacing:.03em;line-height:1.1;}
 .dodeca-core span{display:block;margin-top:6px;font-size:9.5px;line-height:1.3;font-weight:800;color:#8B3B0E;text-shadow:none;}
+.home-lead{margin-top:8px;color:var(--mut);font-size:13px;line-height:1.45;}.home-dodeca{height:190px;margin-top:13px;border-radius:24px;overflow:hidden;background:#FFF8F0;box-shadow:var(--sh-card);}.home-dodeca img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 52%;transform:scale(1.14);}.home-spheres{display:flex;flex-direction:column;gap:9px;margin-top:14px;}.home-sphere{width:100%;display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--surface);font:inherit;color:var(--txt);text-align:left;box-shadow:var(--sh-card);cursor:pointer;}.home-sphere:active{transform:scale(.99);}.home-sphere .icc{width:40px;height:40px;border-radius:13px;}.home-sphere b{display:block;font-size:14px;line-height:1.25;}.home-sphere span{display:block;margin-top:2px;color:var(--mut);font-size:11.5px;line-height:1.3;}.home-sphere .chev{margin-left:auto;margin-top:0;color:var(--accent-d);font-size:22px;}.home-sphere.not-ready{background:#FFFDF9;}.home-sphere.not-ready .icc{background:var(--surface2);color:var(--dim);}
 .journey-method{margin-top:12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,#FFF1E4,#FFF9F0);border:1px solid #F3D7BE;color:var(--accent-d);font-size:12px;line-height:1.45;text-align:center;font-weight:800;}
 .t.add{color:var(--accent);font-weight:700;}
 .t .lblwrap{flex:1;display:flex;align-items:center;gap:13px;min-width:0;}
@@ -283,7 +284,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 /* nav */
 .nav{position:absolute;left:0;right:0;bottom:0;height:80px;display:none;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:11px 6px 24px;z-index:40;}
 .nav.show{display:flex;}
-.nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--dim);font-size:9.5px;font-weight:700;cursor:pointer;}
+.nav a{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--dim);font-size:8px;font-weight:700;cursor:pointer;white-space:nowrap;}
 .nav a.on{color:var(--accent);}
 .nav svg{width:23px;height:23px;}
 .inp{width:100%;padding:14px 15px;border:1px solid var(--line);border-radius:14px;font-family:inherit;font-size:15px;background:#fff;color:var(--txt);outline:none;transition:border .15s;}
@@ -320,7 +321,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 .steps .st{display:flex;gap:12px;align-items:flex-start;padding:11px 0;}
 .steps .stn{width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--accent-d);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none;}
 @media(max-width:460px){body{padding:0;}.phone{width:100vw;height:100dvh;border-radius:0;border:none;box-shadow:none;}.demoTag{display:none;}}
-@media(max-width:360px){.goalfields{grid-template-columns:1fr}.goalfields .wide{grid-column:auto}.sharestats{gap:11px}.nav a{font-size:9px}}
+@media(max-width:360px){.goalfields{grid-template-columns:1fr}.goalfields .wide{grid-column:auto}.sharestats{gap:11px}.nav a{font-size:7.5px}}
 </style>
 </head>
 <body>
@@ -339,11 +340,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
     <div class="dodeca-hero" aria-label="Карта пути к счастью">
       <img src="img/dodecahedron-journey-v1.png" alt="Оранжевый многогранник пути">
-      <span class="facet top">Дело жизни</span>
+      <span class="facet top">Смысл<br>и развитие</span>
       <span class="facet left">Отношения<br>и общение</span>
       <span class="facet right">Спорт<br>и тело</span>
-      <span class="facet bl">Здоровье<br>и осознанность</span>
-      <span class="facet br">Достижения<br>и рост</span>
+      <span class="facet bl">Здоровье<br>и энергия</span>
+      <span class="facet br">Доход<br>и дело</span>
       <div class="dodeca-core"><b>МЫ</b><span>Правильные привычки<br>и простые действия<br>= больше результатов</span></div>
     </div>
 
@@ -359,10 +360,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <h1 style="margin:9px 0 6px;">Ты — архитектор<br>своей жизни</h1>
     <p class="mut small">Что будем улучшать? Отметь столько направлений, сколько сейчас важно.</p>
     <div class="diag-list" id="diagnosticList">
-      <div class="diag-area" data-area="health"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('health')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 16.5 3 13.2 3 9.3 3 6.4 5.2 4 8 4c1.6 0 3.1.8 4 2.1C12.9 4.8 14.4 4 16 4c2.8 0 5 2.4 5 5.3 0 3.9-4 7.2-9 11.7z"/><path d="M7 12h2l1.2-2.5L12.6 15l1.7-3H17"/></svg></span><span class="diag-copy"><b>Энергия и здоровье</b><span>Состояние, сон, питание</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-health">Цель на этот месяц</label><input id="diag-health" maxlength="90" placeholder="Например: высыпаться 5 дней в неделю" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('health',this.value)"></div></div>
+      <div class="diag-area" data-area="health"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('health')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 16.5 3 13.2 3 9.3 3 6.4 5.2 4 8 4c1.6 0 3.1.8 4 2.1C12.9 4.8 14.4 4 16 4c2.8 0 5 2.4 5 5.3 0 3.9-4 7.2-9 11.7z"/><path d="M7 12h2l1.2-2.5L12.6 15l1.7-3H17"/></svg></span><span class="diag-copy"><b>Здоровье и энергия</b><span>Состояние, сон, питание</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-health">Цель на этот месяц</label><input id="diag-health" maxlength="90" placeholder="Например: высыпаться 5 дней в неделю" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('health',this.value)"></div></div>
       <div class="diag-area" data-area="sport"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('sport')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l3 8 4-16 3 8h5"/></svg></span><span class="diag-copy"><b>Спорт и тело</b><span>Сила, форма, движение</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-sport">Цель на этот месяц</label><input id="diag-sport" maxlength="90" placeholder="Например: 12 тренировок за месяц" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('sport',this.value)"></div></div>
-      <div class="diag-area" data-area="biz"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('biz')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span><span class="diag-copy"><b>Доход и бизнес</b><span>Дело, клиенты, рост</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-biz">Цель на этот месяц</label><input id="diag-biz" maxlength="90" placeholder="Например: найти 5 новых клиентов" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('biz',this.value)"></div></div>
-      <div class="diag-area" data-area="life"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('life')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V7h14v12M9 7V4h6v3M9 12h6M9 16h4"/></svg></span><span class="diag-copy"><b>Дело жизни</b><span>Призвание и наследие</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-life">Цель на этот месяц</label><input id="diag-life" maxlength="90" placeholder="Например: завершить первый проект" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('life',this.value)"></div></div>
+      <div class="diag-area" data-area="biz"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('biz')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span><span class="diag-copy"><b>Доход и дело</b><span>Дело, клиенты, рост</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-biz">Цель на этот месяц</label><input id="diag-biz" maxlength="90" placeholder="Например: найти 5 новых клиентов" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('biz',this.value)"></div></div>
+      <div class="diag-area" data-area="life"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('life')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V7h14v12M9 7V4h6v3M9 12h6M9 16h4"/></svg></span><span class="diag-copy"><b>Смысл и развитие</b><span>Призвание, знания, личный проект</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-life">Цель на этот месяц</label><input id="diag-life" maxlength="90" placeholder="Например: завершить первый проект" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('life',this.value)"></div></div>
       <div class="diag-area" data-area="relations"><button class="diag-head" type="button" onclick="toggleDiagnosticArea('relations')"><span class="icc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2.2c0-2.1 1.8-3.8 4-3.8h4c2.2 0 4 1.7 4 3.8V20M16 8a3 3 0 0 1 0 6M19 14c1.2.5 2 1.6 2 3v3"/></svg></span><span class="diag-copy"><b>Отношения и окружение</b><span>Близкие, друзья, команда</span></span><span class="diag-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></button><div class="diag-goal"><label for="diag-relations">Цель на этот месяц</label><input id="diag-relations" maxlength="90" placeholder="Например: один вечер в неделю с близкими" onclick="event.stopPropagation()" oninput="updateDiagnosticGoal('relations',this.value)"></div></div>
     </div>
     <div class="life-goal"><b>Главная цель жизни сейчас</b><input class="inp" id="lifeGoal" maxlength="120" placeholder="Самая важная цель, о которой ты думаешь"></div>
@@ -433,9 +434,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
   <!-- 6. СЕГОДНЯ -->
   <section class="screen" data-s="today">
     <div class="row between">
-      <div><div class="dim small" id="todayDate">Сегодня</div><h2>Сегодня</h2></div>
+      <div><div class="dim small" id="todayDate">Сегодня</div><h2>Главная</h2></div>
       <div class="chip" onclick="go('path')" style="cursor:pointer;"><svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.6 6.6 19.2l1.3-6-4.5-4 6-.6z"/></svg> <span class="num" id="ptsTop">0</span></div>
     </div>
+
+    <p class="home-lead">Твой путь начинается с одного шага. Нажми на сферу, чтобы увидеть её цель и действия.</p>
+    <div class="home-dodeca" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></div>
+    <div class="home-spheres" id="homeSpheres" aria-label="Сферы жизни"></div>
 
     <div class="motivation" style="margin-top:14px;">
       <div class="spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.6 6.6 19.2l1.3-6-4.5-4 6-.6z"/></svg></div>
@@ -880,10 +885,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
   <div class="toast" id="toast" role="status" aria-live="polite"><div class="ti" id="toastIc"></div><div class="small" id="toastMsg"></div></div>
 
   <nav class="nav" id="nav">
-    <a href="#today" data-t="today" onclick="event.preventDefault();go('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Сегодня</a>
+    <a href="#today" data-t="today" onclick="event.preventDefault();go('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Главная</a>
     <a href="#path" data-t="path" onclick="event.preventDefault();go('path')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.6 6.6 19.2l1.3-6-4.5-4 6-.6z"/></svg>Путь</a>
-    <a id="navMentorLink" href="#mentorchat" data-t="mentorchat" onclick="event.preventDefault();openMentorArea()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 1-3.5-6.6L21 4l-1 4"/></svg>Наставник</a>
-    <a href="#team" data-t="team" onclick="event.preventDefault();go('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/></svg>Окружение</a>
+    <a id="navMentorLink" href="#mentorchat" data-t="mentorchat" onclick="event.preventDefault();openMentorArea()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 1-3.5-6.6L21 4l-1 4"/></svg>Наставничество</a>
+    <a href="#team" data-t="team" onclick="event.preventDefault();go('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/></svg>Команда</a>
     <a href="#knowledge" data-t="knowledge" onclick="event.preventDefault();go('knowledge')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 0-3 3z"/><path d="M5 4.5V20a3 3 0 0 1 3-3h11"/><path d="M9 9h6M9 13h5"/></svg>База</a>
   </nav>
 </div>
@@ -940,14 +945,16 @@ var GOAL_PRESETS={
   biz:{title:'Увеличить доход за месяц',target:100000,unit:'₽',hint:'Пример: «Увеличить доход за месяц» · 100 000 · ₽'},
   sport:{title:'Сделать 500 бёрпи за месяц',target:500,unit:'бёрпи',hint:'Пример: «500 бёрпи за месяц» · 500 · бёрпи'},
   health:{title:'30 дней заботы о здоровье',target:30,unit:'дней',hint:'Пример: «30 дней заботы о здоровье» · 30 · дней'},
+  life:{title:'Продвинуть личный проект',target:1,unit:'проект',hint:'Пример: «Продвинуть личный проект» · 1 · проект'},
+  relations:{title:'4 встречи с близкими за месяц',target:4,unit:'встречи',hint:'Пример: «4 встречи с близкими за месяц» · 4 · встречи'},
   regime:{title:'21 день соблюдать режим',target:21,unit:'дней',hint:'Пример: «21 день соблюдать режим» · 21 · дней'}
 };
 var DIAGNOSTIC_AREAS={
-  health:{dir:'health',name:'Энергия и здоровье'},
+  health:{dir:'health',name:'Здоровье и энергия'},
   sport:{dir:'sport',name:'Спорт и тело'},
-  biz:{dir:'biz',name:'Доход и бизнес'},
-  life:{dir:'biz',name:'Дело жизни'},
-  relations:{dir:'health',name:'Отношения и окружение'}
+  biz:{dir:'biz',name:'Доход и дело'},
+  life:{dir:'life',name:'Смысл и развитие'},
+  relations:{dir:'relations',name:'Отношения и окружение'}
 };
 function defaultGoal(dir){var p=GOAL_PRESETS[dir]||GOAL_PRESETS.sport;return {title:p.title,target:p.target,current:0,unit:p.unit,deadline:'',pending:null};}
 function defState(){return {v:6,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),goalsByArea:{},actionsByArea:{},diagnosticAreas:[],diagnosticGoals:{},lifeGoal:'',habits:[],days:{},lastCheckinAt:'',rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',created:todayKey()};}
@@ -980,7 +987,7 @@ function cleanAwardMap(value){
   return out;
 }
 function load(){
-  var raw=null,base=defState(),rawVersion=1,dirNames={biz:'Бизнес',sport:'Спорт',health:'Здоровье',regime:'Режим дня'};
+  var raw=null,base=defState(),rawVersion=1,dirNames={biz:'Доход и дело',sport:'Спорт и тело',health:'Здоровье и энергия',life:'Смысл и развитие',relations:'Отношения и окружение',regime:'Режим дня'};
   try{raw=JSON.parse(localStorage.getItem('mp_v1'));}catch(e){}
   if(!raw||typeof raw!=='object'||Array.isArray(raw))raw={};
   rawVersion=Number(raw.v)||1;
@@ -1267,10 +1274,12 @@ function back(){go(prev||'splash');}
 
 /* --- Онбординг: направление и план --- */
 var HABITS={
- biz:{name:'Бизнес',items:['План на день с вечера','1 главное дело до 12:00','Учёт денег каждый день','30 минут на развитие','3 звонка или контакта','Без соцсетей до обеда'],on:[0,1,2]},
- sport:{name:'Спорт',items:['Тренировка 30 минут','10 000 шагов','Зарядка 10 минут','20 отжиманий','Пробежка 15 минут','Растяжка вечером'],on:[0,1,2]},
- health:{name:'Здоровье',items:['Стакан воды с утра','Сон до 23:30','Без еды после 20:00','Прогулка на воздухе','День без сахара','Овощи в каждый приём'],on:[0,1,2]},
- regime:{name:'Режим дня',items:['Подъём в одно время','План на день с вечера','Утренний ритуал 15 минут','Отбой в одно время','Час без телефона утром','Итоги дня вечером'],on:[0,1,3]}
+ biz:{name:'Доход и дело',items:['План на день с вечера','1 главное дело до 12:00','Учёт денег каждый день','30 минут на развитие','3 звонка или контакта','Без соцсетей до обеда'],on:[0,1,2]},
+ sport:{name:'Спорт и тело',items:['Тренировка 30 минут','10 000 шагов','Зарядка 10 минут','20 отжиманий','Пробежка 15 минут','Растяжка вечером'],on:[0,1,2]},
+ health:{name:'Здоровье и энергия',items:['Стакан воды с утра','Сон до 23:30','Без еды после 20:00','Прогулка на воздухе','День без сахара','Овощи в каждый приём'],on:[0,1,2]},
+ life:{name:'Смысл и развитие',items:['30 минут на личный проект','Прочитать 10 страниц','Записать одну идею','Сделать один шаг к проекту','Практика навыка 20 минут','Итоги недели'],on:[0,1,2]},
+ relations:{name:'Отношения и окружение',items:['Написать близкому человеку','Позвонить родителям','Один разговор без телефона','Поддержать участника команды','Время с семьёй','Поблагодарить человека'],on:[0,1,2]},
+  regime:{name:'Режим дня',items:['Подъём в одно время','План на день с вечера','Утренний ритуал 15 минут','Отбой в одно время','Час без телефона утром','Итоги дня вечером'],on:[0,1,3]}
 };
 var CHECK='<div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></div>';
 var OPS={
@@ -1640,7 +1649,7 @@ function goalDirectionName(goal){
   if(/б[её]рпи|тренир|отжим|шаг|пробеж|спорт|тело/i.test(source))return 'Спорт';
   if(/сон|здоров|энерг|питан|самочув|вода|восстанов/i.test(source))return 'Здоровье';
   if(/режим|под[ъь]ём|отбой|день/i.test(source))return 'Режим дня';
-  if(/доход|выруч|заработ|₽|руб|бизнес/i.test(source))return 'Доход и бизнес';
+  if(/доход|выруч|заработ|₽|руб|бизнес/i.test(source))return 'Доход и дело';
   return 'Твоя цель';
 }
 function goalCurrentCopy(goal){
@@ -1675,7 +1684,7 @@ function renderGoalCarousel(){
   var cards=goalCarouselCards(),h='';
   cards.forEach(function(card){
     var p=Math.max(0,Math.min(100,card.pct));
-    h+='<article class="goal-slide"><div class="row" style="align-items:center;"><div class="goalring" style="--p:'+(p*3.6)+'deg"><span>'+p+'%</span></div><div style="min-width:0;flex:1;"><div class="goal-title">'+esc(card.name)+'</div><div class="goal-month">Цель на месяц<br><b>'+esc(card.monthly)+'</b></div></div></div><div class="goaltrack"><i style="width:'+p+'%"></i></div><div class="goal-foot"><span>'+esc(fmt(card.goal.current)+' из '+fmt(card.goal.target)+' '+card.goal.unit)+'</span><button class="goaledit" type="button" onclick="openDiagnosticGoal(\''+card.id+'\')">Изменить</button></div></article>';
+    h+='<article class="goal-slide"><div class="row" style="align-items:center;"><div class="goalring" style="--p:'+(p*3.6)+'deg"><span>'+p+'%</span></div><div style="min-width:0;flex:1;"><div class="goal-title">'+esc(card.name)+'</div><div class="goal-month">Цель на месяц<br><b class="editable" style="cursor:text;" onclick="openDiagnosticGoal(\''+card.id+'\')">'+esc(card.monthly)+'</b></div></div></div><div class="goaltrack"><i style="width:'+p+'%"></i></div><div class="goal-foot"><span>'+esc(fmt(card.goal.current)+' из '+fmt(card.goal.target)+' '+card.goal.unit)+'</span><button class="goaledit" type="button" onclick="openDiagnosticGoal(\''+card.id+'\')">Изменить</button></div></article>';
   });
   rail.innerHTML=h;
   dots.innerHTML=cards.map(function(_,i){return '<i'+(i===0?' class="on"':'')+'></i>';}).join('');
@@ -1712,10 +1721,43 @@ function areaWeekStats(id,d){
   for(var i=0;i<elapsed;i++){var day=new Date(monday);day.setDate(monday.getDate()+i);var rec=S.days[todayKey(day)]||{done:[]},done=doneForArea(rec,id);sum+=Math.min(done/total,1);if(done>=total)full++;}
   return {full:full,elapsed:elapsed,pct:Math.round(sum/elapsed*100)};
 }
+function homeSphereIcon(id){
+  var icons={
+    biz:'<path d="M4 19V8h16v11M8 8V5h8v3M8 13h8M11 13v6"/>',
+    health:'<path d="M12 21C7 16.5 3 13.2 3 9.3 3 6.4 5.2 4 8 4c1.6 0 3.1.8 4 2.1C12.9 4.8 14.4 4 16 4c2.8 0 5 2.4 5 5.3 0 3.9-4 7.2-9 11.7z"/><path d="M7 12h2l1.2-2.5L12.6 15l1.7-3H17"/>',
+    sport:'<path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/>',
+    relations:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/>',
+    life:'<path d="M4 5.5c2.5-1.2 5.2-.8 8 1.2 2.8-2 5.5-2.4 8-1.2v13c-2.5-1.2-5.2-.8-8 1.2-2.8-2-5.5-2.4-8-1.2z"/><path d="M12 6.7v13"/>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icons[id]+'</svg>';
+}
+function renderHomeSpheres(){
+  var box=document.getElementById('homeSpheres');if(!box)return;
+  var selected=selectedAreaIds();
+  box.innerHTML=Object.keys(DIAGNOSTIC_AREAS).map(function(id){
+    var area=DIAGNOSTIC_AREAS[id],ready=selected.indexOf(id)>=0,goal=ready?goalForArea(id):null;
+    var status=ready?(goal&&goal.title?goal.title:'Настроить цель и действия'):'Добавить цель и действия';
+    return '<button type="button" class="home-sphere '+(ready?'':'not-ready')+'" onclick="openHomeSphere(\''+id+'\')"><span class="icc">'+homeSphereIcon(id)+'</span><span><b>'+esc(area.name)+'</b><span>'+esc(status)+'</span></span><span class="chev">›</span></button>';
+  }).join('');
+}
+function openHomeSphere(id){
+  var selected=selectedAreaIds();
+  if(selected.indexOf(id)>=0){pathAreaId=id;go('path');return;}
+  if(!S.diagnosticAreas)S.diagnosticAreas=[];
+  S.diagnosticAreas.push(id);
+  if(!S.diagnosticGoals)S.diagnosticGoals={};
+  if(!S.goalsByArea)S.goalsByArea={};
+  if(!S.actionsByArea)S.actionsByArea={};
+  S.goalsByArea[id]=goalFromDiagnostic(id);
+  S.actionsByArea[id]=[];
+  actionAreaId=id;pathAreaId=id;rebuildFlatHabits();save();
+  go('minimum');
+}
 function renderToday(){
   var d=new Date();
   document.getElementById('todayDate').textContent=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
   document.getElementById('quoteText').textContent=quoteOfDay();
+  renderHomeSpheres();
   renderCheckinPrompt();
   if(!S.habits.length){var firstArea=selectedAreaIds()[0];S.actionsByArea[firstArea]=(HABITS[DIAGNOSTIC_AREAS[firstArea].dir]||HABITS.sport).items.slice(0,3);rebuildFlatHabits();save();}
   renderGoalCarousel();
@@ -1723,7 +1765,7 @@ function renderToday(){
   selectedAreaIds().forEach(function(id){
     var area=DIAGNOSTIC_AREAS[id],tasks=actionsForArea(id);if(!tasks.length)return;
     h+='<div class="tiny amber" style="font-weight:800;padding-top:10px;">'+esc(area.name)+'</div>';
-    tasks.forEach(function(text){var key=taskKey(id,text),done=rec.done.indexOf(key)>=0;h+='<div class="t'+(done?' done':'')+'" data-task="'+esc(key)+'" onclick="tapHabit(this)">'+CHECK+'<span class="lbl">'+esc(text)+'</span></div>';});
+    tasks.forEach(function(text,index){var key=taskKey(id,text),done=rec.done.indexOf(key)>=0;h+='<div class="t'+(done?' done':'')+'" data-task="'+esc(key)+'" onclick="tapHabit(this)">'+CHECK+'<span class="lbl editable" onclick="event.stopPropagation();editTodayAction(\''+id+'\','+index+')">'+esc(text)+'</span></div>';});
   });
   document.getElementById('dayList').innerHTML=h;
   refreshDay();
@@ -1763,6 +1805,14 @@ function tapHabit(el){
     else toast('+20 баллов пути ⭐','pts');
   }
   save();refreshDay();
+}
+function editTodayAction(id,index){
+  var actions=actionsForArea(id),old=actions[index];if(!old)return;
+  var next=prompt('Измени действие:',old);if(!next||!next.trim()||next.trim()===old)return;
+  next=next.trim();if(actions.some(function(item,i){return i!==index&&item===next;})){toast('Такое действие уже есть','ok');return;}
+  actions[index]=next;
+  Object.keys(S.days||{}).forEach(function(day){var rec=S.days[day];if(rec&&Array.isArray(rec.done))rec.done=rec.done.map(function(key){return key===taskKey(id,old)?taskKey(id,next):key;});});
+  rebuildFlatHabits();save();renderToday();toast('Действие изменено ✓','ok');
 }
 
 /* --- Чек-ин --- */
