@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FBF7F1">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="img/icon-192.png">
@@ -16,8 +16,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#FBF7F1;--surface:#FFFFFF;--surface2:#F5EEE3;--line:#ECE2D3;
-  --txt:#1B1813;--mut:#5B544A;--dim:#928A7C;
+  --bg:#FFFFFF;--surface:#FFFFFF;--surface2:#F6F6F4;--line:#E8E6E2;
+  --txt:#171512;--mut:#5D5953;--dim:#918C84;
   --accent:#F0792F;--accent-d:#C2410C;--soft:#FDE8D8;--green:#1AA06A;--green-soft:#E3F4EC;--gold:#E0A43B;
   --r:20px;
   --grad-btn:linear-gradient(135deg,#F0792F 0%,#F3A93C 100%);
@@ -29,7 +29,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
 body{font-family:Manrope,-apple-system,'SF Pro Text',Roboto,sans-serif;
-  background:radial-gradient(120% 70% at 50% -8%, #FFE7D2 0%, #FBF7F1 52%),#FBF7F1;
+  background:radial-gradient(90% 55% at 50% -8%, #FFF1E5 0%, #F8F7F5 58%),#F8F7F5;
   color:var(--txt);display:flex;align-items:center;justify-content:center;min-height:100dvh;padding:22px;background-attachment:fixed;
   font-variant-numeric:tabular-nums;}
 .phone{position:relative;width:392px;height:min(824px,calc(100dvh - 44px));background:var(--bg);border-radius:42px;
@@ -115,7 +115,34 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .dodeca-core{position:absolute;z-index:3;top:50%;left:50%;transform:translate(-50%,-48%);width:154px;padding:10px 9px 11px;border:1px solid rgba(255,255,255,.92);border-radius:16px;background:linear-gradient(145deg,rgba(255,253,249,.96),rgba(255,237,214,.94));box-shadow:0 8px 22px rgba(130,57,8,.28);text-align:center;color:var(--accent-d);}
 .dodeca-core b{display:block;font-family:Unbounded;font-size:19px;letter-spacing:.03em;line-height:1.1;}
 .dodeca-core span{display:block;margin-top:6px;font-size:9.5px;line-height:1.3;font-weight:800;color:#8B3B0E;text-shadow:none;}
-.home-lead{margin-top:8px;color:var(--mut);font-size:13px;line-height:1.45;}.home-dodeca{height:190px;margin-top:13px;border-radius:24px;overflow:hidden;background:#FFF8F0;box-shadow:var(--sh-card);}.home-dodeca img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 52%;transform:scale(1.14);}.home-spheres{display:flex;flex-direction:column;gap:9px;margin-top:14px;}.home-sphere{width:100%;display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--surface);font:inherit;color:var(--txt);text-align:left;box-shadow:var(--sh-card);cursor:pointer;}.home-sphere:active{transform:scale(.99);}.home-sphere .icc{width:40px;height:40px;border-radius:13px;}.home-sphere b{display:block;font-size:14px;line-height:1.25;}.home-sphere span{display:block;margin-top:2px;color:var(--mut);font-size:11.5px;line-height:1.3;}.home-sphere .chev{margin-left:auto;margin-top:0;color:var(--accent-d);font-size:22px;}.home-sphere.not-ready{background:#FFFDF9;}.home-sphere.not-ready .icc{background:var(--surface2);color:var(--dim);}
+.home-head{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.home-brand{display:flex;align-items:center;gap:10px;min-width:0;}
+.home-brand .logo{width:36px;height:36px;border-radius:12px;box-shadow:0 0 0 5px rgba(240,121,47,.08),0 7px 20px rgba(240,121,47,.24);}
+.home-brand .wordmark{font-size:18px;text-shadow:0 0 18px rgba(240,121,47,.22);}
+.home-date{margin-top:2px;font-size:11.5px;color:var(--dim);}
+.home-spheres{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:18px;}
+.home-sphere{min-width:0;padding:0;border:0;background:transparent;font:inherit;color:var(--mut);text-align:center;cursor:pointer;}
+.home-sphere .icc{width:47px;height:47px;margin:0 auto;border:1px solid var(--line);border-radius:15px;background:#fff;color:#393632;box-shadow:none;transition:.18s;}
+.home-sphere .icc svg{width:23px;height:23px;}
+.home-sphere b{display:block;margin-top:6px;overflow:hidden;text-overflow:ellipsis;font-size:9.5px;line-height:1.15;white-space:nowrap;}
+.home-sphere.on{color:var(--accent-d);}
+.home-sphere.on .icc{border-color:#F5C9A6;background:#FFF9F4;color:var(--accent-d);box-shadow:0 0 0 4px rgba(240,121,47,.08),0 7px 18px rgba(240,121,47,.16);}
+.home-sphere.not-ready{opacity:.54;}
+.home-swipe-hint{margin-top:8px;text-align:center;color:var(--dim);font-size:10.5px;}
+.home-goal{width:100%;margin-top:15px;padding:15px;border:1px solid var(--line);border-radius:20px;background:#fff;color:var(--txt);font:inherit;text-align:left;cursor:pointer;box-shadow:0 8px 24px rgba(30,25,20,.055);}
+.home-goal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.home-goal-head span{display:block;color:var(--dim);font-size:10.5px;font-weight:700;}
+.home-goal-head b{display:block;margin-top:3px;font-size:16px;line-height:1.28;}
+.home-goal-pct{font-family:Unbounded;font-size:21px;font-weight:700;color:var(--accent-d);white-space:nowrap;}
+.home-goal-track{display:block;height:6px;margin-top:12px;overflow:hidden;border-radius:999px;background:#EFEDE9;}
+.home-goal-track i{display:block;width:0;height:100%;border-radius:inherit;background:var(--accent);transition:width .28s ease;}
+.home-goal-foot{display:flex;justify-content:space-between;gap:10px;margin-top:7px;color:var(--dim);font-size:10.5px;}
+.home-actions-title{margin-top:17px;}
+#dayList.home-actions{margin-top:5px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;}
+#dayList.home-actions .t{min-height:54px;padding:11px 2px;}
+#dayList.home-actions .t:first-child{border-top:1px solid var(--line);}
+#dayList.home-actions .box{width:26px;height:26px;border-radius:8px;}
+.home-quote{margin-top:13px;padding-top:12px;border-top:1px solid var(--line);color:var(--dim);font-size:11.5px;line-height:1.45;text-align:center;}
 .journey-method{margin-top:12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,#FFF1E4,#FFF9F0);border:1px solid #F3D7BE;color:var(--accent-d);font-size:12px;line-height:1.45;text-align:center;font-weight:800;}
 .t.add{color:var(--accent);font-weight:700;}
 .t .lblwrap{flex:1;display:flex;align-items:center;gap:13px;min-width:0;}
@@ -174,6 +201,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 /* quote / mentor */
 .bubble{background:var(--surface2);border-radius:16px 16px 16px 5px;padding:12px 14px;font-size:14px;line-height:1.45;max-width:82%;}
 .bubble.me{background:var(--grad-btn);color:#fff;border-radius:16px 16px 5px 16px;align-self:flex-end;font-weight:600;}
+.mentor-chat-entry{width:100%;display:flex;align-items:center;gap:12px;margin-top:16px;padding:14px;border:1px solid #F2D1B5;border-radius:20px;background:#FFF9F4;color:var(--txt);font:inherit;text-align:left;cursor:pointer;box-shadow:0 9px 24px rgba(240,121,47,.09);}
+.mentor-chat-entry .av{width:48px;height:48px;}
+.mentor-chat-entry .copy{min-width:0;flex:1;}
+.mentor-chat-entry .copy b{display:block;font-size:15px;}
+.mentor-chat-entry .copy span{display:block;margin-top:3px;overflow:hidden;color:var(--mut);font-size:12px;text-overflow:ellipsis;white-space:nowrap;}
+.mentor-chat-entry .chev{color:var(--accent-d);font-size:24px;}
+.mentor-hub-request{margin-top:12px;padding:12px 13px;border:1px solid var(--line);border-radius:16px;background:#fff;}
+.mentor-hub-request button{margin-top:8px;padding:0;border:0;background:none;color:var(--accent-d);font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;}
+.screen[data-s="mentorchat"]{padding:46px 0 0;overflow:hidden;background:#fff;}
+.chat-shell{display:flex;flex:1;min-height:0;flex-direction:column;}
+.chat-topbar{height:64px;display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--line);background:#fff;}
+.chat-back{width:34px;height:34px;display:grid;place-items:center;border:0;background:transparent;color:var(--txt);cursor:pointer;}
+.chat-back svg{width:24px;height:24px;}
+.chat-topbar .av{width:42px;height:42px;}
+.chat-person{min-width:0;flex:1;}
+.chat-person b{display:block;font-size:16px;}
+.chat-person span{display:block;margin-top:1px;color:var(--green);font-size:11.5px;}
+.chat-menu{width:34px;height:34px;border:0;background:transparent;color:var(--mut);font-size:24px;letter-spacing:2px;cursor:pointer;}
+.chat-checkin{display:none;align-items:center;gap:9px;margin:9px 12px 0;padding:10px 11px;border:1px solid var(--line);border-radius:14px;background:#fff;}
+.chat-checkin.show{display:flex;}
+.chat-checkin span{min-width:0;flex:1;font-size:12px;font-weight:700;}
+.chat-checkin button{border:0;background:none;color:var(--accent-d);font:inherit;font-size:12px;font-weight:800;cursor:pointer;}
+.chat-history{display:flex;min-height:0;flex:1;flex-direction:column;gap:8px;overflow-y:auto;padding:15px 14px 18px;scrollbar-width:none;}
+.chat-history::-webkit-scrollbar{display:none;}
+.chat-day{align-self:center;margin:2px 0 7px;color:var(--dim);font-size:11px;}
+.chat-history .bubble{max-width:80%;padding:10px 12px;border-radius:17px 17px 17px 5px;background:#FFF2E6;color:var(--txt);box-shadow:none;font-size:13.5px;font-weight:500;}
+.chat-history .bubble.me{align-self:flex-end;border-radius:17px 17px 5px 17px;background:#F2F2F1;color:var(--txt);}
+.chat-time{display:block;margin-top:5px;color:var(--dim);font-size:9.5px;font-weight:500;text-align:right;}
+.chat-composer{display:flex;align-items:center;gap:8px;padding:10px 12px calc(11px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#fff;}
+.chat-attach,.chat-send{width:38px;height:38px;display:grid;place-items:center;flex:none;border:0;border-radius:50%;cursor:pointer;}
+.chat-attach{background:transparent;color:var(--mut);}
+.chat-send{background:var(--accent);color:#fff;box-shadow:0 7px 16px rgba(240,121,47,.24);}
+.chat-attach svg,.chat-send svg{width:20px;height:20px;}
+.chat-composer .inp{min-width:0;margin:0;padding:11px 13px;border-radius:18px;background:#F7F7F5;font-size:14px;}
 .quote{background:linear-gradient(160deg,#FFF6EC,#FFFBF6);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh-card);}
 .motivation{background:linear-gradient(145deg,#FFF0E3,#FFF8F1);border:1px solid #F3D7BE;border-radius:var(--r);padding:17px 18px;display:flex;gap:13px;align-items:center;box-shadow:var(--sh-card);}
 .motivation .spark{width:42px;height:42px;border-radius:14px;background:var(--grad-btn);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:var(--sh-btn);}
@@ -433,31 +494,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <!-- 6. СЕГОДНЯ -->
   <section class="screen" data-s="today">
-    <div class="row between">
-      <div><div class="dim small" id="todayDate">Сегодня</div><h2>Главная</h2></div>
+    <div class="home-head">
+      <div class="home-brand">
+        <div class="logo"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 27c2.7-7.5 6.8-11.1 11.1-13.1"/><path d="M11.8 12.7l3.2 1.1-1.1 3.2"/><path d="M21 3.8l7 5.1-2.7 8.2h-8.6L14 8.9z"/><path d="M21 8.2l3.5 2.5-1.3 4.1h-4.4l-1.3-4.1z"/><path d="M21 3.8v4.4M28 8.9l-3.5 1.8M25.3 17.1l-2.1-2.3M16.7 17.1l2.1-2.3M14 8.9l3.5 1.8"/></svg></div>
+        <div><span class="wordmark">Мой&nbsp;путь</span><div class="home-date" id="todayDate">Сегодня</div></div>
+      </div>
       <div class="chip" onclick="go('path')" style="cursor:pointer;"><svg style="width:15px;height:15px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.6 6.6 19.2l1.3-6-4.5-4 6-.6z"/></svg> <span class="num" id="ptsTop">0</span></div>
     </div>
 
-    <p class="home-lead">Твой путь начинается с одного шага. Нажми на сферу, чтобы увидеть её цель и действия.</p>
-    <div class="home-dodeca" aria-hidden="true"><img src="img/dodecahedron-journey-v1.png" alt=""></div>
     <div class="home-spheres" id="homeSpheres" aria-label="Сферы жизни"></div>
+    <div class="home-swipe-hint">Выбери сферу — цель и действия изменятся</div>
 
-    <div class="motivation" style="margin-top:14px;">
-      <div class="spark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.6 6.6 19.2l1.3-6-4.5-4 6-.6z"/></svg></div>
-      <div><div class="tiny amber" style="font-weight:800;margin-bottom:3px;">НАПУТСТВИЕ ДНЯ</div><b id="quoteText">Твоя цель ближе, чем кажется</b></div>
-    </div>
-    <div id="checkinPrompt" hidden></div>
+    <button type="button" class="home-goal" id="homeGoalPanel" onclick="openHomeGoal()">
+      <span class="home-goal-head"><span><span id="homeGoalArea">Твоя сфера</span><b id="homeGoalTitle">Твоя цель на месяц</b></span><strong class="home-goal-pct" id="homeGoalPct">0%</strong></span>
+      <span class="home-goal-track"><i id="homeGoalBar"></i></span>
+      <span class="home-goal-foot"><span id="homeGoalProgress">0 из 1</span><span>Открыть в «Пути» ›</span></span>
+    </button>
 
-    <div class="goal-carousel" id="goalCarouselWrap">
-      <button class="goal-arrow prev" type="button" onclick="moveGoalCarousel(-1)" aria-label="Предыдущая цель"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="goal-rail" id="goalCarousel" aria-label="Цели на этот месяц"></div>
-      <button class="goal-arrow next" type="button" onclick="moveGoalCarousel(1)" aria-label="Следующая цель"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
-    </div>
-    <div class="goal-dots" id="goalDots" aria-hidden="true"></div>
-    <div class="swipehint">← свайпни, чтобы посмотреть другие цели →</div>
-
-    <div class="sectiontitle" style="margin-top:17px;"><b>Действия на сегодня</b><span class="small dim">нажми, когда сделаешь</span></div>
-    <div class="card tasks" id="dayList"></div>
+    <div class="sectiontitle home-actions-title"><b>Сегодня</b><span class="small dim" id="homeActionsArea">действия по сфере</span></div>
+    <div class="tasks home-actions" id="dayList"></div>
 
     <div class="daysummary" style="margin-top:12px;">
       <div style="min-width:84px;"><div class="tiny dim">ИТОГ ДНЯ</div><b><span class="num" id="doneN">0</span> из <span class="num" id="totN">3</span></b></div>
@@ -465,6 +520,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <b class="num amber" id="dayPercent">0%</b>
     </div>
     <p class="note" id="dayState">Начни с одного простого действия.</p>
+    <div id="checkinPrompt" hidden></div>
+    <p class="home-quote" id="quoteText">Твоя цель ближе, чем кажется</p>
 
   </section>
 
@@ -591,10 +648,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <div class="card2 knowledge-article" id="knowledgeArticle" hidden></div>
   </section>
 
-  <!-- 8. ЧАТ НАСТАВНИКА -->
-  <section class="screen" data-s="mentorchat">
+  <!-- 8. НАСТАВНИЧЕСТВО -->
+  <section class="screen" data-s="mentorhub">
     <div id="mentorLocked">
-      <h2>Наставник</h2>
+      <h2>Наставничество</h2>
       <p class="small mut" style="margin-top:7px;">Личный чат, еженедельный план и разбор чек-инов открываются после согласования и оплаты сопровождения.</p>
       <div class="card" style="margin-top:16px;">
         <div class="row"><img class="av sm" src="img/mentor-1.jpg" alt=""><div><b id="mentorLockedName">Александр</b><div class="small mut" style="margin-top:3px;">Персональное сопровождение</div></div></div>
@@ -603,17 +660,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <button class="btn btn-amber" style="margin-top:14px;" id="mentorLockedAction" onclick="go('mentors')">Выбрать наставника</button>
       <button class="btn btn-ghost" style="margin-top:10px;" id="mentorPreviewAction" onclick="go('mentorstart')">Посмотреть, что будет после оплаты</button>
     </div>
-    <div id="mentorActive" hidden>
-      <div class="row between">
-      <div class="row" style="gap:11px;"><img class="av sm" id="mentorActivePhoto" src="img/mentor-1.jpg" alt=""><div><b id="mentorActiveName">Александр</b><div class="small grn">● на связи</div></div></div>
-      <span class="chip neu" style="cursor:pointer;" onclick="go('mentors')">Все наставники →</span>
-      </div>
-      <div class="card" style="margin-top:16px;border-color:#F2C89F;">
-        <div class="row between"><div><b>Личный чат с наставником</b><div class="small mut" style="margin-top:3px;">Ответы, фокус и договорённости</div></div><span class="chip grn">на связи</span></div>
-        <div id="mentorMessages" style="margin-top:13px;display:flex;flex-direction:column;gap:10px;"></div>
-        <div class="row" style="margin-top:13px;gap:8px;"><input class="inp" id="mentorMessageInput" placeholder="Написать наставнику" maxlength="700" style="margin:0;min-width:0;"><button class="btn btn-amber btn-sm" onclick="sendChatMessage()">Отправить</button></div>
-        <button class="btn btn-ghost" style="margin-top:10px;" onclick="go('checkin')">Отправить один чек-ин за сегодня</button>
-      </div>
+    <div id="mentorHubActive" hidden>
+      <div class="row between"><div><h2>Наставничество</h2><div class="small mut" style="margin-top:3px;">Связь, чек-ин и план недели</div></div><button class="goaledit" onclick="go('mentors')">Все наставники</button></div>
+      <button type="button" class="mentor-chat-entry" onclick="go('mentorchat')">
+        <img class="av" id="mentorHubPhoto" src="img/mentor-1.jpg" alt="">
+        <span class="copy"><b id="mentorHubName">Александр · на связи</b><span id="mentorLatestMessage">Открыть историю переписки</span></span>
+        <span class="chev">›</span>
+      </button>
+      <div id="mentorHubCheckin"></div>
       <div class="card2" style="margin-top:14px;">
         <b class="small">План недели от наставника</b>
         <div class="tasks" style="margin-top:4px;">
@@ -623,6 +677,25 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         </div>
       </div>
       <div id="mentorFeedback" style="margin-top:14px;"></div>
+    </div>
+  </section>
+
+  <!-- 8.1 ЛИЧНЫЙ ЧАТ -->
+  <section class="screen full" data-s="mentorchat">
+    <div class="chat-shell">
+      <header class="chat-topbar">
+        <button type="button" class="chat-back" onclick="go('mentorhub')" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <img class="av" id="mentorChatPhoto" src="img/mentor-1.jpg" alt="">
+        <div class="chat-person"><b id="mentorChatName">Саша</b><span>● На связи</span></div>
+        <button type="button" class="chat-menu" onclick="toast('Настройки чата появятся позже','ok')" aria-label="Меню">•••</button>
+      </header>
+      <div class="chat-checkin" id="mentorChatCheckin"><span>Саша запросил чек-ин</span><button type="button" onclick="go('checkin')">Ответить</button></div>
+      <div class="chat-history" id="mentorMessages" aria-live="polite"></div>
+      <div class="chat-composer">
+        <button type="button" class="chat-attach" onclick="toast('Вложения появятся в следующей версии','ok')" aria-label="Прикрепить файл"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20.5 11.5-8.7 8.7a6 6 0 0 1-8.5-8.5l9.4-9.4a4 4 0 1 1 5.7 5.7L9 17.4a2 2 0 1 1-2.8-2.8l8.7-8.7"/></svg></button>
+        <input class="inp" id="mentorMessageInput" placeholder="Сообщение…" maxlength="700" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}">
+        <button type="button" class="chat-send" onclick="sendChatMessage()" aria-label="Отправить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4zM22 2 11 13"/></svg></button>
+      </div>
     </div>
   </section>
 
@@ -887,7 +960,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
   <nav class="nav" id="nav">
     <a href="#today" data-t="today" onclick="event.preventDefault();go('today')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Главная</a>
     <a href="#path" data-t="path" onclick="event.preventDefault();go('path')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6 .6-4.5 4 1.3 6L12 16.6 6.6 19.2l1.3-6-4.5-4 6-.6z"/></svg>Путь</a>
-    <a id="navMentorLink" href="#mentorchat" data-t="mentorchat" onclick="event.preventDefault();openMentorArea()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 1-3.5-6.6L21 4l-1 4"/></svg>Наставничество</a>
+    <a id="navMentorLink" href="#mentorhub" data-t="mentorhub" onclick="event.preventDefault();openMentorArea()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 1-3.5-6.6L21 4l-1 4"/></svg>Наставничество</a>
     <a href="#team" data-t="team" onclick="event.preventDefault();go('team')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 .5-3 2-3.5"/></svg>Команда</a>
     <a href="#knowledge" data-t="knowledge" onclick="event.preventDefault();go('knowledge')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 0-3 3z"/><path d="M5 4.5V20a3 3 0 0 1 3-3h11"/><path d="M9 9h6M9 13h5"/></svg>База</a>
   </nav>
@@ -895,8 +968,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
 <script>
 /* ================== МОЙ ПУТЬ · веб-MVP ================== */
-var MAIN=['today','path','mentorchat','mentordesk','team','knowledge'], prev='splash';
-var OVER=['heroes','mentors','mentorprofile','checkin','apply','thanks','mentorstart','mentorlogin','mentordesk','mentorparticipant','privacy'];
+var MAIN=['today','path','mentorhub','mentordesk','team','knowledge'], prev='splash';
+var OVER=['heroes','mentors','mentorprofile','mentorchat','checkin','apply','thanks','mentorstart','mentorlogin','mentordesk','mentorparticipant','privacy'];
 var MENTOR_PRICE=24000;
 var MENTORS={
   alex:{id:'alex',name:'Александр',photo:'img/mentor-1.jpg',focus:'Спорт · дисциплина',rating:'4.9',reviews:86,experience:'12 лет практики',clients:'148 сопровождений',format:'Личный чат · недельный фокус · 1 созвон в неделю',about:'Помогает выстроить устойчивую дисциплину без жёстких запретов: цель, минимум на каждый день и разбор срывов.',case:'Антон: с 0 до 12 тренировок в месяц за 8 недель',review:'«Не давит, а возвращает в план. Наконец-то перестал бросать на второй неделе.»'},
@@ -1091,7 +1164,7 @@ function applySnapshot(data){
     if(AUTH.role==='participant'&&migrateDiagnosticGoal())scheduleStateSync();
   }
   var current=(location.hash||'').replace('#','');
-  if(current==='today')renderToday();if(current==='path')renderPath();if(current==='mentorchat')renderMentorChat();if(current==='mentordesk')renderMentorDesk();if(current==='mentorparticipant')renderMentorParticipant();
+  if(current==='today')renderToday();if(current==='path')renderPath();if(current==='mentorhub')renderMentorHub();if(current==='mentorchat')renderMentorChat();if(current==='mentordesk')renderMentorDesk();if(current==='mentorparticipant')renderMentorParticipant();
 }
 function refreshRemoteSnapshot(){
   return apiRequest('snapshot').then(function(data){applySnapshot(data);return data;}).catch(function(error){if(error.message==='Нужен тестовый вход'){AUTH=null;REMOTE=null;}throw error;});
@@ -1099,7 +1172,7 @@ function refreshRemoteSnapshot(){
 function refreshLiveData(){
   if(!AUTH||document.hidden)return;
   var current=(location.hash||'').replace('#','');
-  if(['today','mentorchat','mentordesk','mentorparticipant'].indexOf(current)<0)return;
+  if(['today','mentorhub','mentorchat','mentordesk','mentorparticipant'].indexOf(current)<0)return;
   var active=document.activeElement;
   if(active&&['mentorComment','mentorMessageInput','mentorReview'].indexOf(active.id)>=0)return;
   refreshRemoteSnapshot().catch(function(){});
@@ -1250,6 +1323,7 @@ function go(id){
   if(id==='knowledge')renderKnowledge();
   if(id==='mentors')renderMentorCatalog();
   if(id==='mentorprofile')renderMentorProfile();
+  if(id==='mentorhub'){renderMentorHub();if(AUTH)refreshRemoteSnapshot().catch(function(){});}
   if(id==='mentorchat'){renderMentorChat();if(AUTH)refreshRemoteSnapshot().catch(function(){});}
   if(id==='mentorstart')renderMentorStart();
   if(id==='mentordesk'){renderMentorDesk();if(AUTH)refreshRemoteSnapshot().catch(function(){});}
@@ -1267,8 +1341,8 @@ function go(id){
 function updateNavForRole(){
   var link=document.getElementById('navMentorLink');if(!link)return;
   var mentor=!!(AUTH&&AUTH.role==='mentor');
-  link.href=mentor?'#mentordesk':'#mentorchat';
-  link.dataset.t=mentor?'mentordesk':'mentorchat';
+  link.href=mentor?'#mentordesk':'#mentorhub';
+  link.dataset.t=mentor?'mentordesk':'mentorhub';
 }
 function back(){go(prev||'splash');}
 
@@ -1287,7 +1361,7 @@ var OPS={
  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>',
  del:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'
 };
-var draft=[],actionAreaId='',pathAreaId='';
+var draft=[],actionAreaId='',pathAreaId='',homeAreaId='';
 function esc(s){
   var map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
   return String(s).replace(/[&<>"']/g,function(ch){return map[ch];});
@@ -1544,7 +1618,7 @@ function openMentorDesk(){
   if(AUTH&&AUTH.role==='mentor'){go('mentordesk');return;}
   var role=document.getElementById('testRole');if(role)role.value='mentor';go('mentorlogin');
 }
-function openMentorArea(){if(AUTH&&AUTH.role==='mentor'){go('mentordesk');return;}go('mentorchat');}
+function openMentorArea(){if(AUTH&&AUTH.role==='mentor'){go('mentordesk');return;}go('mentorhub');}
 var DEMO_PARTICIPANTS={
   anna:{name:'Анна',goal:'Увеличить доход за месяц',progress:'50 000 из 100 000 ₽',status:'новый',checkin:'Нужен разбор предложения',done:'Сделано: 3 из 4 действий · энергия 7/10',proof:'Скриншот оплаты от клиента · 18 июля',comment:'Анна, на этой неделе не расширяем список задач. Сделай 3 предложения по текущим лидам и пришли результат в пятницу.'},
   igor:{name:'Игорь',goal:'Сделать 500 бёрпи за месяц',progress:'260 из 500 бёрпи',status:'новый',checkin:'Прислал чек-ин',done:'Сделано: 4 из 4 действий · сон 8 ч',comment:'Игорь, хороший темп. Оставь объём прежним и добавь день восстановления в субботу.'},
@@ -1734,15 +1808,17 @@ function homeSphereIcon(id){
 function renderHomeSpheres(){
   var box=document.getElementById('homeSpheres');if(!box)return;
   var selected=selectedAreaIds();
+  if(selected.indexOf(homeAreaId)<0)homeAreaId=selected[0];
+  var shortNames={health:'Здоровье',sport:'Спорт',biz:'Доход',life:'Развитие',relations:'Отношения'};
   box.innerHTML=Object.keys(DIAGNOSTIC_AREAS).map(function(id){
-    var area=DIAGNOSTIC_AREAS[id],ready=selected.indexOf(id)>=0,goal=ready?goalForArea(id):null;
-    var status=ready?(goal&&goal.title?goal.title:'Настроить цель и действия'):'Добавить цель и действия';
-    return '<button type="button" class="home-sphere '+(ready?'':'not-ready')+'" onclick="openHomeSphere(\''+id+'\')"><span class="icc">'+homeSphereIcon(id)+'</span><span><b>'+esc(area.name)+'</b><span>'+esc(status)+'</span></span><span class="chev">›</span></button>';
+    var ready=selected.indexOf(id)>=0;
+    return '<button type="button" class="home-sphere '+(id===homeAreaId?'on ':'')+(ready?'':'not-ready')+'" onclick="selectHomeSphere(\''+id+'\')" aria-pressed="'+(id===homeAreaId)+'"><span class="icc">'+homeSphereIcon(id)+'</span><b>'+esc(shortNames[id])+'</b></button>';
   }).join('');
+  renderHomeGoal();
 }
-function openHomeSphere(id){
+function selectHomeSphere(id){
   var selected=selectedAreaIds();
-  if(selected.indexOf(id)>=0){pathAreaId=id;go('path');return;}
+  if(selected.indexOf(id)>=0){homeAreaId=id;renderToday();return;}
   if(!S.diagnosticAreas)S.diagnosticAreas=[];
   S.diagnosticAreas.push(id);
   if(!S.diagnosticGoals)S.diagnosticGoals={};
@@ -1753,34 +1829,44 @@ function openHomeSphere(id){
   actionAreaId=id;pathAreaId=id;rebuildFlatHabits();save();
   go('minimum');
 }
+function renderHomeGoal(){
+  var id=homeAreaId||selectedAreaIds()[0],area=DIAGNOSTIC_AREAS[id],goal=goalForArea(id),pct=goalPct(goal);
+  document.getElementById('homeGoalArea').textContent=area.name;
+  document.getElementById('homeGoalTitle').textContent=goal.title;
+  document.getElementById('homeGoalPct').textContent=pct+'%';
+  document.getElementById('homeGoalBar').style.width=pct+'%';
+  document.getElementById('homeGoalProgress').textContent=goalProgressText(goal);
+  document.getElementById('homeActionsArea').textContent=area.name.toLowerCase();
+}
+function openHomeGoal(){pathAreaId=homeAreaId||selectedAreaIds()[0];go('path');}
 function renderToday(){
   var d=new Date();
   document.getElementById('todayDate').textContent=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
   document.getElementById('quoteText').textContent=quoteOfDay();
+  if(!S.habits.length){var firstArea=selectedAreaIds()[0];S.actionsByArea[firstArea]=(HABITS[DIAGNOSTIC_AREAS[firstArea].dir]||HABITS.sport).items.slice(0,3);rebuildFlatHabits();save();}
   renderHomeSpheres();
   renderCheckinPrompt();
-  if(!S.habits.length){var firstArea=selectedAreaIds()[0];S.actionsByArea[firstArea]=(HABITS[DIAGNOSTIC_AREAS[firstArea].dir]||HABITS.sport).items.slice(0,3);rebuildFlatHabits();save();}
-  renderGoalCarousel();
   var rec=dayRec(),h='';
-  selectedAreaIds().forEach(function(id){
-    var area=DIAGNOSTIC_AREAS[id],tasks=actionsForArea(id);if(!tasks.length)return;
-    h+='<div class="tiny amber" style="font-weight:800;padding-top:10px;">'+esc(area.name)+'</div>';
-    tasks.forEach(function(text,index){var key=taskKey(id,text),done=rec.done.indexOf(key)>=0;h+='<div class="t'+(done?' done':'')+'" data-task="'+esc(key)+'" onclick="tapHabit(this)">'+CHECK+'<span class="lbl editable" onclick="event.stopPropagation();editTodayAction(\''+id+'\','+index+')">'+esc(text)+'</span></div>';});
-  });
+  var id=homeAreaId||selectedAreaIds()[0],tasks=actionsForArea(id);
+  if(!tasks.length)h='<button type="button" class="btn btn-ghost btn-sm" style="margin-top:9px;" onclick="actionAreaId=\''+id+'\';go(\'minimum\')">Добавить действия для этой сферы</button>';
+  tasks.forEach(function(text,index){var key=taskKey(id,text),done=rec.done.indexOf(key)>=0;h+='<div class="t'+(done?' done':'')+'" data-task="'+esc(key)+'" onclick="tapHabit(this)">'+CHECK+'<span class="lbl editable" onclick="event.stopPropagation();editTodayAction(\''+id+'\','+index+')">'+esc(text)+'</span></div>';});
   document.getElementById('dayList').innerHTML=h;
   refreshDay();
 }
-function renderCheckinPrompt(){
-  var box=document.getElementById('checkinPrompt');if(!box)return;
+function pendingCheckinRequest(){
   var messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[];
   var answeredAt=Date.parse(S.lastCheckinAt||'')||0;
-  var request=messages.slice().reverse().find(function(message){return message.authorId==='sasha'&&/чек-?ин/i.test(message.body||'')&&((Date.parse(message.createdAt||'')||0)>answeredAt);});
+  return messages.slice().reverse().find(function(message){return message.authorId==='sasha'&&/чек-?ин/i.test(message.body||'')&&((Date.parse(message.createdAt||'')||0)>answeredAt);});
+}
+function renderCheckinPrompt(){
+  var box=document.getElementById('checkinPrompt');if(!box)return;
+  var request=pendingCheckinRequest();
   box.hidden=!request;
   if(!request){box.innerHTML='';return;}
   box.innerHTML='<div class="card2" style="margin-top:12px;border-color:#F2C89F;"><div class="tiny amber" style="font-weight:800;">НАСТАВНИК ЖДЁТ ЧЕК-ИН</div><p class="small mut" style="margin-top:5px;">'+esc(request.body)+'</p><button class="btn btn-amber btn-sm" style="margin-top:10px;" onclick="go(\'checkin\')">Заполнить чек-ин</button></div>';
 }
 function refreshDay(){
-  var rec=dayRec(),tot=S.habits.length||1,done=rec.done.length,p=Math.min(100,Math.round(done/tot*100));
+  var rec=dayRec(),id=homeAreaId||selectedAreaIds()[0],actions=actionsForArea(id),tot=actions.length||1,done=doneForArea(rec,id),p=Math.min(100,Math.round(done/tot*100));
   document.getElementById('doneN').textContent=done;
   document.getElementById('totN').textContent=tot;
   document.getElementById('dayPercent').textContent=p+'%';
@@ -1962,26 +2048,52 @@ function saveGoalProgress(){
   if(was<100&&goalPct(activeGoal)>=100){confetti();toast('Цель достигнута — ты это сделал! 🏆','pts');}
   else toast('Результат обновлён: '+goalProgressText(activeGoal)+' ✓','ok');
 }
-function renderMentorChat(){
+function renderMentorHub(){
   var active=(AUTH&&AUTH.role==='participant')||S.mentorStatus==='active';
   var m=mentor();
   var mentorName=(AUTH&&AUTH.role==='participant'&&REMOTE&&REMOTE.mentorProfile&&REMOTE.mentorProfile.displayName)||m.name;
   document.getElementById('mentorLockedName').textContent=mentorName;
-  document.getElementById('mentorActiveName').textContent=mentorName;
-  document.getElementById('mentorActivePhoto').src=m.photo;
   document.getElementById('mentorLocked').hidden=active;
-  document.getElementById('mentorActive').hidden=!active;
+  document.getElementById('mentorHubActive').hidden=!active;
   if(!active){
     var action=document.getElementById('mentorLockedAction'),preview=document.getElementById('mentorPreviewAction');
     action.textContent=S.mentorStatus==='applied'?'Заявка отправлена — что дальше':'Выбрать наставника';
     action.onclick=S.mentorStatus==='applied'?function(){go('thanks');}:function(){go('mentors');};
     preview.hidden=!S.applied;
   }else{
-    var box=document.getElementById('mentorMessages'),messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[];
-    if(!messages.length)messages=[{authorId:'sasha',body:'Я на связи. В конце дня пришли короткий чек-ин: что сделала и где нужен фокус.'}];
-    box.innerHTML=messages.map(function(message){return '<div class="bubble '+(message.authorId==='mila'?'me':'')+'">'+esc(message.body)+'</div>';}).join('');
+    var messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[],last=messages[messages.length-1];
+    document.getElementById('mentorHubName').textContent=mentorName+' · на связи';
+    document.getElementById('mentorHubPhoto').src=m.photo;
+    document.getElementById('mentorLatestMessage').textContent=last?last.body:'Открыть историю переписки';
+    var request=pendingCheckinRequest(),requestBox=document.getElementById('mentorHubCheckin');
+    requestBox.innerHTML=request?'<div class="mentor-hub-request"><b class="small">Наставник запросил чек-ин</b><p class="tiny mut" style="margin-top:3px;">'+esc(request.body)+'</p><button type="button" onclick="go(\'checkin\')">Ответить сейчас →</button></div>':'';
     renderMentorFeedback(mentorName);
   }
+}
+function formatChatTime(value){
+  var date=value?new Date(value):null;
+  if(!date||isNaN(date.getTime()))return '';
+  return String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
+}
+function renderMentorChat(){
+  var active=(AUTH&&AUTH.role==='participant')||S.mentorStatus==='active';
+  if(!active){go('mentorhub');return;}
+  var m=mentor(),mentorName=(AUTH&&REMOTE&&REMOTE.mentorProfile&&REMOTE.mentorProfile.displayName)||m.name;
+  document.getElementById('mentorChatName').textContent=mentorName;
+  document.getElementById('mentorChatPhoto').src=m.photo;
+  var request=pendingCheckinRequest(),checkin=document.getElementById('mentorChatCheckin');
+  checkin.classList.toggle('show',!!request);
+  if(request)checkin.querySelector('span').textContent=mentorName+' запросил чек-ин';
+  var box=document.getElementById('mentorMessages'),messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[];
+  if(!messages.length){
+    box.innerHTML='<div class="chat-day">Сообщений пока нет. Напиши наставнику первым.</div>';
+  }else{
+    box.innerHTML='<div class="chat-day">История переписки</div>'+messages.map(function(message){
+      var mine=message.authorId==='mila',time=formatChatTime(message.createdAt);
+      return '<div class="bubble '+(mine?'me':'')+'">'+esc(message.body)+(time?'<span class="chat-time">'+time+(mine?' ✓✓':'')+'</span>':'')+'</div>';
+    }).join('');
+  }
+  requestAnimationFrame(function(){box.scrollTop=box.scrollHeight;});
 }
 function renderMentorFeedback(mentorName){
   var box=document.getElementById('mentorFeedback');if(!box)return;

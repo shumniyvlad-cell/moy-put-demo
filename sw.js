@@ -1,4 +1,4 @@
-const CACHE='mp-v32';
+const CACHE='mp-v33';
 const APP_SHELL=[
   './','./index.html','./manifest.json',
   './img/brand-mark.svg','./img/icon-192.png','./img/icon-512.png','./img/splash-hero.jpg','./img/dodecahedron-journey-v1.png',
