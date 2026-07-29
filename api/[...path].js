@@ -367,18 +367,18 @@ export default async function handler(req, res) {
   try {
     await ensureSchema();
     if (req.method === 'GET' && route === '/health') return send(res, 200, { ok: true, storage: 'neon-postgres' });
-    if (req.method === 'POST' && route === '/register') return register(req, res);
-    if (req.method === 'POST' && route === '/login') return login(req, res);
-    if (req.method === 'POST' && route === '/logout') return logout(req, res);
+    if (req.method === 'POST' && route === '/register') return await register(req, res);
+    if (req.method === 'POST' && route === '/login') return await login(req, res);
+    if (req.method === 'POST' && route === '/logout') return await logout(req, res);
     const profile = await currentProfile(req);
     if (!profile) return send(res, 401, { error: 'Нужен тестовый вход' });
     if (req.method === 'GET' && route === '/snapshot') return send(res, 200, { profile, ...(await snapshot(profile)) });
-    if (req.method === 'PUT' && route === '/state') return saveState(req, res, profile);
-    if (req.method === 'PUT' && route === '/personal-state') return savePersonalState(req, res, profile);
-    if (req.method === 'POST' && route === '/messages') return addMessage(req, res, profile);
-    if (req.method === 'POST' && route === '/result-submissions') return submitResult(req, res, profile);
-    if (req.method === 'POST' && route === '/reviews') return reviewResult(req, res, profile);
-    if (req.method === 'POST' && route === '/mentor-feedback') return leaveMentorFeedback(req, res, profile);
+    if (req.method === 'PUT' && route === '/state') return await saveState(req, res, profile);
+    if (req.method === 'PUT' && route === '/personal-state') return await savePersonalState(req, res, profile);
+    if (req.method === 'POST' && route === '/messages') return await addMessage(req, res, profile);
+    if (req.method === 'POST' && route === '/result-submissions') return await submitResult(req, res, profile);
+    if (req.method === 'POST' && route === '/reviews') return await reviewResult(req, res, profile);
+    if (req.method === 'POST' && route === '/mentor-feedback') return await leaveMentorFeedback(req, res, profile);
     return send(res, 404, { error: 'Маршрут не найден' });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Ошибка сервера';
