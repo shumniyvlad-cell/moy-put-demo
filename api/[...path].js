@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
 
-const MAX_BODY = 200_000;
+const MAX_BODY = 750_000;
 const COOKIE_NAME = 'mp_session';
 let schemaReady = null;
 
@@ -61,6 +61,22 @@ async function ensureSchema() {
         comment TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`;
+      await sql`CREATE TABLE IF NOT EXISTS result_submissions (
+        id TEXT PRIMARY KEY,
+        participant_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        area_id TEXT NOT NULL,
+        value DOUBLE PRECISION NOT NULL,
+        unit TEXT NOT NULL DEFAULT '',
+        evidence_text TEXT NOT NULL DEFAULT '',
+        proof_name TEXT NOT NULL DEFAULT '',
+        proof_type TEXT NOT NULL DEFAULT '',
+        proof_data TEXT NOT NULL DEFAULT '',
+        status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'needs_clarification')),
+        reviewer_id TEXT REFERENCES profiles(id) ON DELETE SET NULL,
+        review_comment TEXT NOT NULL DEFAULT '',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        reviewed_at TIMESTAMPTZ
+      )`;
       await sql`CREATE TABLE IF NOT EXISTS mentor_feedback (
         participant_id TEXT PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
         mentor_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -92,6 +108,12 @@ function cookie(token, maxAge = 60 * 60 * 24 * 7) {
 }
 
 async function readJson(req) {
+  if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) return req.body;
+  if (typeof req.body === 'string') {
+    if (Buffer.byteLength(req.body) > MAX_BODY) throw new Error('Слишком большой запрос');
+    try { return JSON.parse(req.body); }
+    catch { throw new Error('Некорректные данные'); }
+  }
   const chunks = [];
   let size = 0;
   for await (const chunk of req) {
@@ -128,7 +150,7 @@ async function currentProfile(req) {
 
 async function snapshot(profile) {
   const sql = getDb();
-  const [stateRows, personalRows, messages, reviews, feedbackRows, mentorRows] = await Promise.all([
+  const [stateRows, personalRows, messages, reviews, submissions, feedbackRows, mentorRows] = await Promise.all([
     sql`SELECT state_json AS "stateJson", updated_at AS "updatedAt" FROM participant_state WHERE participant_id = 'mila'`,
     profile?.role === 'mentor'
       ? sql`SELECT state_json AS "stateJson", updated_at AS "updatedAt" FROM personal_states WHERE profile_id = ${profile.id}`
@@ -136,6 +158,12 @@ async function snapshot(profile) {
     sql`SELECT m.author_id AS "authorId", p.display_name AS "authorName", m.body, m.created_at AS "createdAt"
       FROM mentor_messages m JOIN profiles p ON p.id = m.author_id ORDER BY m.created_at ASC LIMIT 80`,
     sql`SELECT status, comment, created_at AS "createdAt" FROM result_reviews ORDER BY created_at DESC LIMIT 20`,
+    sql`SELECT id, area_id AS "areaId", value, unit, evidence_text AS evidence,
+      proof_name AS "proofName", proof_type AS "proofType", proof_data AS "proofData",
+      status, review_comment AS "reviewComment", created_at AS "createdAt", reviewed_at AS "reviewedAt"
+      FROM result_submissions
+      WHERE participant_id = 'mila' AND status IN ('pending', 'needs_clarification')
+      ORDER BY created_at DESC LIMIT 8`,
     sql`SELECT rating, review, created_at AS "createdAt" FROM mentor_feedback WHERE participant_id = 'mila' AND mentor_id = 'sasha'`,
     sql`SELECT display_name AS "displayName" FROM profiles WHERE id = 'sasha'`
   ]);
@@ -156,6 +184,7 @@ async function snapshot(profile) {
     personalUpdatedAt: personalRows[0]?.updatedAt || null,
     messages,
     reviews,
+    resultSubmissions: submissions,
     mentorFeedback: feedbackRows[0] || null,
     mentorProfile: mentorRows[0] || { displayName: 'Саша' }
   };
@@ -233,6 +262,34 @@ async function addMessage(req, res, profile) {
   return send(res, 200, { ok: true });
 }
 
+async function submitResult(req, res, profile) {
+  if (profile.role !== 'participant') return send(res, 403, { error: 'Результат отправляет участник' });
+  const input = await readJson(req);
+  const allowedAreas = new Set(['health', 'sport', 'biz', 'life', 'relations']);
+  const areaId = allowedAreas.has(input.areaId) ? input.areaId : '';
+  const value = Number(input.value);
+  const unit = cleanText(input.unit, 24);
+  const evidence = cleanText(input.evidence, 500);
+  const proofName = cleanText(input.proofName, 120);
+  const proofType = cleanText(input.proofType, 40);
+  const proofData = typeof input.proofData === 'string' ? input.proofData : '';
+  const validImage = !proofData || /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(proofData);
+  if (!areaId) return send(res, 400, { error: 'Не выбрано направление результата' });
+  if (!Number.isFinite(value) || value < 0 || value > 1_000_000_000_000) return send(res, 400, { error: 'Некорректное значение результата' });
+  if (!evidence && !proofData) return send(res, 400, { error: 'Добавь скриншот, ссылку или комментарий' });
+  if (!validImage || proofData.length > 650_000) return send(res, 413, { error: 'Скриншот слишком большой или имеет неподдерживаемый формат' });
+  if (proofData && (!proofName || proofType !== 'image/jpeg')) return send(res, 400, { error: 'Некорректные данные скриншота' });
+  const id = crypto.randomUUID();
+  const sql = getDb();
+  await sql`UPDATE result_submissions
+    SET status = 'needs_clarification', review_comment = 'Заменено новой версией результата', reviewed_at = NOW()
+    WHERE participant_id = ${profile.id} AND area_id = ${areaId} AND status = 'pending'`;
+  await sql`INSERT INTO result_submissions
+    (id, participant_id, area_id, value, unit, evidence_text, proof_name, proof_type, proof_data)
+    VALUES (${id}, ${profile.id}, ${areaId}, ${value}, ${unit}, ${evidence}, ${proofName}, ${proofType}, ${proofData})`;
+  return send(res, 201, { id });
+}
+
 async function reviewResult(req, res, profile) {
   if (profile.role !== 'mentor') return send(res, 403, { error: 'Только наставник может проверять результат' });
   const input = await readJson(req);
@@ -240,19 +297,38 @@ async function reviewResult(req, res, profile) {
   const comment = cleanText(input.comment);
   if (!status || !comment) return send(res, 400, { error: 'Укажи решение и комментарий' });
   const sql = getDb();
+  const submissionId = cleanText(input.submissionId, 80);
+  const submissions = submissionId
+    ? await sql`SELECT id, area_id AS "areaId", value FROM result_submissions
+        WHERE id = ${submissionId} AND participant_id = 'mila' AND status IN ('pending', 'needs_clarification')`
+    : await sql`SELECT id, area_id AS "areaId", value FROM result_submissions
+        WHERE participant_id = 'mila' AND status IN ('pending', 'needs_clarification')
+        ORDER BY created_at DESC LIMIT 1`;
+  const submission = submissions[0] || null;
+  if (submissionId && !submission) return send(res, 404, { error: 'Заявка на проверку не найдена или уже обработана' });
+  if (submission) {
+    await sql`UPDATE result_submissions SET status = ${status}, reviewer_id = ${profile.id},
+      review_comment = ${comment}, reviewed_at = NOW() WHERE id = ${submission.id}`;
+  }
   await sql`INSERT INTO result_reviews (id, reviewer_id, status, comment) VALUES (${crypto.randomUUID()}, ${profile.id}, ${status}, ${comment})`;
   const stateRows = await sql`SELECT state_json AS "stateJson" FROM participant_state WHERE participant_id = 'mila'`;
   if (stateRows[0]) {
     try {
       const state = JSON.parse(stateRows[0].stateJson);
-      const pending = state?.goal?.pending;
-      if (pending && state.goal) {
+      const areaId = submission?.areaId || cleanText(input.areaId, 40);
+      const primaryId = Array.isArray(state?.diagnosticAreas) ? state.diagnosticAreas[0] : '';
+      const targetGoal = areaId && state?.goalsByArea?.[areaId] ? state.goalsByArea[areaId] : state?.goal;
+      const pending = targetGoal?.pending;
+      if (pending && targetGoal) {
         if (status === 'approved') {
-          state.goal.current = Number(pending.value) || state.goal.current || 0;
-          delete state.goal.pending;
+          const approvedValue = Number(submission?.value ?? pending.value);
+          targetGoal.current = Number.isFinite(approvedValue) ? approvedValue : (targetGoal.current || 0);
+          delete targetGoal.pending;
         } else {
-          state.goal.pending = { ...pending, reviewStatus: status, reviewComment: comment };
+          targetGoal.pending = { ...pending, reviewStatus: status, reviewComment: comment };
         }
+        if (areaId && state.goalsByArea) state.goalsByArea[areaId] = targetGoal;
+        if (!areaId || areaId === primaryId) state.goal = targetGoal;
         await sql`UPDATE participant_state SET state_json = ${JSON.stringify(state)}, updated_at = NOW() WHERE participant_id = 'mila'`;
       }
     } catch { /* malformed client state is left untouched */ }
@@ -300,6 +376,7 @@ export default async function handler(req, res) {
     if (req.method === 'PUT' && route === '/state') return saveState(req, res, profile);
     if (req.method === 'PUT' && route === '/personal-state') return savePersonalState(req, res, profile);
     if (req.method === 'POST' && route === '/messages') return addMessage(req, res, profile);
+    if (req.method === 'POST' && route === '/result-submissions') return submitResult(req, res, profile);
     if (req.method === 'POST' && route === '/reviews') return reviewResult(req, res, profile);
     if (req.method === 'POST' && route === '/mentor-feedback') return leaveMentorFeedback(req, res, profile);
     return send(res, 404, { error: 'Маршрут не найден' });

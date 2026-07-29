@@ -1,4 +1,4 @@
-const CACHE='mp-way-b-v1';
+const CACHE='mp-way-b-v2';
 const APP_SHELL=[
   './','./index.html','./way-b.css','./manifest.json',
   './img/brand-mark.svg','./img/icon-192.png','./img/icon-512.png','./img/splash-hero.jpg','./img/dodecahedron-journey-v1.png','./img/way-a-splash-runner.png',
