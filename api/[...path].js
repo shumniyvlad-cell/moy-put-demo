@@ -513,6 +513,15 @@ async function logout(req, res) {
   return send(res, 200, { ok: true }, { 'Set-Cookie': cookie('', 0) });
 }
 
+async function deleteOwnProfile(req, res, profile) {
+  if (profile.role !== 'participant') return send(res, 403, { error: 'Кабинет наставника удаляется только администратором' });
+  const input = await readJson(req);
+  if (input.confirm !== 'delete_profile') return send(res, 400, { error: 'Удаление профиля не подтверждено' });
+  const sql = getDb();
+  await sql`DELETE FROM profiles WHERE id = ${profile.id} AND role = 'participant'`;
+  return send(res, 200, { ok: true }, { 'Set-Cookie': cookie('', 0) });
+}
+
 function telegramAppUrl() {
   const value = cleanText(process.env.WAY_APP_URL, 300);
   if (!/^https:\/\/[a-z0-9.-]+(?::\d+)?(?:\/[^\s]*)?$/i.test(value)) return '';
@@ -579,6 +588,7 @@ export default async function handler(req, res) {
     }
     if (req.method === 'PUT' && route === '/state') return await saveState(req, res, profile);
     if (req.method === 'PUT' && route === '/personal-state') return await savePersonalState(req, res, profile);
+    if (req.method === 'DELETE' && route === '/profile') return await deleteOwnProfile(req, res, profile);
     if (req.method === 'POST' && route === '/messages') return await addMessage(req, res, profile);
     if (req.method === 'POST' && route === '/result-submissions') return await submitResult(req, res, profile);
     if (req.method === 'POST' && route === '/reviews') return await reviewResult(req, res, profile);
