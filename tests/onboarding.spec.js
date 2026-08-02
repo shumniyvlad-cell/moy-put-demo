@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 function profile() {
-  return { id: 'p_qa_onboarding', role: 'participant', displayName: 'Тест', contact: '@qa', registered: true };
+  return { id: 'p_qa_onboarding', role: 'participant', displayName: 'Тест', contact: '@qa', registered: true, telegramLinked: true };
 }
 
 test('participant completes passwordless onboarding and stays signed in', async ({ page }) => {
@@ -169,9 +169,25 @@ test('today screen centers selected areas and composes schedule presets', async 
   await expect(page.locator('[data-schedule-preset="tomorrow"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-schedule-preset="evening"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#scheduleSelected')).toHaveText('Выбрано: Завтра · 20:00');
+  await expect(page.locator('#scheduleTelegram')).toBeChecked();
+  await expect(page.locator('#scheduleTelegramHint')).toHaveText('Бот напишет точно в выбранное время.');
+  const lightSheet = await page.locator('.schedule-sheet').boundingBox();
+  expect(lightSheet).not.toBeNull();
+  expect(lightSheet.x).toBeGreaterThanOrEqual(0);
+  expect(lightSheet.y).toBeGreaterThanOrEqual(0);
+  expect(lightSheet.x + lightSheet.width).toBeLessThanOrEqual(390);
+  expect(lightSheet.y + lightSheet.height).toBeLessThanOrEqual(844);
+  await page.screenshot({ path: 'test-results/schedule-telegram-light.png' });
 
   await page.getByRole('button', { name: 'Сохранить' }).click();
   await expect(page.getByRole('button', { name: 'Расписание: Завтра · 20:00' })).toBeVisible();
+  await page.locator('.theme-toggle').first().click();
+  await expect(page.locator('body')).toHaveClass(/theme-way-b/);
+  await page.getByRole('button', { name: 'Расписание: Завтра · 20:00' }).click();
+  await expect(page.locator('#scheduleTelegramHint')).toHaveText('Бот напишет точно в выбранное время.');
+  await page.screenshot({ path: 'test-results/schedule-telegram-dark.png' });
+  await page.getByRole('button', { name: 'Закрыть' }).click();
   await page.waitForTimeout(650);
-  expect(state.schedules['health::Сон до 23:30']).toEqual({ date: expectedTomorrow, time: '20:00', repeat: 'none' });
+  expect(state.schedules['health::Сон до 23:30']).toMatchObject({ date: expectedTomorrow, time: '20:00', repeat: 'none', notifyTelegram: true });
+  expect(state.schedules['health::Сон до 23:30'].timezone).toBeTruthy();
 });

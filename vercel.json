@@ -1,7 +1,27 @@
 {
   "functions": {
     "api/[...path].js": {
-      "maxDuration": 10
+      "maxDuration": 30
+    },
+    "api/telegram/reminder-consumer.js": {
+      "maxDuration": 30,
+      "experimentalTriggers": [
+        {
+          "type": "queue/v2beta",
+          "topic": "way-telegram-reminders",
+          "retryAfterSeconds": 60,
+          "initialDelaySeconds": 0
+        }
+      ]
+    },
+    "api/telegram/reminder-cron.js": {
+      "maxDuration": 60
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/telegram/reminder-cron",
+      "schedule": "0 0 * * *"
+    }
+  ]
 }

@@ -7,10 +7,12 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2"
+    "@neondatabase/serverless": "^1.0.2",
+    "@vercel/queue": "^0.4.0"
   },
   "scripts": {
-    "check": "node --check api/[...path].js"
+    "check": "node --check api/[...path].js && node --check api/telegram/reminder-consumer.js && node --check api/telegram/reminder-cron.js && node --check lib/reminders.js",
+    "test:reminders": "node --test tests/reminders.test.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1"

@@ -1045,6 +1045,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <label class="schedule-repeat"><span>Повтор</span><select class="inp" id="scheduleRepeat"><option value="none">Один раз</option><option value="daily">Каждый день</option><option value="weekdays">По будням</option><option value="weekly">Раз в неделю</option></select></label>
       <div class="schedule-presets"><button type="button" data-schedule-preset="today" aria-pressed="false" onclick="setSchedulePreset('today')">Сегодня</button><button type="button" data-schedule-preset="tomorrow" aria-pressed="false" onclick="setSchedulePreset('tomorrow')">Завтра</button><button type="button" data-schedule-preset="morning" aria-pressed="false" onclick="setSchedulePreset('morning')">Утро · 09:00</button><button type="button" data-schedule-preset="evening" aria-pressed="false" onclick="setSchedulePreset('evening')">Вечер · 20:00</button></div>
       <p class="schedule-selected" id="scheduleSelected" aria-live="polite"></p>
+      <label class="schedule-telegram"><input type="checkbox" id="scheduleTelegram" checked><span><b>Напомнить в Telegram</b><small id="scheduleTelegramHint">Бот напишет, когда пора выполнить действие.</small></span></label>
       <div class="schedule-actions"><button type="button" class="btn btn-ghost" id="scheduleRemove" onclick="removeSchedule()">Убрать расписание</button><button type="button" class="btn btn-amber" onclick="saveSchedule()">Сохранить</button></div>
     </section>
   </div>
@@ -1147,7 +1148,8 @@ var DIAGNOSTIC_AREAS={
   relations:{dir:'relations',name:'Отношения и окружение'}
 };
 function defaultGoal(dir){var p=GOAL_PRESETS[dir]||GOAL_PRESETS.sport;return {title:p.title,target:p.target,current:0,unit:p.unit,deadline:'',pending:null};}
-function defState(){return {v:8,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),goalsByArea:{},actionsByArea:{},diagnosticAreas:[],diagnosticGoals:{},lifeGoal:'',habits:[],days:{},schedules:{},quoteDismissedOn:'',lastCheckinAt:'',rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',onboardingStep:'diagnostic',onboardingComplete:false,created:todayKey()};}
+function deviceTimeZone(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'Europe/Moscow';}catch(e){return 'Europe/Moscow';}}
+function defState(){return {v:8,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),goalsByArea:{},actionsByArea:{},diagnosticAreas:[],diagnosticGoals:{},lifeGoal:'',habits:[],days:{},schedules:{},timezone:deviceTimeZone(),quoteDismissedOn:'',lastCheckinAt:'',rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',onboardingStep:'diagnostic',onboardingComplete:false,created:todayKey()};}
 function selectedAreaIds(){
   var selected=(S&&S.diagnosticAreas||[]).filter(function(id){return !!DIAGNOSTIC_AREAS[id];});
   if(selected.length)return selected;
@@ -1240,6 +1242,7 @@ function load(){
     });
   }
   S.days=days;
+  S.timezone=typeof S.timezone==='string'&&S.timezone.length<=80?S.timezone:deviceTimeZone();
   var schedules={};
   if(S.schedules&&typeof S.schedules==='object'&&!Array.isArray(S.schedules)){
     Object.keys(S.schedules).forEach(function(key){
@@ -1247,7 +1250,8 @@ function load(){
       var date=typeof item.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(item.date)?item.date:'';
       var time=typeof item.time==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time)?item.time:'';
       var repeat=['none','daily','weekdays','weekly'].indexOf(item.repeat)>=0?item.repeat:'none';
-      if(date||time)schedules[key]={date:date||todayKey(),time:time,repeat:repeat};
+      var timezone=typeof item.timezone==='string'&&item.timezone.length<=80?item.timezone:S.timezone;
+      if(date||time)schedules[key]={date:date||todayKey(),time:time,repeat:repeat,timezone:timezone,notifyTelegram:item.notifyTelegram!==false};
     });
   }
   S.schedules=schedules;
@@ -1377,7 +1381,7 @@ function loginTest(){
   var code=document.getElementById('testLoginCode').value,btn=document.getElementById('testLoginButton');
   if(!code){toast('Введи код доступа','ok');return;}
   btn.disabled=true;btn.textContent='Входим…';
-  apiRequest('login',{method:'POST',body:JSON.stringify({role:'mentor',code:code})}).then(function(data){
+  apiRequest('login',{method:'POST',body:JSON.stringify({role:'mentor',code:code,telegramInitData:telegramInitData()})}).then(function(data){
     document.getElementById('testLoginCode').value='';openTestWorkspace(data,'Кабинет наставника открыт');
   }).catch(function(error){toast(error.message,'ok');}).then(function(){btn.disabled=false;btn.textContent='Открыть кабинет';});
 }
@@ -1513,10 +1517,16 @@ function openSchedule(areaId,index){
   document.getElementById('scheduleDate').value=item&&item.date?item.date:todayKey();
   document.getElementById('scheduleTime').value=item&&item.time?item.time:'09:00';
   document.getElementById('scheduleRepeat').value=item&&item.repeat?item.repeat:'none';
+  document.getElementById('scheduleTelegram').checked=!item||item.notifyTelegram!==false;
   document.getElementById('scheduleRemove').hidden=!item;
-  overlay.hidden=false;refreshSchedulePresetState();document.getElementById('scheduleTime').focus();
+  overlay.hidden=false;refreshSchedulePresetState();refreshScheduleTelegramState();document.getElementById('scheduleTime').focus();
 }
 function closeSchedule(){document.getElementById('scheduleOverlay').hidden=true;scheduleTaskArea='';scheduleTaskIndex=-1;}
+function refreshScheduleTelegramState(){
+  var hint=document.getElementById('scheduleTelegramHint');if(!hint)return;
+  if(AUTH&&AUTH.telegramLinked){hint.textContent='Бот напишет точно в выбранное время.';return;}
+  hint.innerHTML='Для уведомлений открой WAY через <a href="https://t.me/Myproway_bot" target="_blank" rel="noopener">@Myproway_bot</a>.';
+}
 function refreshSchedulePresetState(){
   var dateInput=document.getElementById('scheduleDate'),timeInput=document.getElementById('scheduleTime'),selected=document.getElementById('scheduleSelected');
   if(!dateInput||!timeInput)return;
@@ -1544,8 +1554,13 @@ function saveSchedule(){
   var actions=actionsForArea(scheduleTaskArea),text=actions[scheduleTaskIndex];if(!text)return closeSchedule();
   var date=document.getElementById('scheduleDate').value,time=document.getElementById('scheduleTime').value,repeat=document.getElementById('scheduleRepeat').value;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){toast('Укажи дату и время','ok');return;}
-  if(!S.schedules)S.schedules={};S.schedules[taskKey(scheduleTaskArea,text)]={date:date,time:time,repeat:repeat};
-  save();closeSchedule();renderToday();toast('Расписание сохранено','ok');
+  var notifyTelegram=document.getElementById('scheduleTelegram').checked;
+  S.timezone=deviceTimeZone();
+  if(!S.schedules)S.schedules={};S.schedules[taskKey(scheduleTaskArea,text)]={date:date,time:time,repeat:repeat,timezone:S.timezone,notifyTelegram:notifyTelegram};
+  save();closeSchedule();renderToday();
+  if(notifyTelegram&&AUTH&&AUTH.telegramLinked)toast('Расписание и Telegram-напоминание сохранены','ok');
+  else if(notifyTelegram)toast('Расписание сохранено. Открой WAY через бот для уведомлений','ok');
+  else toast('Расписание сохранено','ok');
 }
 function removeSchedule(){
   var actions=actionsForArea(scheduleTaskArea),text=actions[scheduleTaskIndex];if(text&&S.schedules)delete S.schedules[taskKey(scheduleTaskArea,text)];

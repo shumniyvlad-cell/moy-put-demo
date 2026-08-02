@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
+import { enqueueProfileReminders } from '../lib/reminders.js';
 
 const MAX_BODY = 750_000;
 const COOKIE_NAME = 'mp_session';
@@ -208,6 +209,7 @@ async function currentProfile(req) {
   if (!token || token.length > 180) return null;
   const sql = getDb();
   const rows = await sql`SELECT p.id, p.role, p.display_name AS "displayName", p.contact,
+    (p.telegram_user_id IS NOT NULL) AS "telegramLinked",
     (p.registered_at IS NOT NULL) AS "registered"
     FROM sessions s JOIN profiles p ON p.id = s.profile_id
     WHERE s.token = ${token} AND s.expires_at > NOW()`;
@@ -296,15 +298,22 @@ async function login(req, res) {
   if (input.role !== 'mentor' || !isSameSecret(input.code, process.env.SASHA_TEST_CODE)) {
     return send(res, 401, { error: 'Неверный код наставника' });
   }
+  const telegram = telegramIdentity(input.telegramInitData);
   const profileId = 'sasha';
   const sql = getDb();
-  const profileRows = await sql`SELECT display_name AS "displayName", contact,
+  const profileRows = await sql`SELECT display_name AS "displayName", contact, telegram_user_id AS "telegramUserId",
     (registered_at IS NOT NULL) AS "registered" FROM profiles WHERE id = ${profileId}`;
   const saved = profileRows[0];
   if (!saved) return send(res, 404, { error: 'Профиль наставника не найден' });
-  await sql`UPDATE profiles SET registered_at = COALESCE(registered_at, NOW()) WHERE id = ${profileId}`;
+  if (telegram) {
+    const conflict = await sql`SELECT id FROM profiles WHERE telegram_user_id = ${telegram.id} AND id <> ${profileId}`;
+    if (conflict[0]) return send(res, 409, { error: 'Этот Telegram уже привязан к другому профилю' });
+  }
+  await sql`UPDATE profiles SET registered_at = COALESCE(registered_at, NOW()),
+    telegram_user_id = COALESCE(${telegram?.id || null}, telegram_user_id) WHERE id = ${profileId}`;
   const token = await issueSession(sql, profileId);
-  const profile = { id: profileId, role: 'mentor', displayName: saved.displayName, contact: saved.contact, registered: true };
+  const profile = { id: profileId, role: 'mentor', displayName: saved.displayName, contact: saved.contact, registered: true, telegramLinked: Boolean(telegram || saved.telegramUserId) };
+  await enqueueRemindersQuietly(profileId);
   return send(res, 200, { profile, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(token) });
 }
 
@@ -320,13 +329,20 @@ async function register(req, res) {
   if (!deviceToken && !telegram) return send(res, 400, { error: 'Не удалось сохранить вход на этом устройстве' });
   const sql = getDb();
   const credentialHash = deviceToken ? deviceCredentialHash(deviceToken) : '';
-  const existingRows = telegram
-    ? await sql`SELECT id, display_name AS "displayName", contact FROM profiles WHERE telegram_user_id = ${telegram.id} AND role = 'participant'`
-    : credentialHash
-      ? await sql`SELECT p.id, p.display_name AS "displayName", p.contact FROM device_credentials d
-          JOIN profiles p ON p.id = d.profile_id WHERE d.credential_hash = ${credentialHash} AND p.role = 'participant'`
-      : [];
+  let existingRows = telegram
+    ? await sql`SELECT id, display_name AS "displayName", contact, telegram_user_id AS "telegramUserId"
+        FROM profiles WHERE telegram_user_id = ${telegram.id} AND role = 'participant'`
+    : [];
+  if (!existingRows[0] && credentialHash) {
+    existingRows = await sql`SELECT p.id, p.display_name AS "displayName", p.contact, p.telegram_user_id AS "telegramUserId"
+      FROM device_credentials d JOIN profiles p ON p.id = d.profile_id
+      WHERE d.credential_hash = ${credentialHash} AND p.role = 'participant'`;
+  }
   let profileId = existingRows[0]?.id || `p_${crypto.randomUUID().replaceAll('-', '')}`;
+  if (telegram) {
+    const conflict = await sql`SELECT id FROM profiles WHERE telegram_user_id = ${telegram.id} AND id <> ${profileId}`;
+    if (conflict[0]) return send(res, 409, { error: 'Этот Telegram уже привязан к другому профилю' });
+  }
   const finalName = displayName || telegram?.displayName || existingRows[0]?.displayName;
   const finalContact = contact || telegram?.contact || existingRows[0]?.contact || '';
   if (existingRows[0]) {
@@ -344,7 +360,8 @@ async function register(req, res) {
       ON CONFLICT (credential_hash) DO UPDATE SET last_used_at = NOW()`;
   }
   const token = await issueSession(sql, profileId);
-  const profile = { id: profileId, role: 'participant', displayName: finalName, contact: finalContact, registered: true };
+  const profile = { id: profileId, role: 'participant', displayName: finalName, contact: finalContact, registered: true, telegramLinked: Boolean(telegram || existingRows[0]?.telegramUserId) };
+  await enqueueRemindersQuietly(profileId);
   return send(res, 201, { profile, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(token) });
 }
 
@@ -354,20 +371,39 @@ async function resume(req, res) {
   const telegram = telegramIdentity(input.telegramInitData);
   if (!deviceToken && !telegram) return send(res, 401, { error: 'Сохранённый вход не найден' });
   const sql = getDb();
-  const rows = telegram
-    ? await sql`SELECT id, role, display_name AS "displayName", contact FROM profiles
-        WHERE telegram_user_id = ${telegram.id} AND role = 'participant'`
-    : await sql`SELECT p.id, p.role, p.display_name AS "displayName", p.contact
-        FROM device_credentials d JOIN profiles p ON p.id = d.profile_id
-        WHERE d.credential_hash = ${deviceCredentialHash(deviceToken)} AND p.role = 'participant'`;
+  let rows = telegram
+    ? await sql`SELECT id, role, display_name AS "displayName", contact, telegram_user_id AS "telegramUserId"
+        FROM profiles WHERE telegram_user_id = ${telegram.id} AND role = 'participant'`
+    : [];
+  if (!rows[0] && deviceToken) {
+    rows = await sql`SELECT p.id, p.role, p.display_name AS "displayName", p.contact, p.telegram_user_id AS "telegramUserId"
+      FROM device_credentials d JOIN profiles p ON p.id = d.profile_id
+      WHERE d.credential_hash = ${deviceCredentialHash(deviceToken)} AND p.role = 'participant'`;
+  }
   const profile = rows[0];
   if (!profile) return send(res, 401, { error: 'Сохранённый вход не найден' });
+  if (telegram && telegram.id !== profile.telegramUserId) {
+    const conflict = await sql`SELECT id FROM profiles WHERE telegram_user_id = ${telegram.id} AND id <> ${profile.id}`;
+    if (conflict[0]) return send(res, 409, { error: 'Этот Telegram уже привязан к другому профилю' });
+    await sql`UPDATE profiles SET telegram_user_id = ${telegram.id} WHERE id = ${profile.id}`;
+  }
   if (deviceToken) {
     await sql`UPDATE device_credentials SET last_used_at = NOW()
       WHERE credential_hash = ${deviceCredentialHash(deviceToken)}`;
   }
   const token = await issueSession(sql, profile.id);
-  return send(res, 200, { profile: { ...profile, registered: true }, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(token) });
+  const publicProfile = { id: profile.id, role: profile.role, displayName: profile.displayName, contact: profile.contact, registered: true, telegramLinked: Boolean(telegram || profile.telegramUserId) };
+  await enqueueRemindersQuietly(profile.id);
+  return send(res, 200, { profile: publicProfile, ...(await snapshot(publicProfile)) }, { 'Set-Cookie': cookie(token) });
+}
+
+async function enqueueRemindersQuietly(profileId) {
+  try {
+    return await enqueueProfileReminders(profileId, { maxOccurrencesPerTask: 1 });
+  } catch (error) {
+    console.error('telegram reminder sync failed', error instanceof Error ? error.message : 'unknown error');
+    return { eligible: false, planned: 0, queued: 0, existing: 0, failed: 1 };
+  }
 }
 
 async function saveState(req, res, profile) {
@@ -380,7 +416,7 @@ async function saveState(req, res, profile) {
   await sql`INSERT INTO participant_state (participant_id, state_json, updated_at)
     VALUES (${profile.id}, ${packed}, NOW())
     ON CONFLICT (participant_id) DO UPDATE SET state_json = EXCLUDED.state_json, updated_at = NOW()`;
-  return send(res, 200, { ok: true });
+  return send(res, 200, { ok: true, reminders: await enqueueRemindersQuietly(profile.id) });
 }
 
 async function savePersonalState(req, res, profile) {
@@ -393,7 +429,7 @@ async function savePersonalState(req, res, profile) {
   await sql`INSERT INTO personal_states (profile_id, state_json, updated_at)
     VALUES (${profile.id}, ${packed}, NOW())
     ON CONFLICT (profile_id) DO UPDATE SET state_json = EXCLUDED.state_json, updated_at = NOW()`;
-  return send(res, 200, { ok: true });
+  return send(res, 200, { ok: true, reminders: await enqueueRemindersQuietly(profile.id) });
 }
 
 async function addMessage(req, res, profile) {

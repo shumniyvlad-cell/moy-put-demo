@@ -1,4 +1,4 @@
-const CACHE='mp-way-today-ui-v4';
+const CACHE='mp-way-telegram-reminders-v5';
 const APP_SHELL=[
   './','./index.html','./way-a.css','./way-b.css','./unified.css','./manifest.json',
   './img/brand-mark.svg','./img/icon-192.png','./img/icon-512.png','./img/splash-hero.jpg','./img/dodecahedron-journey-v1.webp','./img/way-a-splash-runner.webp',
