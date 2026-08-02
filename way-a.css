@@ -217,11 +217,14 @@ h2{font-size:21px;line-height:1.18;letter-spacing:-.35px;}
 .screen[data-s="goal"],
 .screen[data-s="minimum"],
 .screen[data-s="mentor"],
+.screen[data-s="participantregister"],
 .screen[data-s="mentorlogin"]{background:#F7F7F3;}
+.screen[data-s="participantregister"] .way-auth-brand,
 .screen[data-s="mentorlogin"] .way-auth-brand{
   margin:4px 0 18px;
   text-align:center;
 }
+.screen[data-s="participantregister"] .way-auth-brand .way-wordmark,
 .screen[data-s="mentorlogin"] .way-auth-brand .way-wordmark{font-size:38px;}
 .screen[data-s="mentorlogin"] [hidden]{display:none!important;}
 .way-auth-tabs{gap:6px;padding:5px;}

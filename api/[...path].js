@@ -3,6 +3,7 @@ import { neon } from '@neondatabase/serverless';
 
 const MAX_BODY = 750_000;
 const COOKIE_NAME = 'mp_session';
+const SESSION_SECONDS = 60 * 60 * 24 * 180;
 let schemaReady = null;
 
 function send(res, status, payload, headers = {}) {
@@ -32,11 +33,21 @@ async function ensureSchema() {
       )`;
       await sql`ALTER TABLE profiles ADD COLUMN IF NOT EXISTS contact TEXT NOT NULL DEFAULT ''`;
       await sql`ALTER TABLE profiles ADD COLUMN IF NOT EXISTS registered_at TIMESTAMPTZ`;
+      await sql`ALTER TABLE profiles ADD COLUMN IF NOT EXISTS telegram_user_id TEXT`;
+      await sql`ALTER TABLE profiles ADD COLUMN IF NOT EXISTS consented_at TIMESTAMPTZ`;
+      await sql`CREATE UNIQUE INDEX IF NOT EXISTS profiles_telegram_user_id_idx
+        ON profiles (telegram_user_id) WHERE telegram_user_id IS NOT NULL`;
       await sql`CREATE TABLE IF NOT EXISTS sessions (
         token TEXT PRIMARY KEY,
         profile_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
         expires_at TIMESTAMPTZ NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`;
+      await sql`CREATE TABLE IF NOT EXISTS device_credentials (
+        credential_hash TEXT PRIMARY KEY,
+        profile_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        last_used_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`;
       await sql`CREATE TABLE IF NOT EXISTS participant_state (
         participant_id TEXT PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
@@ -51,16 +62,20 @@ async function ensureSchema() {
       await sql`CREATE TABLE IF NOT EXISTS mentor_messages (
         id TEXT PRIMARY KEY,
         author_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        participant_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
         body TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`;
+      await sql`ALTER TABLE mentor_messages ADD COLUMN IF NOT EXISTS participant_id TEXT REFERENCES profiles(id) ON DELETE CASCADE`;
       await sql`CREATE TABLE IF NOT EXISTS result_reviews (
         id TEXT PRIMARY KEY,
         reviewer_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        participant_id TEXT REFERENCES profiles(id) ON DELETE CASCADE,
         status TEXT NOT NULL CHECK (status IN ('approved', 'needs_clarification')),
         comment TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`;
+      await sql`ALTER TABLE result_reviews ADD COLUMN IF NOT EXISTS participant_id TEXT REFERENCES profiles(id) ON DELETE CASCADE`;
       await sql`CREATE TABLE IF NOT EXISTS result_submissions (
         id TEXT PRIMARY KEY,
         participant_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -87,6 +102,12 @@ async function ensureSchema() {
       await sql`INSERT INTO profiles (id, role, display_name) VALUES
         ('mila', 'participant', 'Мила'), ('sasha', 'mentor', 'Саша')
         ON CONFLICT (id) DO NOTHING`;
+      await sql`UPDATE mentor_messages SET participant_id = CASE WHEN author_id = 'sasha' THEN 'mila' ELSE author_id END
+        WHERE participant_id IS NULL`;
+      await sql`UPDATE result_reviews SET participant_id = 'mila' WHERE participant_id IS NULL`;
+      await sql`CREATE INDEX IF NOT EXISTS mentor_messages_participant_idx ON mentor_messages (participant_id, created_at)`;
+      await sql`CREATE INDEX IF NOT EXISTS result_reviews_participant_idx ON result_reviews (participant_id, created_at)`;
+      await sql`CREATE INDEX IF NOT EXISTS participant_state_updated_idx ON participant_state (updated_at DESC)`;
     })().catch((error) => {
       schemaReady = null;
       throw error;
@@ -103,7 +124,7 @@ function parseCookie(header = '') {
   }, {});
 }
 
-function cookie(token, maxAge = 60 * 60 * 24 * 7) {
+function cookie(token, maxAge = SESSION_SECONDS) {
   return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
 }
 
@@ -137,6 +158,51 @@ function isSameSecret(value, expected) {
   return left.length === right.length && crypto.timingSafeEqual(left, right);
 }
 
+function cleanDeviceToken(value) {
+  return typeof value === 'string' && /^[A-Za-z0-9_-]{32,180}$/.test(value) ? value : '';
+}
+
+function deviceCredentialHash(value) {
+  return crypto.createHash('sha256').update(value).digest('hex');
+}
+
+function telegramIdentity(initData) {
+  if (!initData) return null;
+  if (typeof initData !== 'string' || initData.length > 12_000) throw new Error('Некорректные данные Telegram');
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) throw new Error('Вход через Telegram пока недоступен');
+  const params = new URLSearchParams(initData);
+  const suppliedHash = params.get('hash') || '';
+  if (!/^[a-f0-9]{64}$/i.test(suppliedHash)) throw new Error('Telegram не подтвердил вход');
+  params.delete('hash');
+  const authDate = Number(params.get('auth_date'));
+  if (!Number.isFinite(authDate) || Math.abs(Date.now() / 1000 - authDate) > 60 * 60 * 24 * 7) {
+    throw new Error('Сессия Telegram устарела. Открой приложение из бота ещё раз');
+  }
+  const dataCheckString = [...params.entries()].sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, value]) => `${key}=${value}`).join('\n');
+  const secret = crypto.createHmac('sha256', 'WebAppData').update(token).digest();
+  const expected = crypto.createHmac('sha256', secret).update(dataCheckString).digest('hex');
+  if (!isSameSecret(suppliedHash.toLowerCase(), expected)) throw new Error('Telegram не подтвердил вход');
+  let user;
+  try { user = JSON.parse(params.get('user') || '{}'); }
+  catch { throw new Error('Telegram не передал профиль'); }
+  if (!user?.id) throw new Error('Telegram не передал профиль');
+  return {
+    id: String(user.id),
+    displayName: cleanText([user.first_name, user.last_name].filter(Boolean).join(' '), 60),
+    contact: user.username ? `@${cleanText(user.username, 64)}` : ''
+  };
+}
+
+async function issueSession(sql, profileId) {
+  const token = crypto.randomBytes(32).toString('base64url');
+  await sql`DELETE FROM sessions WHERE expires_at <= NOW()`;
+  await sql`INSERT INTO sessions (token, profile_id, expires_at)
+    VALUES (${token}, ${profileId}, NOW() + INTERVAL '180 days')`;
+  return token;
+}
+
 async function currentProfile(req) {
   const token = parseCookie(req.headers.cookie)[COOKIE_NAME];
   if (!token || token.length > 180) return null;
@@ -148,35 +214,67 @@ async function currentProfile(req) {
   return rows[0] || null;
 }
 
-async function snapshot(profile) {
+function parseStoredState(value) {
+  try { return value ? JSON.parse(value) : null; }
+  catch { return null; }
+}
+
+async function participantDirectory(sql) {
+  const rows = await sql`SELECT p.id, p.display_name AS "displayName", p.contact,
+    s.state_json AS "stateJson", s.updated_at AS "updatedAt"
+    FROM profiles p LEFT JOIN participant_state s ON s.participant_id = p.id
+    WHERE p.role = 'participant' AND p.registered_at IS NOT NULL
+    ORDER BY COALESCE(s.updated_at, p.registered_at, p.created_at) DESC`;
+  return rows.map((row) => ({
+    id: row.id,
+    displayName: row.displayName,
+    contact: row.contact,
+    state: parseStoredState(row.stateJson),
+    updatedAt: row.updatedAt || null
+  }));
+}
+
+async function snapshot(profile, requestedParticipantId = '') {
   const sql = getDb();
+  const participants = profile?.role === 'mentor' ? await participantDirectory(sql) : [];
+  const participantId = profile?.role === 'participant'
+    ? profile.id
+    : participants.some((item) => item.id === requestedParticipantId)
+      ? requestedParticipantId
+      : participants.find((item) => item.id === 'mila')?.id || participants[0]?.id || '';
+  const participant = participants.find((item) => item.id === participantId) || null;
   const [stateRows, personalRows, messages, reviews, submissions, feedbackRows, mentorRows] = await Promise.all([
-    sql`SELECT state_json AS "stateJson", updated_at AS "updatedAt" FROM participant_state WHERE participant_id = 'mila'`,
+    participantId
+      ? sql`SELECT state_json AS "stateJson", updated_at AS "updatedAt" FROM participant_state WHERE participant_id = ${participantId}`
+      : Promise.resolve([]),
     profile?.role === 'mentor'
       ? sql`SELECT state_json AS "stateJson", updated_at AS "updatedAt" FROM personal_states WHERE profile_id = ${profile.id}`
       : Promise.resolve([]),
-    sql`SELECT m.author_id AS "authorId", p.display_name AS "authorName", m.body, m.created_at AS "createdAt"
-      FROM mentor_messages m JOIN profiles p ON p.id = m.author_id ORDER BY m.created_at ASC LIMIT 80`,
-    sql`SELECT status, comment, created_at AS "createdAt" FROM result_reviews ORDER BY created_at DESC LIMIT 20`,
-    sql`SELECT id, area_id AS "areaId", value, unit, evidence_text AS evidence,
-      proof_name AS "proofName", proof_type AS "proofType", proof_data AS "proofData",
-      status, review_comment AS "reviewComment", created_at AS "createdAt", reviewed_at AS "reviewedAt"
-      FROM result_submissions
-      WHERE participant_id = 'mila' AND status IN ('pending', 'needs_clarification')
-      ORDER BY created_at DESC LIMIT 8`,
-    sql`SELECT rating, review, created_at AS "createdAt" FROM mentor_feedback WHERE participant_id = 'mila' AND mentor_id = 'sasha'`,
+    participantId
+      ? sql`SELECT m.author_id AS "authorId", p.display_name AS "authorName", m.body, m.created_at AS "createdAt"
+          FROM mentor_messages m JOIN profiles p ON p.id = m.author_id
+          WHERE m.participant_id = ${participantId} ORDER BY m.created_at ASC LIMIT 80`
+      : Promise.resolve([]),
+    participantId
+      ? sql`SELECT status, comment, created_at AS "createdAt" FROM result_reviews
+          WHERE participant_id = ${participantId} ORDER BY created_at DESC LIMIT 20`
+      : Promise.resolve([]),
+    participantId
+      ? sql`SELECT id, area_id AS "areaId", value, unit, evidence_text AS evidence,
+          proof_name AS "proofName", proof_type AS "proofType", proof_data AS "proofData",
+          status, review_comment AS "reviewComment", created_at AS "createdAt", reviewed_at AS "reviewedAt"
+          FROM result_submissions
+          WHERE participant_id = ${participantId} AND status IN ('pending', 'needs_clarification')
+          ORDER BY created_at DESC LIMIT 8`
+      : Promise.resolve([]),
+    participantId
+      ? sql`SELECT rating, review, created_at AS "createdAt" FROM mentor_feedback
+          WHERE participant_id = ${participantId} AND mentor_id = 'sasha'`
+      : Promise.resolve([]),
     sql`SELECT display_name AS "displayName" FROM profiles WHERE id = 'sasha'`
   ]);
-  let state = null;
-  let personalState = null;
-  if (stateRows[0]) {
-    try { state = JSON.parse(stateRows[0].stateJson); }
-    catch { state = null; }
-  }
-  if (personalRows[0]) {
-    try { personalState = JSON.parse(personalRows[0].stateJson); }
-    catch { personalState = null; }
-  }
+  const state = parseStoredState(stateRows[0]?.stateJson);
+  const personalState = parseStoredState(personalRows[0]?.stateJson);
   return {
     state,
     updatedAt: stateRows[0]?.updatedAt || null,
@@ -186,45 +284,90 @@ async function snapshot(profile) {
     reviews,
     resultSubmissions: submissions,
     mentorFeedback: feedbackRows[0] || null,
-    mentorProfile: mentorRows[0] || { displayName: 'Саша' }
+    mentorProfile: mentorRows[0] || { displayName: 'Саша' },
+    selectedParticipantId: participantId || null,
+    selectedParticipant: participant,
+    participants
   };
 }
 
 async function login(req, res) {
   const input = await readJson(req);
-  const role = input.role === 'mentor' ? 'mentor' : input.role === 'participant' ? 'participant' : '';
-  const expected = role === 'mentor' ? process.env.SASHA_TEST_CODE : process.env.MILA_TEST_CODE;
-  if (!role || !isSameSecret(input.code, expected)) return send(res, 401, { error: 'Неверный код доступа' });
-  const profileId = role === 'mentor' ? 'sasha' : 'mila';
+  if (input.role !== 'mentor' || !isSameSecret(input.code, process.env.SASHA_TEST_CODE)) {
+    return send(res, 401, { error: 'Неверный код наставника' });
+  }
+  const profileId = 'sasha';
   const sql = getDb();
   const profileRows = await sql`SELECT display_name AS "displayName", contact,
     (registered_at IS NOT NULL) AS "registered" FROM profiles WHERE id = ${profileId}`;
   const saved = profileRows[0];
-  if (!saved?.registered) return send(res, 403, { error: 'Сначала пройди предрегистрацию' });
-  const token = crypto.randomBytes(32).toString('base64url');
-  await sql`DELETE FROM sessions WHERE expires_at <= NOW()`;
-  await sql`INSERT INTO sessions (token, profile_id, expires_at) VALUES (${token}, ${profileId}, NOW() + INTERVAL '7 days')`;
-  const profile = { id: profileId, role, displayName: saved.displayName, contact: saved.contact, registered: true };
+  if (!saved) return send(res, 404, { error: 'Профиль наставника не найден' });
+  await sql`UPDATE profiles SET registered_at = COALESCE(registered_at, NOW()) WHERE id = ${profileId}`;
+  const token = await issueSession(sql, profileId);
+  const profile = { id: profileId, role: 'mentor', displayName: saved.displayName, contact: saved.contact, registered: true };
   return send(res, 200, { profile, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(token) });
 }
 
 async function register(req, res) {
   const input = await readJson(req);
-  const role = input.role === 'mentor' ? 'mentor' : input.role === 'participant' ? 'participant' : '';
-  const expected = role === 'mentor' ? process.env.SASHA_TEST_CODE : process.env.MILA_TEST_CODE;
   const displayName = cleanText(input.name, 60);
   const contact = cleanText(input.contact, 100);
-  if (!role || !isSameSecret(input.code, expected)) return send(res, 401, { error: 'Неверный код доступа' });
   if (displayName.length < 2) return send(res, 400, { error: 'Укажи имя минимум из 2 символов' });
-  if (contact.length < 3) return send(res, 400, { error: 'Укажи Telegram или телефон' });
-  const profileId = role === 'mentor' ? 'sasha' : 'mila';
+  if (contact && contact.length < 3) return send(res, 400, { error: 'Проверь Telegram или телефон' });
+  if (input.consent !== true) return send(res, 400, { error: 'Нужно согласие на обработку данных' });
+  const deviceToken = cleanDeviceToken(input.deviceToken);
+  const telegram = telegramIdentity(input.telegramInitData);
+  if (!deviceToken && !telegram) return send(res, 400, { error: 'Не удалось сохранить вход на этом устройстве' });
   const sql = getDb();
-  await sql`UPDATE profiles SET display_name = ${displayName}, contact = ${contact}, registered_at = NOW() WHERE id = ${profileId}`;
-  const token = crypto.randomBytes(32).toString('base64url');
-  await sql`DELETE FROM sessions WHERE expires_at <= NOW()`;
-  await sql`INSERT INTO sessions (token, profile_id, expires_at) VALUES (${token}, ${profileId}, NOW() + INTERVAL '7 days')`;
-  const profile = { id: profileId, role, displayName, contact, registered: true };
+  const credentialHash = deviceToken ? deviceCredentialHash(deviceToken) : '';
+  const existingRows = telegram
+    ? await sql`SELECT id, display_name AS "displayName", contact FROM profiles WHERE telegram_user_id = ${telegram.id} AND role = 'participant'`
+    : credentialHash
+      ? await sql`SELECT p.id, p.display_name AS "displayName", p.contact FROM device_credentials d
+          JOIN profiles p ON p.id = d.profile_id WHERE d.credential_hash = ${credentialHash} AND p.role = 'participant'`
+      : [];
+  let profileId = existingRows[0]?.id || `p_${crypto.randomUUID().replaceAll('-', '')}`;
+  const finalName = displayName || telegram?.displayName || existingRows[0]?.displayName;
+  const finalContact = contact || telegram?.contact || existingRows[0]?.contact || '';
+  if (existingRows[0]) {
+    await sql`UPDATE profiles SET display_name = ${finalName}, contact = ${finalContact},
+      telegram_user_id = COALESCE(telegram_user_id, ${telegram?.id || null}), registered_at = COALESCE(registered_at, NOW()),
+      consented_at = NOW() WHERE id = ${profileId}`;
+  } else {
+    await sql`INSERT INTO profiles
+      (id, role, display_name, contact, telegram_user_id, registered_at, consented_at)
+      VALUES (${profileId}, 'participant', ${finalName}, ${finalContact}, ${telegram?.id || null}, NOW(), NOW())`;
+  }
+  if (credentialHash) {
+    await sql`INSERT INTO device_credentials (credential_hash, profile_id, last_used_at)
+      VALUES (${credentialHash}, ${profileId}, NOW())
+      ON CONFLICT (credential_hash) DO UPDATE SET last_used_at = NOW()`;
+  }
+  const token = await issueSession(sql, profileId);
+  const profile = { id: profileId, role: 'participant', displayName: finalName, contact: finalContact, registered: true };
   return send(res, 201, { profile, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(token) });
+}
+
+async function resume(req, res) {
+  const input = await readJson(req);
+  const deviceToken = cleanDeviceToken(input.deviceToken);
+  const telegram = telegramIdentity(input.telegramInitData);
+  if (!deviceToken && !telegram) return send(res, 401, { error: 'Сохранённый вход не найден' });
+  const sql = getDb();
+  const rows = telegram
+    ? await sql`SELECT id, role, display_name AS "displayName", contact FROM profiles
+        WHERE telegram_user_id = ${telegram.id} AND role = 'participant'`
+    : await sql`SELECT p.id, p.role, p.display_name AS "displayName", p.contact
+        FROM device_credentials d JOIN profiles p ON p.id = d.profile_id
+        WHERE d.credential_hash = ${deviceCredentialHash(deviceToken)} AND p.role = 'participant'`;
+  const profile = rows[0];
+  if (!profile) return send(res, 401, { error: 'Сохранённый вход не найден' });
+  if (deviceToken) {
+    await sql`UPDATE device_credentials SET last_used_at = NOW()
+      WHERE credential_hash = ${deviceCredentialHash(deviceToken)}`;
+  }
+  const token = await issueSession(sql, profile.id);
+  return send(res, 200, { profile: { ...profile, registered: true }, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(token) });
 }
 
 async function saveState(req, res, profile) {
@@ -235,7 +378,7 @@ async function saveState(req, res, profile) {
   if (packed.length > 180_000) return send(res, 413, { error: 'Слишком большой маршрут' });
   const sql = getDb();
   await sql`INSERT INTO participant_state (participant_id, state_json, updated_at)
-    VALUES ('mila', ${packed}, NOW())
+    VALUES (${profile.id}, ${packed}, NOW())
     ON CONFLICT (participant_id) DO UPDATE SET state_json = EXCLUDED.state_json, updated_at = NOW()`;
   return send(res, 200, { ok: true });
 }
@@ -258,7 +401,12 @@ async function addMessage(req, res, profile) {
   const text = cleanText(input.text);
   if (!text) return send(res, 400, { error: 'Напиши сообщение' });
   const sql = getDb();
-  await sql`INSERT INTO mentor_messages (id, author_id, body) VALUES (${crypto.randomUUID()}, ${profile.id}, ${text})`;
+  const participantId = profile.role === 'participant' ? profile.id : cleanText(input.participantId, 80);
+  if (!participantId) return send(res, 400, { error: 'Выбери участника для сообщения' });
+  const targets = await sql`SELECT id FROM profiles WHERE id = ${participantId} AND role = 'participant'`;
+  if (!targets[0]) return send(res, 404, { error: 'Участник не найден' });
+  await sql`INSERT INTO mentor_messages (id, author_id, participant_id, body)
+    VALUES (${crypto.randomUUID()}, ${profile.id}, ${participantId}, ${text})`;
   return send(res, 200, { ok: true });
 }
 
@@ -299,19 +447,24 @@ async function reviewResult(req, res, profile) {
   const sql = getDb();
   const submissionId = cleanText(input.submissionId, 80);
   const submissions = submissionId
-    ? await sql`SELECT id, area_id AS "areaId", value FROM result_submissions
-        WHERE id = ${submissionId} AND participant_id = 'mila' AND status IN ('pending', 'needs_clarification')`
-    : await sql`SELECT id, area_id AS "areaId", value FROM result_submissions
-        WHERE participant_id = 'mila' AND status IN ('pending', 'needs_clarification')
+    ? await sql`SELECT id, participant_id AS "participantId", area_id AS "areaId", value FROM result_submissions
+        WHERE id = ${submissionId} AND status IN ('pending', 'needs_clarification')`
+    : await sql`SELECT id, participant_id AS "participantId", area_id AS "areaId", value FROM result_submissions
+        WHERE participant_id = ${cleanText(input.participantId, 80)} AND status IN ('pending', 'needs_clarification')
         ORDER BY created_at DESC LIMIT 1`;
   const submission = submissions[0] || null;
   if (submissionId && !submission) return send(res, 404, { error: 'Заявка на проверку не найдена или уже обработана' });
+  const participantId = submission?.participantId || cleanText(input.participantId, 80);
+  if (!participantId) return send(res, 400, { error: 'Выбери участника' });
+  const targets = await sql`SELECT id FROM profiles WHERE id = ${participantId} AND role = 'participant'`;
+  if (!targets[0]) return send(res, 404, { error: 'Участник не найден' });
   if (submission) {
     await sql`UPDATE result_submissions SET status = ${status}, reviewer_id = ${profile.id},
       review_comment = ${comment}, reviewed_at = NOW() WHERE id = ${submission.id}`;
   }
-  await sql`INSERT INTO result_reviews (id, reviewer_id, status, comment) VALUES (${crypto.randomUUID()}, ${profile.id}, ${status}, ${comment})`;
-  const stateRows = await sql`SELECT state_json AS "stateJson" FROM participant_state WHERE participant_id = 'mila'`;
+  await sql`INSERT INTO result_reviews (id, reviewer_id, participant_id, status, comment)
+    VALUES (${crypto.randomUUID()}, ${profile.id}, ${participantId}, ${status}, ${comment})`;
+  const stateRows = await sql`SELECT state_json AS "stateJson" FROM participant_state WHERE participant_id = ${participantId}`;
   if (stateRows[0]) {
     try {
       const state = JSON.parse(stateRows[0].stateJson);
@@ -329,7 +482,8 @@ async function reviewResult(req, res, profile) {
         }
         if (areaId && state.goalsByArea) state.goalsByArea[areaId] = targetGoal;
         if (!areaId || areaId === primaryId) state.goal = targetGoal;
-        await sql`UPDATE participant_state SET state_json = ${JSON.stringify(state)}, updated_at = NOW() WHERE participant_id = 'mila'`;
+        await sql`UPDATE participant_state SET state_json = ${JSON.stringify(state)}, updated_at = NOW()
+          WHERE participant_id = ${participantId}`;
       }
     } catch { /* malformed client state is left untouched */ }
   }
@@ -404,7 +558,8 @@ async function telegramWebhook(req, res) {
 export default async function handler(req, res) {
   // On Vercel catch-all functions `req.query.path` differs between local dev
   // and production. The URL is the stable source of the requested API path.
-  const pathname = new URL(req.url || '/', 'https://moy-put.local').pathname;
+  const requestUrl = new URL(req.url || '/', 'https://moy-put.local');
+  const pathname = requestUrl.pathname;
   const route = pathname === '/api' ? '/' : pathname.replace(/^\/api(?=\/|$)/, '');
   try {
     if (req.method === 'GET' && route === '/telegram/health') {
@@ -414,11 +569,14 @@ export default async function handler(req, res) {
     await ensureSchema();
     if (req.method === 'GET' && route === '/health') return send(res, 200, { ok: true, storage: 'neon-postgres' });
     if (req.method === 'POST' && route === '/register') return await register(req, res);
+    if (req.method === 'POST' && route === '/resume') return await resume(req, res);
     if (req.method === 'POST' && route === '/login') return await login(req, res);
     if (req.method === 'POST' && route === '/logout') return await logout(req, res);
     const profile = await currentProfile(req);
-    if (!profile) return send(res, 401, { error: 'Нужен тестовый вход' });
-    if (req.method === 'GET' && route === '/snapshot') return send(res, 200, { profile, ...(await snapshot(profile)) });
+    if (!profile) return send(res, 401, { error: 'Нужен вход' });
+    if (req.method === 'GET' && route === '/snapshot') {
+      return send(res, 200, { profile, ...(await snapshot(profile, cleanText(requestUrl.searchParams.get('participantId'), 80))) });
+    }
     if (req.method === 'PUT' && route === '/state') return await saveState(req, res, profile);
     if (req.method === 'PUT' && route === '/personal-state') return await savePersonalState(req, res, profile);
     if (req.method === 'POST' && route === '/messages') return await addMessage(req, res, profile);

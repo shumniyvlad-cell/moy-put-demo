@@ -521,6 +521,7 @@ body.theme-way-b{
 .theme-way-b .screen[data-s="goal"],
 .theme-way-b .screen[data-s="minimum"],
 .theme-way-b .screen[data-s="mentor"],
+.theme-way-b .screen[data-s="participantregister"],
 .theme-way-b .screen[data-s="mentorlogin"]{
   background:var(--way-bg-primary);
 }

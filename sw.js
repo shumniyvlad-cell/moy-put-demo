@@ -1,4 +1,4 @@
-const CACHE='mp-way-unified-v1';
+const CACHE='mp-way-onboarding-v3';
 const APP_SHELL=[
   './','./index.html','./way-a.css','./way-b.css','./unified.css','./manifest.json',
   './img/brand-mark.svg','./img/icon-192.png','./img/icon-512.png','./img/splash-hero.jpg','./img/dodecahedron-journey-v1.webp','./img/way-a-splash-runner.webp',
@@ -20,7 +20,8 @@ self.addEventListener('activate',event=>{
 
 self.addEventListener('fetch',event=>{
   const request=event.request;
-  if(request.method!=='GET'||new URL(request.url).origin!==self.location.origin)return;
+  const url=new URL(request.url);
+  if(request.method!=='GET'||url.origin!==self.location.origin||url.pathname.startsWith('/api/'))return;
   event.respondWith(
     fetch(request).then(response=>{
       if(response.ok){

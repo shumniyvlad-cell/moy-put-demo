@@ -11,5 +11,8 @@
   },
   "scripts": {
     "check": "node --check api/[...path].js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
   }
 }

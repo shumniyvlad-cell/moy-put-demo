@@ -72,6 +72,17 @@ button,a,input,select,textarea,[onclick]{touch-action:manipulation;}
 .profile-theme-copy{display:flex!important;flex:1;flex-direction:column;gap:2px;margin:0!important;color:inherit!important;font-size:inherit!important;}
 .profile-theme-copy small{color:var(--dim);font-size:10px;font-weight:500;}
 
+.onboarding-profile-card{box-shadow:none;}
+.onboarding-policy{margin-top:12px;}
+.onboarding-device-note{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);}
+.onboarding-device-note>span{display:grid;place-items:center;width:28px;height:28px;flex:none;border-radius:50%;background:rgba(198,255,0,.2);color:var(--way-brand-ink,#789C00);font-size:14px;font-weight:900;}
+.onboarding-device-note div{display:flex;min-width:0;flex-direction:column;gap:2px;}
+.onboarding-device-note b{font-size:12px;}
+.onboarding-device-note small{color:var(--mut);font-size:10px;line-height:1.35;}
+.onboarding-mentor-link{width:100%;margin-top:10px;padding:10px;border:0;background:transparent;color:var(--mut);font:700 11px Inter,sans-serif;text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
+.theme-way-b .onboarding-device-note{border-color:var(--way-border-default);background:var(--way-surface-primary);}
+.theme-way-b .onboarding-device-note>span{background:var(--way-brand-muted);color:var(--way-brand-primary);}
+
 /* The knowledge item used to float above the bar and steal nearby taps in theme B. */
 .theme-way-b .nav a:nth-child(3),.theme-way-b .nav a:nth-child(3).on{transform:none;color:var(--way-text-tertiary);}
 .theme-way-b .nav a:nth-child(3) svg,.theme-way-b .nav a:nth-child(3).on svg{

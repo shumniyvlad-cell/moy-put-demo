@@ -411,16 +411,39 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <div class="way-wordmark">WAY</div>
         <div class="way-splash-tag"><span>Твой путь.</span><span>Твои правила.</span><span>Твой результат.</span></div>
       </div>
-      <button class="way-splash-arrow" type="button" onclick="go('mentorlogin')" aria-label="Начать путь">
+      <button class="way-splash-arrow" type="button" onclick="go('participantregister')" aria-label="Начать путь">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 19 5M9 5h10v10"/></svg>
       </button>
     </div>
-    <p class="way-splash-login">Уже есть профиль? <button type="button" onclick="go('mentorlogin')">Войти</button></p>
+    <p class="way-splash-login">Входишь как наставник? <button type="button" onclick="go('mentorlogin')">Открыть кабинет</button></p>
+  </section>
+
+  <!-- 2. РЕГИСТРАЦИЯ УЧАСТНИКА -->
+  <section class="screen full" data-s="participantregister">
+    <div class="way-auth-brand"><span class="way-wordmark">WAY</span></div>
+    <div class="kick">Шаг 1 из 4</div>
+    <h1 style="font-size:25px;margin-top:8px;">Создай свой маршрут</h1>
+    <p class="mut small" style="margin-top:8px;">Пароль не нужен. Мы сохраним вход на этом устройстве, а в Telegram узнаем тебя автоматически.</p>
+    <div class="card onboarding-profile-card" style="margin-top:18px;">
+      <label class="flabel" for="participantName" style="margin-top:0;">Как тебя зовут</label>
+      <input class="inp" id="participantName" autocomplete="name" maxlength="60" placeholder="Имя">
+      <label class="flabel" for="participantContact">Telegram или телефон <span class="dim">· необязательно</span></label>
+      <input class="inp" id="participantContact" autocomplete="tel" maxlength="100" placeholder="@username или +7…">
+      <button type="button" class="consent" id="participantConsent" aria-pressed="false" onclick="toggleConsent(this)">
+        <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="small mut">Согласен на обработку имени, контакта, целей и ежедневных отметок для работы WAY.</span>
+      </button>
+      <button type="button" class="policy-link onboarding-policy" onclick="openParticipantPrivacy()">Прочитать политику обработки данных</button>
+    </div>
+    <div class="onboarding-device-note"><span>✓</span><div><b>Вход запомнится</b><small>После обновления страницы повторная регистрация не нужна.</small></div></div>
+    <div class="spacer"></div>
+    <button type="button" class="btn btn-amber" id="participantRegisterButton" onclick="registerParticipant()">Продолжить</button>
+    <button type="button" class="onboarding-mentor-link" onclick="go('mentorlogin')">Я наставник</button>
   </section>
 
   <!-- 2. ВЫБОР НАПРАВЛЕНИЯ -->
   <section class="screen full" data-s="pain">
-    <div class="kick">Шаг 1 из 3</div>
+    <div class="kick">Шаг 2 из 4</div>
     <h1 style="margin:9px 0 6px;">Ты — архитектор<br>своей жизни</h1>
     <p class="mut small">Что будем улучшать? Отметь столько направлений, сколько сейчас важно.</p>
     <div class="diag-list" id="diagnosticList">
@@ -469,7 +492,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <!-- 4. ВЫБОР ДЕЙСТВИЙ -->
   <section class="screen full" data-s="minimum">
-    <div class="kick">Шаг 2 из 3</div>
+    <div class="kick">Шаг 3 из 4</div>
     <h1 style="margin:9px 0 6px;">Выбери действия,<br>которые приведут к результату</h1>
     <p class="mut small">Маленькие шаги каждый день формируют привычки и приближают к цели.</p>
     <div class="area-tabs" id="actionAreaTabs" aria-label="Направления"></div>
@@ -483,7 +506,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 
   <!-- 5. САМ / С НАСТАВНИКОМ -->
   <section class="screen full" data-s="mentor">
-    <div class="kick">Шаг 3 из 3</div>
+    <div class="kick">Шаг 4 из 4</div>
     <h1 style="margin:9px 0 6px;">Как пойдёшь<br>к цели?</h1>
     <p class="mut small">Оба пути работают. Выбери поддержку, которая нужна тебе сейчас.</p>
     <div class="mode-list">
@@ -937,33 +960,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <button class="btn btn-ghost" style="margin-top:10px;" onclick="go('splash')">На главную</button>
   </section>
 
-  <!-- 16. ТЕСТОВЫЙ ВХОД -->
+  <!-- 16. ОТДЕЛЬНЫЙ ВХОД НАСТАВНИКА -->
   <section class="screen full" data-s="mentorlogin">
+    <div class="backbar" onclick="go('splash')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg> На главную</div>
     <div class="way-auth-brand"><span class="way-wordmark">WAY</span></div>
-    <div class="kick">Пилотный доступ</div>
-    <h1 style="font-size:24px;margin-top:8px;">Вход в приложение</h1>
-    <p class="mut small" id="entryModeHint" style="margin-top:8px;">Первый вход: укажи имя, контакт и личный код. После регистрации данные сохранятся в общей базе.</p>
-    <div class="seg way-auth-tabs" style="margin-top:16px;"><button type="button" class="segbtn on" id="entryRegisterTab" aria-selected="true" onclick="setTestEntryMode('register')">Первый вход</button><button type="button" class="segbtn" id="entryLoginTab" aria-selected="false" onclick="setTestEntryMode('login')">Уже есть профиль</button></div>
-    <div class="card" id="testRegisterForm" style="margin-top:14px;">
-      <label class="flabel" for="testRole" style="margin-top:0;">Кто входит</label>
-      <select class="inp" id="testRole"><option value="participant">Мила · участник</option><option value="mentor">Саша · наставник</option></select>
-      <label class="flabel" for="testName">Имя</label>
-      <input class="inp" id="testName" autocomplete="name" placeholder="Как к тебе обращаться">
-      <label class="flabel" for="testContact">Telegram или телефон</label>
-      <input class="inp" id="testContact" autocomplete="tel" placeholder="@username или +7…">
-      <label class="flabel" for="testCode">Код доступа</label>
-      <input class="inp" id="testCode" type="password" autocomplete="one-time-code" placeholder="Введите личный код" onkeydown="if(event.key==='Enter')registerTest()">
-      <p class="tiny dim" style="margin-top:9px;">Имя и контакт нужны только для этого пилота. Код выдаётся отдельно и не сохраняется в приложении.</p>
-    </div>
-    <div class="card" id="testLoginForm" hidden style="margin-top:14px;">
-      <label class="flabel" for="testLoginRole" style="margin-top:0;">Кто входит</label>
-      <select class="inp" id="testLoginRole"><option value="participant">Мила · участник</option><option value="mentor">Саша · наставник</option></select>
+    <div class="kick">Кабинет наставника</div>
+    <h1 style="font-size:24px;margin-top:8px;">Вход для наставника</h1>
+    <p class="mut small" style="margin-top:8px;">Участникам код не нужен. Это отдельный служебный вход для работы с учениками.</p>
+    <div class="card" style="margin-top:18px;">
       <label class="flabel" for="testLoginCode">Код доступа</label>
-      <input class="inp" id="testLoginCode" type="password" autocomplete="current-password" placeholder="Введите личный код" onkeydown="if(event.key==='Enter')loginTest()">
+      <input class="inp" id="testLoginCode" type="password" autocomplete="current-password" placeholder="Код наставника" onkeydown="if(event.key==='Enter')loginTest()">
     </div>
     <div class="way-auth-actions">
-      <button type="button" class="btn btn-amber" id="testRegisterButton" onclick="registerTest()">Зарегистрироваться</button>
-      <button type="button" class="btn btn-amber" id="testLoginButton" hidden onclick="loginTest()">Войти</button>
+      <button type="button" class="btn btn-amber" id="testLoginButton" onclick="loginTest()">Открыть кабинет</button>
     </div>
   </section>
 
@@ -1018,11 +1027,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
     <h1 style="font-size:20px;">Политика обработки персональных данных</h1>
     <div class="small mut" style="margin-top:12px;display:flex;flex-direction:column;gap:11px;">
       <p><b style="color:var(--txt)">Кто отвечает за ваши данные.</b> Оператор персональных данных — Александр, наставник и организатор сервиса «Мой путь» (Сочи). Полные реквизиты оператора публикуются на этой странице до начала приёма заявок. Обработка ведётся в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
-      <p><b style="color:var(--txt)">Какие данные мы собираем.</b> Только то, что вы сами указываете в форме заявки: имя, номер телефона или ник в Telegram, а также выбранное направление и ответы онбординга. Паспортные и платёжные данные не запрашиваются — оплат на сайте нет.</p>
-      <p><b style="color:var(--txt)">Зачем.</b> Связаться с вами по заявке и добавить вас в Telegram-группу первого потока, если решите участвовать. Для рекламных рассылок данные не используются.</p>
+      <p><b style="color:var(--txt)">Какие данные мы собираем.</b> Имя, указанный по желанию телефон или ник в Telegram, выбранные направления, цели, действия, расписание, ежедневные отметки, чек-ины, сообщения наставнику и подтверждения результата. Паспортные и платёжные данные приложение не запрашивает.</p>
+      <p><b style="color:var(--txt)">Зачем.</b> Создать личный маршрут, сохранять прогресс между входами и, если вы выбрали сопровождение, показывать наставнику цели, чек-ины и сообщения. Для сторонних рекламных рассылок данные не используются.</p>
       <p><b style="color:var(--txt)">Основание.</b> Ваше согласие (ст. 6 закона № 152-ФЗ). Отправляя форму, вы даёте согласие на обработку указанных данных для целей выше. Согласие добровольное.</p>
-      <p><b style="color:var(--txt)">Хранение и доступ.</b> Заявки поступают в закрытую таблицу, доступ к которой есть только у организаторов. Данные не продаются и не передаются третьим лицам.</p>
-      <p><b style="color:var(--txt)">Срок.</b> Данные обрабатываются до достижения цели — набора и сопровождения потока — либо до отзыва вашего согласия. После этого удаляются.</p>
+      <p><b style="color:var(--txt)">Хранение и доступ.</b> Данные хранятся в закрытой базе Neon Postgres, приложение размещено на Vercel. Эти сервисы используются как техническая инфраструктура. Доступ к данным участников есть только у организаторов и назначенного наставника; данные не продаются.</p>
+      <p><b style="color:var(--txt)">Срок.</b> Данные обрабатываются, пока вы пользуетесь WAY, либо до отзыва согласия. После запроса на удаление профиль и связанные данные удаляются в установленный законом срок.</p>
       <p><b style="color:var(--txt)">Ваши права.</b> В любой момент можно узнать, какие данные о вас есть, потребовать исправить или удалить их, а также отозвать согласие.</p>
       <p><b style="color:var(--txt)">Как отозвать согласие.</b> Напишите организаторам в Telegram или сообщите по телефону — заявления в свободной форме достаточно. Обработку прекратим и данные удалим не позднее 30 дней (ст. 21 закона № 152-ФЗ).</p>
       <p><b style="color:var(--txt)">Действие политики.</b> С 4 июля 2026 года.</p>
@@ -1060,7 +1069,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 <script>
 /* ================== МОЙ ПУТЬ · веб-MVP ================== */
 var MAIN=['today','path','mentorhub','mentordesk','team','knowledge','profile'], prev='splash';
-var OVER=['heroes','mentors','mentorprofile','mentorchat','checkin','apply','thanks','mentorstart','mentorlogin','mentordesk','mentorparticipant','privacy'];
+var OVER=['heroes','mentors','mentorprofile','mentorchat','checkin','apply','thanks','mentorstart','participantregister','mentorlogin','mentordesk','mentorparticipant','privacy'];
 var MENTOR_PRICE=24000;
 var MENTORS={
   alex:{id:'alex',name:'Александр',photo:'img/mentor-1.jpg',focus:'Спорт · дисциплина',rating:'4.9',reviews:86,experience:'12 лет практики',clients:'148 сопровождений',format:'Личный чат · недельный фокус · 1 созвон в неделю',about:'Помогает выстроить устойчивую дисциплину без жёстких запретов: цель, минимум на каждый день и разбор срывов.',case:'Антон: с 0 до 12 тренировок в месяц за 8 недель',review:'«Не давит, а возвращает в план. Наконец-то перестал бросать на второй неделе.»'},
@@ -1126,6 +1135,8 @@ var CIFORM={
 
 /* --- Состояние (localStorage, версионированная схема для будущей миграции на сервер) --- */
 var S=null;
+function stateStorageKey(){return AUTH&&AUTH.id?'mp_state_'+String(AUTH.id).replace(/[^a-z0-9_-]/gi,'_'):'mp_state_guest';}
+function writeLocalState(){try{localStorage.setItem(stateStorageKey(),JSON.stringify(S));}catch(e){}}
 var GOAL_PRESETS={
   biz:{title:'Увеличить доход за месяц',target:100000,unit:'₽',hint:'Пример: «Увеличить доход за месяц» · 100 000 · ₽'},
   sport:{title:'Сделать 500 бёрпи за месяц',target:500,unit:'бёрпи',hint:'Пример: «500 бёрпи за месяц» · 500 · бёрпи'},
@@ -1142,7 +1153,7 @@ var DIAGNOSTIC_AREAS={
   relations:{dir:'relations',name:'Отношения и окружение'}
 };
 function defaultGoal(dir){var p=GOAL_PRESETS[dir]||GOAL_PRESETS.sport;return {title:p.title,target:p.target,current:0,unit:p.unit,deadline:'',pending:null};}
-function defState(){return {v:7,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),goalsByArea:{},actionsByArea:{},diagnosticAreas:[],diagnosticGoals:{},lifeGoal:'',habits:[],days:{},schedules:{},quoteDismissedOn:'',lastCheckinAt:'',rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',created:todayKey()};}
+function defState(){return {v:8,name:'',contact:'',dir:'sport',dirName:'Спорт',mode:'Сам',mentorId:'alex',goal:defaultGoal('sport'),goalsByArea:{},actionsByArea:{},diagnosticAreas:[],diagnosticGoals:{},lifeGoal:'',habits:[],days:{},schedules:{},quoteDismissedOn:'',lastCheckinAt:'',rewards:{weeks:{},returns:{},shares:{}},bonus:0,applied:false,mentorStatus:'none',onboardingStep:'diagnostic',onboardingComplete:false,created:todayKey()};}
 function selectedAreaIds(){
   var selected=(S&&S.diagnosticAreas||[]).filter(function(id){return !!DIAGNOSTIC_AREAS[id];});
   if(selected.length)return selected;
@@ -1173,12 +1184,16 @@ function cleanAwardMap(value){
 }
 function load(){
   var raw=null,base=defState(),rawVersion=1,dirNames={biz:'Доход и дело',sport:'Спорт и тело',health:'Здоровье и энергия',life:'Смысл и развитие',relations:'Отношения и окружение',regime:'Режим дня'};
-  try{raw=JSON.parse(localStorage.getItem('mp_v1'));}catch(e){}
+  try{
+    var stored=localStorage.getItem(stateStorageKey());
+    if(!stored&&AUTH&&AUTH.id==='mila')stored=localStorage.getItem('mp_v1');
+    raw=JSON.parse(stored);
+  }catch(e){}
   if(!raw||typeof raw!=='object'||Array.isArray(raw))raw={};
   rawVersion=Number(raw.v)||1;
   S=Object.assign(base,raw);
   if(!dirNames[S.dir])S.dir='sport';
-  S.v=7;S.dirName=dirNames[S.dir];
+  S.v=8;S.dirName=dirNames[S.dir];
   S.diagnosticAreas=cleanStrings(S.diagnosticAreas).filter(function(id){return !!DIAGNOSTIC_AREAS[id];});
   S.diagnosticGoals=S.diagnosticGoals&&typeof S.diagnosticGoals==='object'&&!Array.isArray(S.diagnosticGoals)?S.diagnosticGoals:{};
   Object.keys(S.diagnosticGoals).forEach(function(id){if(!DIAGNOSTIC_AREAS[id]||typeof S.diagnosticGoals[id]!=='string')delete S.diagnosticGoals[id];else S.diagnosticGoals[id]=S.diagnosticGoals[id].trim().slice(0,90);});
@@ -1249,13 +1264,16 @@ function load(){
   if(rawVersion<2)S.bonus+=streak()*10; // сохраняем старый бонус серии при переходе на новые правила
   S.applied=S.applied===true;
   S.mentorStatus=S.mentorStatus==='active'?'active':(S.applied&&S.mode==='С наставником'?'applied':'none');
+  S.onboardingComplete=S.onboardingComplete===true||(rawVersion<8&&S.habits.length>0);
+  S.onboardingStep=S.onboardingComplete?'complete':(['diagnostic','actions','mode'].indexOf(S.onboardingStep)>=0?S.onboardingStep:(S.diagnosticAreas.length?'actions':'diagnostic'));
   S.created=typeof S.created==='string'&&S.created?S.created:todayKey();
   S.lastCheckinAt=typeof S.lastCheckinAt==='string'?S.lastCheckinAt:'';
   save();
 }
-var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false,liveSyncTimer=0,TEST_ENTRY_MODE='register';
+var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false,liveSyncTimer=0;
 var profileSectionOrigin='',pathPeriod='week',goalEditAreaId='',goalEditReturn='';
 var goalProofData='',goalProofName='',goalProofType='';
+var mentorParticipantId='';
 function pause(ms){return new Promise(function(resolve){setTimeout(resolve,ms);});}
 function apiRequest(path,options){
   options=options||{};options.credentials='same-origin';options.cache='no-store';options.headers=Object.assign({'Content-Type':'application/json','Accept':'application/json'},options.headers||{});
@@ -1288,9 +1306,10 @@ function syncState(){
 }
 function applySnapshot(data){
   AUTH=data.profile||AUTH;REMOTE=data;
+  if(AUTH&&AUTH.role==='mentor'&&data.selectedParticipantId)mentorParticipantId=data.selectedParticipantId;
   var ownState=AUTH&&AUTH.role==='mentor'?data.personalState:data.state;
   if(AUTH&&ownState&&typeof ownState==='object'){
-    S=ownState;try{localStorage.setItem('mp_v1',JSON.stringify(S));}catch(e){}
+    S=ownState;writeLocalState();
     // Снимок базы тоже проходит миграцию: иначе старый профиль теряет новые цели и действия при входе.
     load();
     // Ранние версии онбординга сохраняли выбранные направления, но оставляли
@@ -1300,8 +1319,10 @@ function applySnapshot(data){
   var current=(location.hash||'').replace('#','');
   if(current==='today')renderToday();if(current==='path')renderPath();if(current==='profile')renderProfile();if(current==='mentorhub')renderMentorHub();if(current==='mentorchat')renderMentorChat();if(current==='mentordesk')renderMentorDesk();if(current==='mentorparticipant')renderMentorParticipant();
 }
-function refreshRemoteSnapshot(){
-  return apiRequest('snapshot').then(function(data){applySnapshot(data);return data;}).catch(function(error){if(error.message==='Нужен тестовый вход'){AUTH=null;REMOTE=null;}throw error;});
+function refreshRemoteSnapshot(participantId){
+  var selected=participantId||(AUTH&&AUTH.role==='mentor'&&(mentorParticipantId||(REMOTE&&REMOTE.selectedParticipantId)))||'';
+  var path='snapshot'+(selected?'?participantId='+encodeURIComponent(selected):'');
+  return apiRequest(path).then(function(data){applySnapshot(data);return data;}).catch(function(error){if(error.message==='Нужен вход'||error.message==='Нужен тестовый вход'){AUTH=null;REMOTE=null;}throw error;});
 }
 function refreshLiveData(){
   if(!AUTH||document.hidden)return;
@@ -1315,52 +1336,65 @@ function startLiveSync(){
   clearInterval(liveSyncTimer);
   liveSyncTimer=setInterval(refreshLiveData,8000);
 }
-function setTestEntryMode(mode){
-  TEST_ENTRY_MODE=mode==='login'?'login':'register';
-  var registering=TEST_ENTRY_MODE==='register';
-  document.getElementById('testRegisterForm').hidden=!registering;
-  document.getElementById('testLoginForm').hidden=registering;
-  document.getElementById('testRegisterButton').hidden=!registering;
-  document.getElementById('testLoginButton').hidden=registering;
-  var registerTab=document.getElementById('entryRegisterTab'),loginTab=document.getElementById('entryLoginTab');
-  registerTab.classList.toggle('on',registering);
-  loginTab.classList.toggle('on',!registering);
-  registerTab.setAttribute('aria-selected',registering?'true':'false');
-  loginTab.setAttribute('aria-selected',registering?'false':'true');
-  document.getElementById('entryModeHint').textContent=registering
-    ?'Первый вход: укажи имя, контакт и личный код. После регистрации данные сохранятся в общей базе.'
-    :'Вход в профиль: выбери свою роль и введи тот же личный код, который использовался при регистрации.';
+function deviceToken(create){
+  var key='way_device_credential',saved='';
+  try{saved=localStorage.getItem(key)||'';}catch(e){}
+  if(saved||!create)return saved;
+  var bytes=new Uint8Array(32);crypto.getRandomValues(bytes);
+  saved=btoa(String.fromCharCode.apply(null,bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  try{localStorage.setItem(key,saved);}catch(e){}
+  return saved;
+}
+function telegramInitData(){
+  try{return window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData||'';}catch(e){return '';}
+}
+function resumeParticipant(){
+  var credential=deviceToken(false),initData=telegramInitData();
+  if(!credential&&!initData)return Promise.reject(new Error('Сохранённый вход не найден'));
+  return apiRequest('resume',{method:'POST',body:JSON.stringify({deviceToken:credential,telegramInitData:initData})}).then(function(data){applySnapshot(data);return data;});
+}
+function registerParticipant(){
+  var name=document.getElementById('participantName').value.trim(),contact=document.getElementById('participantContact').value.trim(),consent=document.getElementById('participantConsent').classList.contains('on'),btn=document.getElementById('participantRegisterButton');
+  if(name.length<2){toast('Укажи имя минимум из 2 символов','ok');return;}
+  if(!consent){toast('Подтверди согласие на обработку данных','ok');return;}
+  btn.disabled=true;btn.textContent='Создаём маршрут…';
+  apiRequest('register',{method:'POST',body:JSON.stringify({name:name,contact:contact,consent:true,deviceToken:deviceToken(true),telegramInitData:telegramInitData()})}).then(function(data){
+    openTestWorkspace(data,'Профиль создан. Теперь настроим твой маршрут');
+  }).catch(function(error){toast(error.message,'ok');}).then(function(){btn.disabled=false;btn.textContent='Продолжить';});
+}
+function participantOnboardingRoute(){
+  if(S.onboardingComplete)return 'today';
+  if(!S.diagnosticAreas.length||S.onboardingStep==='diagnostic')return 'pain';
+  var missing=selectedAreaIds().filter(function(id){return !actionsForArea(id).length;})[0];
+  if(missing){actionAreaId=missing;renderHabits(DIAGNOSTIC_AREAS[missing].dir,true);return 'minimum';}
+  return 'mentor';
 }
 function openTestWorkspace(data,notice){
   data=data||{};
   applySnapshot(data);
-  if(!AUTH){toast('Сессия не подтверждена. Обнови страницу и войди ещё раз.','ok');go('mentorlogin');return;}
+  if(!AUTH){toast('Сессия не подтверждена. Начни регистрацию ещё раз.','ok');go('participantregister');return;}
   var ownState=AUTH.role==='mentor'?data.personalState:data.state;
-  if(!ownState){S=defState();S.name=AUTH.displayName||'';save();scheduleStateSync();}
+  if(!ownState){S=defState();S.name=AUTH.displayName||'';S.contact=AUTH.contact||'';save();scheduleStateSync();}
   if(AUTH.role==='mentor'){go('mentordesk');if(notice)toast(notice,'ok');return;}
-  go(S.habits.length?'today':'pain');
+  go(participantOnboardingRoute());
   if(notice)toast(notice,'ok');
 }
-function registerTest(){
-  var role=document.getElementById('testRole').value,name=document.getElementById('testName').value.trim(),contact=document.getElementById('testContact').value.trim(),code=document.getElementById('testCode').value,btn=document.getElementById('testRegisterButton');
-  if(!name||!contact||!code){toast('Заполни имя, контакт и код','ok');return;}
-  btn.disabled=true;btn.textContent='Сохраняем…';
-  apiRequest('register',{method:'POST',body:JSON.stringify({role:role,name:name,contact:contact,code:code})}).then(function(data){
-    document.getElementById('testCode').value='';openTestWorkspace(data,'Профиль создан и подключён к общей базе');
-  }).catch(function(error){toast(error.message,'ok');}).then(function(){btn.disabled=false;btn.textContent='Зарегистрироваться';});
-}
 function loginTest(){
-  var role=document.getElementById('testLoginRole').value,code=document.getElementById('testLoginCode').value,btn=document.getElementById('testLoginButton');
+  var code=document.getElementById('testLoginCode').value,btn=document.getElementById('testLoginButton');
   if(!code){toast('Введи код доступа','ok');return;}
   btn.disabled=true;btn.textContent='Входим…';
-  apiRequest('login',{method:'POST',body:JSON.stringify({role:role,code:code})}).then(function(data){
-    document.getElementById('testLoginCode').value='';openTestWorkspace(data,AUTH&&AUTH.role==='mentor'?'Кабинет наставника открыт':'Маршрут подключён к общей базе');
-  }).catch(function(error){toast(error.message,'ok');}).then(function(){btn.disabled=false;btn.textContent='Войти';});
+  apiRequest('login',{method:'POST',body:JSON.stringify({role:'mentor',code:code})}).then(function(data){
+    document.getElementById('testLoginCode').value='';openTestWorkspace(data,'Кабинет наставника открыт');
+  }).catch(function(error){toast(error.message,'ok');}).then(function(){btn.disabled=false;btn.textContent='Открыть кабинет';});
 }
 function logoutTest(){
-  apiRequest('logout',{method:'POST',body:'{}'}).catch(function(){}).then(function(){AUTH=null;REMOTE=null;go('splash');toast('Вы вышли из тестового доступа','ok');});
+  var participant=AUTH&&AUTH.role==='participant';
+  apiRequest('logout',{method:'POST',body:'{}'}).catch(function(){}).then(function(){
+    if(participant){try{localStorage.removeItem('way_device_credential');}catch(e){}}
+    AUTH=null;REMOTE=null;mentorParticipantId='';go('splash');toast('Вы вышли из профиля','ok');
+  });
 }
-function save(){try{localStorage.setItem('mp_v1',JSON.stringify(S));}catch(e){}scheduleStateSync();}
+function save(){writeLocalState();scheduleStateSync();}
 function todayKey(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function dateFromKey(k){var p=String(k).split('-').map(Number);return new Date(p[0],p[1]-1,p[2]);}
 function dayRec(k){k=k||todayKey();if(!S.days[k])S.days[k]={done:[]};return S.days[k];}
@@ -1510,7 +1544,7 @@ function removeSchedule(){
 
 /* --- Навигация --- */
 function go(id){
-  if(!AUTH&&id!=='mentorlogin'&&id!=='splash')id='splash';
+  if(!AUTH&&id!=='participantregister'&&id!=='mentorlogin'&&id!=='privacy'&&id!=='splash')id='splash';
   if(id!=='path'&&id!=='team')profileSectionOrigin='';
   var cur=document.querySelector('.screen.active');
   if(cur){var c=cur.dataset.s; if(OVER.indexOf(c)<0) prev=c;}
@@ -1553,6 +1587,7 @@ function go(id){
   }
   if(history.replaceState)history.replaceState(null,'','#'+id);
 }
+function openParticipantPrivacy(){prev='participantregister';go('privacy');}
 function updateNavForRole(){
   var link=document.getElementById('navMentorLink');if(!link)return;
   var mentor=!!(AUTH&&AUTH.role==='mentor');
@@ -1733,7 +1768,7 @@ function migrateDiagnosticGoal(){
   var typed=String((S.diagnosticGoals||{})[id]||'').trim(),template=defaultGoal(area.dir);
   if(!typed||S.goal.title!==template.title)return false;
   S.dir=area.dir;S.dirName=(HABITS[area.dir]||HABITS.sport).name;S.goal=goalFromDiagnostic(id);
-  try{localStorage.setItem('mp_v1',JSON.stringify(S));}catch(e){}
+  writeLocalState();
   return true;
 }
 function continueDiagnostic(){
@@ -1755,6 +1790,7 @@ function continueDiagnostic(){
     if(!Array.isArray(S.actionsByArea[id]))S.actionsByArea[id]=[];
   });
   S.goal=S.goalsByArea[primaryId];actionAreaId=primaryId;rebuildFlatHabits();
+  S.onboardingStep='actions';S.onboardingComplete=false;
   save();renderHabits(S.dir,true);go('minimum');
 }
 function diagnosticSummary(){
@@ -1825,12 +1861,15 @@ function addCustom(){
 }
 function multi(el){el.classList.toggle('on');}
 function savePlan(){
+  var onboarding=!S.onboardingComplete;
   var sel=draft.filter(function(d){return d.on;}).map(function(d){return d.txt;});
   if(!sel.length){toast('Отметь хотя бы одно действие','ok');return;}
   S.actionsByArea[actionAreaId]=sel;rebuildFlatHabits();save();
   var next=selectedAreaIds().filter(function(id){return id!==actionAreaId&&!actionsForArea(id).length;})[0];
   if(next){actionAreaId=next;renderHabits(DIAGNOSTIC_AREAS[next].dir,true);toast('Действия сохранены. Теперь настрой «'+DIAGNOSTIC_AREAS[next].name+'»','ok');return;}
-  toast('Все цели и действия сохранены ✓','ok');go('today');
+  if(!onboarding){toast('Действия обновлены ✓','ok');go('today');return;}
+  S.onboardingStep='mode';S.onboardingComplete=false;save();
+  toast('Все цели и действия сохранены ✓','ok');go('mentor');
 }
 function renderModeChoice(){
   var mode=S.mode==='С наставником'?'С наставником':'Сам';
@@ -1842,7 +1881,13 @@ function selectMode(mode){
   S.mode=mode==='С наставником'?'С наставником':'Сам';
   renderModeChoice();
 }
-function continueMode(){chooseMode(S.mode);}
+function continueMode(){
+  S.mode=S.mode==='С наставником'?'С наставником':'Сам';
+  S.onboardingStep='complete';S.onboardingComplete=true;
+  if(S.mode==='Сам')S.mentorStatus='none';
+  save();go('today');
+  toast(S.mode==='С наставником'?'Маршрут готов. Наставника выберешь во вкладке «Наставники»':'Самостоятельный маршрут готов ✓','ok');
+}
 function mentor(){return MENTORS[S.mentorId]||MENTORS.alex;}
 function renderMentorCatalog(){
   var h='';
@@ -1879,7 +1924,7 @@ function renderMentorProfile(){
 }
 function openMentorDesk(){
   if(AUTH&&AUTH.role==='mentor'){go('mentordesk');return;}
-  var role=document.getElementById('testRole');if(role)role.value='mentor';go('mentorlogin');
+  go('mentorlogin');
 }
 function openMentorArea(){if(AUTH&&AUTH.role==='mentor'){go('mentordesk');return;}go('mentorhub');}
 var DEMO_PARTICIPANTS={
@@ -1888,6 +1933,8 @@ var DEMO_PARTICIPANTS={
   marina:{name:'Марина',goal:'21 день соблюдать режим',progress:'14 из 21 дней',status:'внимание',checkin:'Не отмечалась 2 дня',done:'Последний чек-ин: 2 дня назад',comment:'Марина, не догоняем пропущенное. Сегодня только один минимум: лечь до 23:30 и отметиться вечером.'}
 };
 var demoParticipantId='anna';
+function remoteParticipants(){return REMOTE&&Array.isArray(REMOTE.participants)?REMOTE.participants:[];}
+function remoteParticipant(id){return remoteParticipants().filter(function(item){return item.id===id;})[0]||null;}
 function participantGoals(state){
   var ids=(state&&state.diagnosticAreas||[]).filter(function(id){return state.goalsByArea&&state.goalsByArea[id];});
   if(ids.length)return ids.map(function(id){return {id:id,goal:state.goalsByArea[id],area:DIAGNOSTIC_AREAS[id]||{name:id}};});
@@ -1907,20 +1954,25 @@ function demoParticipantRow(id,p){
 }
 function renderMentorDesk(){
   if(AUTH&&AUTH.role==='mentor'){
-    var feedback=REMOTE&&REMOTE.mentorFeedback,messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[],last=messages[messages.length-1];
-    document.getElementById('mentorDeskChat').innerHTML='<button type="button" class="mentor-dialog-row" onclick="go(\'mentorchat\')"><span class="mentor-avatar">М</span><span class="mentor-dialog-copy"><b>Чат с Милой</b><span>'+(last?esc(last.body):'Сообщений пока нет')+'</span></span>'+(last&&last.authorId==='mila'?'<span class="mentor-unread">1</span>':'<span class="mentor-dialog-time">'+(last?formatChatTime(last.createdAt):'')+'</span>')+'<span class="chev">›</span></button>';
+    var participants=remoteParticipants(),selected=(REMOTE&&REMOTE.selectedParticipant)||participants[0]||null;
+    var feedback=REMOTE&&REMOTE.mentorFeedback,messages=REMOTE&&Array.isArray(REMOTE.messages)?REMOTE.messages:[],last=messages[messages.length-1],selectedName=selected&&selected.displayName||'участником';
+    document.getElementById('mentorDeskChat').innerHTML=selected?'<button type="button" class="mentor-dialog-row" onclick="go(\'mentorchat\')"><span class="mentor-avatar">'+esc(selectedName.charAt(0).toUpperCase())+'</span><span class="mentor-dialog-copy"><b>Чат с '+esc(selectedName)+'</b><span>'+(last?esc(last.body):'Сообщений пока нет')+'</span></span>'+(last&&last.authorId===selected.id?'<span class="mentor-unread">1</span>':'<span class="mentor-dialog-time">'+(last?formatChatTime(last.createdAt):'')+'</span>')+'<span class="chev">›</span></button>':'<div class="card2"><b class="small">Чаты появятся после регистрации участников</b></div>';
     var state=REMOTE&&REMOTE.state;
-    var count=state?1:0,status=state?participantStatus(state):null;
+    var count=participants.length,status=state?participantStatus(state):null;
+    var checkins=participants.filter(function(item){return item.state&&item.state.days&&item.state.days[todayKey()]&&item.state.days[todayKey()].checkin;}).length;
+    var attention=participants.filter(function(item){return !item.state||participantStatus(item.state).kind==='attention';}).length;
     document.getElementById('mentorMetricParticipants').textContent=count;
-    document.getElementById('mentorMetricCheckins').textContent=status&&status.checkin?1:0;
-    document.getElementById('mentorMetricAttention').textContent=status&&status.kind==='attention'?1:0;
-    document.getElementById('mentorDeskCount').textContent=count?count+' человек':'пусто';
-    document.getElementById('mentorTodaySummary').innerHTML='<div class="row between"><b class="small">Сегодня</b>'+(feedback?'<span class="mentor-rating">★ '+feedback.rating+' / 5</span>':'')+'</div><p class="small mut" style="margin-top:5px;">'+(state?(status.checkin?'Чек-ин Милы получен. ':'Чек-ин Милы пока не заполнен. ')+(status.total?'Действия: '+status.done+' из '+status.total+'.':'Действия ещё не настроены.'):'Мила ещё не подключила маршрут.')+'</p>';
-    if(!state){
-      document.getElementById('mentorDeskList').innerHTML='<div class="card"><b>Мила ещё не вошла</b><p class="small mut" style="margin-top:6px;">После первого входа здесь появятся её цели, действия и чек-ин.</p></div>';
+    document.getElementById('mentorMetricCheckins').textContent=checkins;
+    document.getElementById('mentorMetricAttention').textContent=attention;
+    document.getElementById('mentorDeskCount').textContent=count?count+' '+(count===1?'человек':'человек'):'пусто';
+    document.getElementById('mentorTodaySummary').innerHTML='<div class="row between"><b class="small">Сегодня · '+esc(selectedName)+'</b>'+(feedback?'<span class="mentor-rating">★ '+feedback.rating+' / 5</span>':'')+'</div><p class="small mut" style="margin-top:5px;">'+(state?(status.checkin?'Чек-ин получен. ':'Чек-ин пока не заполнен. ')+(status.total?'Действия: '+status.done+' из '+status.total+'.':'Действия ещё не настроены.'):'Выбери участника, чтобы открыть его маршрут.')+'</p>';
+    if(!participants.length){
+      document.getElementById('mentorDeskList').innerHTML='<div class="card"><b>Участников пока нет</b><p class="small mut" style="margin-top:6px;">После регистрации здесь появятся их цели, действия и чек-ины.</p></div>';
     }else{
-      var primary=participantGoals(state)[0],goal=primary&&primary.goal||{};
-      document.getElementById('mentorDeskList').innerHTML='<button type="button" class="mentor-participant-row" onclick="openParticipant(\'mila\')"><span class="mentor-avatar">М</span><span class="mentor-participant-copy"><b>'+esc(state.name||'Мила')+'</b><span>'+esc(goal.title||'Цель не выбрана')+'</span><em>Сегодня: '+status.done+' из '+status.total+' · '+(status.checkin?'чек-ин есть':'без чек-ина')+'</em></span><span class="mentor-status '+status.kind+'" title="'+esc(status.label)+'">'+status.icon+'</span><span class="chev">›</span></button>';
+      document.getElementById('mentorDeskList').innerHTML=participants.map(function(item){
+        var itemState=item.state,itemStatus=itemState?participantStatus(itemState):{done:0,total:0,checkin:false,kind:'attention',icon:'!',label:'Маршрут ещё не настроен'},primary=itemState&&participantGoals(itemState)[0],goal=primary&&primary.goal||{};
+        return '<button type="button" class="mentor-participant-row" onclick="openParticipant(\''+esc(item.id)+'\')"><span class="mentor-avatar">'+esc((item.displayName||'У').charAt(0).toUpperCase())+'</span><span class="mentor-participant-copy"><b>'+esc(item.displayName||'Участник')+'</b><span>'+esc(goal.title||'Маршрут ещё не настроен')+'</span><em>Сегодня: '+itemStatus.done+' из '+itemStatus.total+' · '+(itemStatus.checkin?'чек-ин есть':'без чек-ина')+'</em></span><span class="mentor-status '+itemStatus.kind+'" title="'+esc(itemStatus.label)+'">'+itemStatus.icon+'</span><span class="chev">›</span></button>';
+      }).join('');
     }
     document.getElementById('mentorDemoList').innerHTML=Object.keys(DEMO_PARTICIPANTS).map(function(id){return demoParticipantRow(id,DEMO_PARTICIPANTS[id]);}).join('');
     return;
@@ -1928,7 +1980,14 @@ function renderMentorDesk(){
   document.getElementById('mentorDeskList').innerHTML='<div class="card"><b>Нужен вход наставника</b><p class="small mut" style="margin-top:6px;">Войди как Саша, чтобы увидеть подключённых участников.</p></div>';
   document.getElementById('mentorDemoList').innerHTML=Object.keys(DEMO_PARTICIPANTS).map(function(id){return demoParticipantRow(id,DEMO_PARTICIPANTS[id]);}).join('');
 }
-function openParticipant(id){if(id==='mila'&&AUTH&&AUTH.role==='mentor'){demoParticipantId='mila';go('mentorparticipant');return;}if(!DEMO_PARTICIPANTS[id])return;demoParticipantId=id;go('mentorparticipant');}
+function openParticipant(id){
+  if(remoteParticipant(id)&&AUTH&&AUTH.role==='mentor'){
+    demoParticipantId=id;mentorParticipantId=id;go('mentorparticipant');
+    document.getElementById('mentorParticipant').innerHTML='<p class="mut">Загружаем маршрут…</p>';
+    refreshRemoteSnapshot(id).then(function(){renderMentorParticipant();}).catch(function(error){toast(error.message,'ok');});return;
+  }
+  if(!DEMO_PARTICIPANTS[id])return;demoParticipantId=id;go('mentorparticipant');
+}
 function messageThreadHtml(messages,currentAuthorId){
   if(!messages.length)return '<p class="small mut">Сообщений пока нет.</p>';
   return messages.slice(-12).map(function(message){
@@ -1939,8 +1998,10 @@ function refreshMentorData(){
   refreshRemoteSnapshot().then(function(){toast('Данные обновлены','ok');}).catch(function(error){toast(error.message,'ok');});
 }
 function renderMentorParticipant(){
-  if(demoParticipantId==='mila'&&AUTH&&AUTH.role==='mentor'){
-    var state=REMOTE&&REMOTE.state;if(!state){document.getElementById('mentorParticipant').innerHTML='<p class="mut">Данные Милы пока не поступили.</p>';return;}
+  var real=remoteParticipant(demoParticipantId);
+  if(real&&AUTH&&AUTH.role==='mentor'){
+    var state=REMOTE&&REMOTE.state,participant=(REMOTE&&REMOTE.selectedParticipant)||real,participantName=participant.displayName||state&&state.name||'Участник';
+    if(!state){document.getElementById('mentorParticipant').innerHTML='<p class="mut">'+esc(participantName)+' ещё не настроил маршрут.</p>';return;}
     var goals=participantGoals(state),rec=state.days&&state.days[todayKey()]||{},pendingItem=goals.filter(function(item){return !!item.goal.pending;})[0]||null;
     var goalsHtml=goals.map(function(item){
       var goal=item.goal,pct=Math.min(100,Math.round((Number(goal.current)||0)/(Number(goal.target)||1)*100));
@@ -1949,11 +2010,11 @@ function renderMentorParticipant(){
     var proof='';
     if(pendingItem){
       var goal=pendingItem.goal,pending=goal.pending,submission=findResultSubmission(pending.submissionId);
-      proof='<div class="card mentor-proof-card" style="margin-top:12px;"><div class="row between"><b class="small">Результат ждёт проверки</b><span class="chip">'+esc(pendingItem.area.name)+'</span></div><p class="small mut" style="margin-top:7px;">Мила указала: <b>'+fmt(pending.value)+' '+esc(goal.unit||'')+'</b></p>'+(pending.evidence?'<p class="tiny dim" style="margin-top:6px;">Комментарий: '+esc(pending.evidence)+'</p>':'')+(submission&&submission.proofData?'<button type="button" class="mentor-proof-image" onclick="openProofImage(\''+esc(submission.id)+'\')"><img src="'+submission.proofData+'" alt="Скриншот результата"><span>Открыть скриншот</span></button>':'<p class="tiny dim" style="margin-top:6px;">Скриншот не приложен</p>')+'<div class="mentor-review-actions"><button class="btn btn-amber btn-sm" onclick="approveParticipantResult(\''+esc(pending.submissionId||'')+'\',\''+esc(pendingItem.id)+'\')">Подтвердить</button><button class="btn btn-ghost btn-sm" onclick="requestResultClarification(\''+esc(pending.submissionId||'')+'\',\''+esc(pendingItem.id)+'\')">Уточнить</button></div></div>';
+      proof='<div class="card mentor-proof-card" style="margin-top:12px;"><div class="row between"><b class="small">Результат ждёт проверки</b><span class="chip">'+esc(pendingItem.area.name)+'</span></div><p class="small mut" style="margin-top:7px;">'+esc(participantName)+' указал(а): <b>'+fmt(pending.value)+' '+esc(goal.unit||'')+'</b></p>'+(pending.evidence?'<p class="tiny dim" style="margin-top:6px;">Комментарий: '+esc(pending.evidence)+'</p>':'')+(submission&&submission.proofData?'<button type="button" class="mentor-proof-image" onclick="openProofImage(\''+esc(submission.id)+'\')"><img src="'+submission.proofData+'" alt="Скриншот результата"><span>Открыть скриншот</span></button>':'<p class="tiny dim" style="margin-top:6px;">Скриншот не приложен</p>')+'<div class="mentor-review-actions"><button class="btn btn-amber btn-sm" onclick="approveParticipantResult(\''+esc(pending.submissionId||'')+'\',\''+esc(pendingItem.id)+'\')">Подтвердить</button><button class="btn btn-ghost btn-sm" onclick="requestResultClarification(\''+esc(pending.submissionId||'')+'\',\''+esc(pendingItem.id)+'\')">Уточнить</button></div></div>';
     }
     var checkin=rec.checkin?'Сон '+esc(rec.checkin.sleep||'—')+' · энергия '+esc(rec.checkin.energy||'—')+' · настроение '+esc(rec.checkin.mood||'—'):'Сегодня чек-ин ещё не заполнен';
     var doneText=(rec.done||[]).map(taskLabel).map(esc).join(', ')||'ещё не отмечены';
-    document.getElementById('mentorParticipant').innerHTML='<div class="row between"><div><div class="kick">ПОДКЛЮЧЁННЫЙ УЧАСТНИК</div><h1 style="font-size:25px;margin-top:8px;">'+esc(state.name||'Мила')+'</h1></div><button class="btn btn-ghost btn-sm" onclick="refreshMentorData()">Обновить</button></div><button type="button" class="mentor-dialog-row compact" style="margin-top:14px;" onclick="go(\'mentorchat\')"><span class="mentor-avatar">М</span><span class="mentor-dialog-copy"><b>Открыть чат с Милой</b><span>Вся история сообщений и запросов чек-ина</span></span><span class="chev">›</span></button><div class="card mentor-goals-card" style="margin-top:12px;"><div class="row between"><b class="small">Цели и прогресс</b><span class="tiny dim">'+goals.length+' направлений</span></div><div class="mentor-goals-list">'+goalsHtml+'</div></div>'+proof+'<div class="card2" style="margin-top:12px;"><b class="small">Сегодняшний чек-ин</b><p class="small mut" style="margin-top:5px;">'+checkin+'</p><p class="small mut" style="margin-top:5px;">Действия: '+doneText+'</p><button class="btn btn-ghost btn-sm" style="margin-top:11px;" onclick="requestCheckin()">Запросить чек-ин</button></div>';
+    document.getElementById('mentorParticipant').innerHTML='<div class="row between"><div><div class="kick">ПОДКЛЮЧЁННЫЙ УЧАСТНИК</div><h1 style="font-size:25px;margin-top:8px;">'+esc(participantName)+'</h1></div><button class="btn btn-ghost btn-sm" onclick="refreshMentorData()">Обновить</button></div><button type="button" class="mentor-dialog-row compact" style="margin-top:14px;" onclick="go(\'mentorchat\')"><span class="mentor-avatar">'+esc(participantName.charAt(0).toUpperCase())+'</span><span class="mentor-dialog-copy"><b>Открыть чат с '+esc(participantName)+'</b><span>Вся история сообщений и запросов чек-ина</span></span><span class="chev">›</span></button><div class="card mentor-goals-card" style="margin-top:12px;"><div class="row between"><b class="small">Цели и прогресс</b><span class="tiny dim">'+goals.length+' направлений</span></div><div class="mentor-goals-list">'+goalsHtml+'</div></div>'+proof+'<div class="card2" style="margin-top:12px;"><b class="small">Сегодняшний чек-ин</b><p class="small mut" style="margin-top:5px;">'+checkin+'</p><p class="small mut" style="margin-top:5px;">Действия: '+doneText+'</p><button class="btn btn-ghost btn-sm" style="margin-top:11px;" onclick="requestCheckin()">Запросить чек-ин</button></div>';
     return;
   }
   var p=DEMO_PARTICIPANTS[demoParticipantId];
@@ -1961,11 +2022,11 @@ function renderMentorParticipant(){
   document.getElementById('mentorParticipant').innerHTML='<div class="kick">ДЕМО-УЧАСТНИК</div><h1 style="font-size:25px;margin-top:8px;">'+p.name+'</h1><div class="card" style="margin-top:14px;"><div class="small mut">Главная цель</div><b style="display:block;margin-top:3px;">'+p.goal+'</b><div class="small amber" style="font-weight:800;margin-top:9px;">'+p.progress+'</div></div>'+proof+'<div class="card2" style="margin-top:12px;"><b class="small">Последний чек-ин · заполняет участник</b><p class="small mut" style="margin-top:5px;">'+p.done+'</p><p class="small mut" style="margin-top:5px;">'+p.checkin+'</p><button class="btn btn-ghost btn-sm" style="margin-top:11px;" onclick="requestCheckin()">Запросить новый чек-ин</button></div><div class="card" style="margin-top:12px;"><label class="flabel" for="mentorComment" style="margin-top:0;">Комментарий наставника</label><textarea class="inp" id="mentorComment" rows="4" style="resize:vertical;">'+p.comment+'</textarea><p class="tiny dim" style="margin-top:8px;">Комментарий увидит участник в личном чате. Чек-ин он заполняет сам в своём приложении.</p><button class="btn btn-amber" style="margin-top:12px;" onclick="sendMentorComment()">Отправить комментарий</button></div>';
 }
 function sendMentorComment(){
-  if(demoParticipantId==='mila'&&AUTH&&AUTH.role==='mentor'){var text=document.getElementById('mentorComment').value.trim();if(!text){toast('Напиши сообщение','ok');return;}apiRequest('messages',{method:'POST',body:JSON.stringify({text:text})}).then(function(){document.getElementById('mentorComment').value='';return refreshRemoteSnapshot();}).then(function(){toast('Сообщение Миле отправлено','ok');}).catch(function(error){toast(error.message,'ok');});return;}
+  if(remoteParticipant(demoParticipantId)&&AUTH&&AUTH.role==='mentor'){var text=document.getElementById('mentorComment').value.trim();if(!text){toast('Напиши сообщение','ok');return;}apiRequest('messages',{method:'POST',body:JSON.stringify({text:text,participantId:demoParticipantId})}).then(function(){document.getElementById('mentorComment').value='';return refreshRemoteSnapshot(demoParticipantId);}).then(function(){toast('Сообщение участнику отправлено','ok');}).catch(function(error){toast(error.message,'ok');});return;}
   var p=DEMO_PARTICIPANTS[demoParticipantId];p.comment=document.getElementById('mentorComment').value.trim()||p.comment;toast('Демо: комментарий для '+p.name+' отправлен','ok');
 }
 function requestCheckin(){
-  if(demoParticipantId==='mila'&&AUTH&&AUTH.role==='mentor'){apiRequest('messages',{method:'POST',body:JSON.stringify({text:'Мила, пришли, пожалуйста, короткий чек-ин за сегодня: что сделала и где нужен фокус?'})}).then(function(){return refreshRemoteSnapshot();}).then(function(){toast('Запрос чек-ина отправлен','ok');}).catch(function(error){toast(error.message,'ok');});return;}
+  if(remoteParticipant(demoParticipantId)&&AUTH&&AUTH.role==='mentor'){var participant=remoteParticipant(demoParticipantId),name=participant&&participant.displayName||'Привет';apiRequest('messages',{method:'POST',body:JSON.stringify({text:name+', пришли, пожалуйста, короткий чек-ин за сегодня: что сделал(а) и где нужен фокус?',participantId:demoParticipantId})}).then(function(){return refreshRemoteSnapshot(demoParticipantId);}).then(function(){toast('Запрос чек-ина отправлен','ok');}).catch(function(error){toast(error.message,'ok');});return;}
   var p=DEMO_PARTICIPANTS[demoParticipantId];toast('Демо: запрос на чек-ин отправлен '+p.name,'ok');
 }
 function openProofImage(submissionId){
@@ -1977,13 +2038,13 @@ function openProofImage(submissionId){
   win.document.close();
 }
 function approveParticipantResult(submissionId,areaId){
-  if(demoParticipantId==='mila'&&AUTH&&AUTH.role==='mentor'){var comment=window.prompt('Комментарий для Милы','Результат подтверждён. Хорошая работа — продолжаем в этом же ритме.');if(comment===null)return;apiRequest('reviews',{method:'POST',body:JSON.stringify({status:'approved',comment:comment,submissionId:submissionId||'',areaId:areaId||''})}).then(function(){return refreshRemoteSnapshot();}).then(function(){toast('Результат Милы подтверждён','ok');}).catch(function(error){toast(error.message,'ok');});return;}
+  if(remoteParticipant(demoParticipantId)&&AUTH&&AUTH.role==='mentor'){var comment=window.prompt('Комментарий участнику','Результат подтверждён. Хорошая работа — продолжаем в этом же ритме.');if(comment===null)return;apiRequest('reviews',{method:'POST',body:JSON.stringify({status:'approved',comment:comment,submissionId:submissionId||'',areaId:areaId||'',participantId:demoParticipantId})}).then(function(){return refreshRemoteSnapshot(demoParticipantId);}).then(function(){toast('Результат подтверждён','ok');}).catch(function(error){toast(error.message,'ok');});return;}
   var p=DEMO_PARTICIPANTS[demoParticipantId];p.proof='';p.status='подтверждено';toast('Демо: результат '+p.name+' подтверждён','ok');renderMentorParticipant();
 }
 function requestResultClarification(submissionId,areaId){
-  var comment=window.prompt('Что Миле нужно уточнить?','Добавь, пожалуйста, более понятный скриншот или короткое пояснение к результату.');
+  var comment=window.prompt('Что нужно уточнить?','Добавь, пожалуйста, более понятный скриншот или короткое пояснение к результату.');
   if(comment===null||!comment.trim())return;
-  apiRequest('reviews',{method:'POST',body:JSON.stringify({status:'needs_clarification',comment:comment.trim(),submissionId:submissionId||'',areaId:areaId||''})}).then(function(){return refreshRemoteSnapshot();}).then(function(){toast('Запрос уточнения отправлен Миле','ok');}).catch(function(error){toast(error.message,'ok');});
+  apiRequest('reviews',{method:'POST',body:JSON.stringify({status:'needs_clarification',comment:comment.trim(),submissionId:submissionId||'',areaId:areaId||'',participantId:demoParticipantId})}).then(function(){return refreshRemoteSnapshot(demoParticipantId);}).then(function(){toast('Запрос уточнения отправлен','ok');}).catch(function(error){toast(error.message,'ok');});
 }
 function chooseMode(mode){
   S.mode=mode==='Сам'?'Сам':'С наставником';save();
@@ -2119,9 +2180,8 @@ function renderHomeSpheres(){
   var selected=selectedAreaIds();
   if(selected.indexOf(homeAreaId)<0)homeAreaId=selected[0];
   var shortNames={health:'Здоровье',sport:'Спорт',biz:'Доход',life:'Развитие',relations:'Отношения'};
-  box.innerHTML=Object.keys(DIAGNOSTIC_AREAS).map(function(id){
-    var ready=selected.indexOf(id)>=0;
-    return '<button type="button" class="home-sphere '+(id===homeAreaId?'on ':'')+(ready?'':'not-ready')+'" onclick="selectHomeSphere(\''+id+'\')" aria-pressed="'+(id===homeAreaId)+'"><span class="icc">'+homeSphereIcon(id)+'</span><b>'+esc(shortNames[id])+'</b></button>';
+  box.innerHTML=selected.map(function(id){
+    return '<button type="button" class="home-sphere '+(id===homeAreaId?'on':'')+'" onclick="selectHomeSphere(\''+id+'\')" aria-pressed="'+(id===homeAreaId)+'"><span class="icc">'+homeSphereIcon(id)+'</span><b>'+esc(shortNames[id])+'</b></button>';
   }).join('');
   renderHomeGoal();
 }
@@ -2565,8 +2625,8 @@ function renderMentorChat(){
   var isMentor=!!(AUTH&&AUTH.role==='mentor');
   var active=isMentor||(AUTH&&AUTH.role==='participant')||S.mentorStatus==='active';
   if(!active){go('mentorhub');return;}
-  var m=mentor(),mentorName=(AUTH&&REMOTE&&REMOTE.mentorProfile&&REMOTE.mentorProfile.displayName)||m.name;
-  document.getElementById('mentorChatName').textContent=isMentor?'Мила':mentorName;
+  var m=mentor(),mentorName=(AUTH&&REMOTE&&REMOTE.mentorProfile&&REMOTE.mentorProfile.displayName)||m.name,selected=REMOTE&&REMOTE.selectedParticipant;
+  document.getElementById('mentorChatName').textContent=isMentor?(selected&&selected.displayName||'Участник'):mentorName;
   var photo=document.getElementById('mentorChatPhoto'),avatar=document.getElementById('mentorChatAvatar');
   photo.hidden=isMentor;avatar.hidden=!isMentor;
   if(!isMentor)photo.src=m.photo;
@@ -2596,7 +2656,7 @@ function renderMentorFeedback(mentorName){
   box.innerHTML='<div class="card2"><b class="small">Оценить работу наставника</b><p class="small mut" style="margin-top:5px;">Один раз оцени '+esc(mentorName)+' — это увидит он в кабинете.</p><label class="flabel" for="mentorRating" style="margin-top:11px;">Оценка</label><select class="inp" id="mentorRating"><option value="5">5 — отлично</option><option value="4">4 — хорошо</option><option value="3">3 — нормально</option><option value="2">2 — слабо</option><option value="1">1 — плохо</option></select><label class="flabel" for="mentorReview">Отзыв</label><textarea class="inp" id="mentorReview" rows="3" maxlength="700" style="resize:vertical;" placeholder="Что было полезно или что стоит улучшить"></textarea><button class="btn btn-ghost btn-sm" style="margin-top:10px;" onclick="leaveMentorFeedback()">Отправить оценку</button></div>';
 }
 function leaveMentorFeedback(){
-  if(!AUTH||AUTH.role!=='participant'){toast('Оценку может оставить Мила','ok');return;}
+  if(!AUTH||AUTH.role!=='participant'){toast('Оценку может оставить только участник','ok');return;}
   var rating=Number(document.getElementById('mentorRating').value),review=document.getElementById('mentorReview').value.trim();
   apiRequest('mentor-feedback',{method:'POST',body:JSON.stringify({rating:rating,review:review})}).then(function(){
     if(!REMOTE)REMOTE={};REMOTE.mentorFeedback={rating:rating,review:review};renderMentorFeedback((REMOTE.mentorProfile&&REMOTE.mentorProfile.displayName)||'Саша');
@@ -2616,7 +2676,7 @@ function sendChatMessage(){
   if(!AUTH||(AUTH.role!=='participant'&&AUTH.role!=='mentor')){toast('Для личного чата нужен вход в профиль','ok');return;}
   var input=document.getElementById('mentorMessageInput'),text=input.value.trim();if(!text){toast('Напиши сообщение','ok');return;}
   input.disabled=true;
-  apiRequest('messages',{method:'POST',body:JSON.stringify({text:text})}).then(function(){input.value='';return refreshRemoteSnapshot();}).then(function(){toast(AUTH.role==='mentor'?'Сообщение отправлено Миле':'Сообщение отправлено Саше','ok');}).catch(function(error){toast(error.message,'ok');}).then(function(){input.disabled=false;});
+  apiRequest('messages',{method:'POST',body:JSON.stringify({text:text,participantId:AUTH.role==='mentor'?(mentorParticipantId||(REMOTE&&REMOTE.selectedParticipantId)||''):undefined})}).then(function(){input.value='';return refreshRemoteSnapshot();}).then(function(){toast(AUTH.role==='mentor'?'Сообщение участнику отправлено':'Сообщение отправлено Саше','ok');}).catch(function(error){toast(error.message,'ok');}).then(function(){input.disabled=false;});
 }
 function renderMentorStart(){
   document.getElementById('mentorGoalPreview').textContent=S.goal.title;
@@ -2689,9 +2749,10 @@ function routeAfterBootstrap(data){
   renderHabits(S.dir,true);
   if(!AUTH){go('splash');return;}
   if(data&&!((AUTH.role==='mentor'?data.personalState:data.state)))scheduleStateSync();
+  if(AUTH.role==='participant'&&!S.onboardingComplete){go(participantOnboardingRoute());return;}
   if(['rewards','challenges'].indexOf(h)>=0){go('path');return;}
   // Стартовая страница нужна только до регистрации: сохранённая сессия сразу возвращает в маршрут.
-  if(h&&h!=='splash'&&h!=='mentorlogin'&&document.querySelector('.screen[data-s="'+h+'"]')){go(h);return;}
+  if(h&&['splash','participantregister','mentorlogin'].indexOf(h)<0&&document.querySelector('.screen[data-s="'+h+'"]')){go(h);return;}
   openTestWorkspace(data||{});
 }
 applyTheme(currentTheme,false);
@@ -2699,7 +2760,7 @@ try{if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp
 document.addEventListener('keydown',function(event){if(event.key==='Escape'&&!document.getElementById('scheduleOverlay').hidden)closeSchedule();});
 load();
 startLiveSync();
-refreshRemoteSnapshot().then(routeAfterBootstrap).catch(function(){routeAfterBootstrap(null);});
+refreshRemoteSnapshot().catch(function(){return resumeParticipant();}).then(routeAfterBootstrap).catch(function(){routeAfterBootstrap(null);});
 window.addEventListener('hashchange',function(){
   var h=(location.hash||'').replace('#','');
   if(['rewards','challenges'].indexOf(h)>=0){go('path');return;}
