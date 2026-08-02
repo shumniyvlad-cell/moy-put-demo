@@ -18,7 +18,9 @@ function reply(res, status, payload) {
 export default async function handler(req, res) {
   if (req.method !== 'GET') return reply(res, 405, { error: 'Метод не поддерживается' });
   const authorization = Array.isArray(req.headers.authorization) ? req.headers.authorization[0] : req.headers.authorization;
-  if (!sameSecret(authorization, `Bearer ${process.env.CRON_SECRET || ''}`)) {
+  const manualSecret = Array.isArray(req.headers['x-way-cron-secret']) ? req.headers['x-way-cron-secret'][0] : req.headers['x-way-cron-secret'];
+  const expected = process.env.CRON_SECRET || '';
+  if (!sameSecret(authorization, `Bearer ${expected}`) && !sameSecret(manualSecret, expected)) {
     return reply(res, 401, { error: 'Неверная подпись планировщика' });
   }
   try {
