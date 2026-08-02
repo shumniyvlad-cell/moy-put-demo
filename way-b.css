@@ -699,8 +699,6 @@ body.theme-way-b{
 .theme-way-b .screen[data-s="today"] .home-swipe-hint{order:4;}
 .theme-way-b .screen[data-s="today"] .home-actions-title{order:5;}
 .theme-way-b .screen[data-s="today"] #dayList{order:6;}
-.theme-way-b .screen[data-s="today"] .way-quick-title{order:7;}
-.theme-way-b .screen[data-s="today"] .way-quick-actions{order:8;}
 .theme-way-b .screen[data-s="today"] #dayState{order:9;}
 .theme-way-b .screen[data-s="today"] #checkinPrompt{order:10;}
 .theme-way-b .screen[data-s="today"] .home-quote{order:11;}
@@ -913,40 +911,6 @@ body.theme-way-b{
   height:26px;
 }
 
-.theme-way-b .way-quick-title{
-  margin:22px 2px 10px;
-  color:var(--way-text-tertiary);
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.theme-way-b .way-quick-actions{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-}
-
-.theme-way-b .way-quick{
-  min-height:72px;
-  border:1px solid var(--way-border-default);
-  border-radius:var(--way-radius-md);
-  background:var(--way-surface-primary);
-  color:var(--way-text-secondary);
-  font-size:9px;
-  font-weight:500;
-  transition:background .2s var(--way-ease),color .2s var(--way-ease),transform .12s var(--way-ease);
-}
-
-.theme-way-b .way-quick svg{
-  width:21px;
-  height:21px;
-  color:var(--way-brand-primary);
-}
-
-.theme-way-b .way-quick:hover{background:var(--way-surface-hover);}
-.theme-way-b .way-quick:active{transform:scale(.98);}
 
 .theme-way-b .home-quote{
   margin-top:20px;
@@ -1953,8 +1917,6 @@ body.theme-way-b{
     padding-left:16px;
     padding-right:16px;
   }
-  .theme-way-b .way-quick-actions{gap:6px;}
-  .theme-way-b .way-quick{font-size:8px;}
   .theme-way-b .nav a{font-size:7px;}
 }
 

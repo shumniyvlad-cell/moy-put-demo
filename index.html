@@ -133,7 +133,7 @@ h2{font-family:Unbounded;font-size:20px;font-weight:600;letter-spacing:-.2px;}
 .home-goal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .home-goal-head span{display:block;color:var(--dim);font-size:10.5px;font-weight:700;}
 .home-goal-head b{display:block;margin-top:3px;font-size:16px;line-height:1.28;}
-.home-goal-pct{font-family:Unbounded;font-size:21px;font-weight:700;color:var(--accent-d);white-space:nowrap;}
+.home-goal-pct{font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text",Roboto,sans-serif;font-size:21px;font-weight:700;color:var(--accent-d);white-space:nowrap;}
 .home-goal-track{display:block;height:6px;margin-top:12px;overflow:hidden;border-radius:999px;background:#EFEDE9;}
 .home-goal-track i{display:block;width:0;height:100%;border-radius:inherit;background:var(--accent);transition:width .28s ease;}
 .home-goal-foot{display:flex;justify-content:space-between;gap:10px;margin-top:7px;color:var(--dim);font-size:10.5px;}
@@ -559,13 +559,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <span><strong class="num" id="doneN">0</strong> из <strong class="num" id="totN">3</strong> действий выполнено</span>
         <div class="bar"><i id="dayBar"></i></div>
       </div>
-    </div>
-    <div class="way-quick-title">Быстрые действия</div>
-    <div class="way-quick-actions">
-      <button type="button" class="way-quick" onclick="go('checkin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v3M18 3v3M4 9h16M5 5h14v15H5z"/><path d="m8 14 2 2 5-5"/></svg>Чек-ин</button>
-      <button type="button" class="way-quick" onclick="go('minimum')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg>Действия</button>
-      <button type="button" class="way-quick" onclick="go('path')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="m16.8 7.2 3-3M17 4h3v3"/></svg>Прогресс</button>
-      <button type="button" class="way-quick" onclick="go('knowledge')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 0-3 3z"/><path d="M5 4.5V20a3 3 0 0 1 3-3h11"/></svg>База</button>
     </div>
     <p class="note" id="dayState">Начни с одного простого действия.</p>
     <div id="checkinPrompt" hidden></div>
@@ -1046,11 +1039,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <div class="row between"><div><div class="tiny dim">РАСПИСАНИЕ ДЕЙСТВИЯ</div><h2 id="scheduleTitle">Когда выполнить?</h2></div><button type="button" class="schedule-close" onclick="closeSchedule()" aria-label="Закрыть">×</button></div>
       <p class="small mut schedule-task-name" id="scheduleTaskName"></p>
       <div class="schedule-fields">
-        <label><span>Дата</span><input class="inp" id="scheduleDate" type="date"></label>
-        <label><span>Время</span><input class="inp" id="scheduleTime" type="time"></label>
+        <label><span>Дата</span><input class="inp" id="scheduleDate" type="date" oninput="refreshSchedulePresetState()"></label>
+        <label><span>Время</span><input class="inp" id="scheduleTime" type="time" oninput="refreshSchedulePresetState()"></label>
       </div>
       <label class="schedule-repeat"><span>Повтор</span><select class="inp" id="scheduleRepeat"><option value="none">Один раз</option><option value="daily">Каждый день</option><option value="weekdays">По будням</option><option value="weekly">Раз в неделю</option></select></label>
-      <div class="schedule-presets"><button type="button" onclick="setSchedulePreset('today')">Сегодня</button><button type="button" onclick="setSchedulePreset('tomorrow')">Завтра</button><button type="button" onclick="setSchedulePreset('morning')">Утро · 09:00</button><button type="button" onclick="setSchedulePreset('evening')">Вечер · 20:00</button></div>
+      <div class="schedule-presets"><button type="button" data-schedule-preset="today" aria-pressed="false" onclick="setSchedulePreset('today')">Сегодня</button><button type="button" data-schedule-preset="tomorrow" aria-pressed="false" onclick="setSchedulePreset('tomorrow')">Завтра</button><button type="button" data-schedule-preset="morning" aria-pressed="false" onclick="setSchedulePreset('morning')">Утро · 09:00</button><button type="button" data-schedule-preset="evening" aria-pressed="false" onclick="setSchedulePreset('evening')">Вечер · 20:00</button></div>
+      <p class="schedule-selected" id="scheduleSelected" aria-live="polite"></p>
       <div class="schedule-actions"><button type="button" class="btn btn-ghost" id="scheduleRemove" onclick="removeSchedule()">Убрать расписание</button><button type="button" class="btn btn-amber" onclick="saveSchedule()">Сохранить</button></div>
     </section>
   </div>
@@ -1520,15 +1514,31 @@ function openSchedule(areaId,index){
   document.getElementById('scheduleTime').value=item&&item.time?item.time:'09:00';
   document.getElementById('scheduleRepeat').value=item&&item.repeat?item.repeat:'none';
   document.getElementById('scheduleRemove').hidden=!item;
-  overlay.hidden=false;document.getElementById('scheduleTime').focus();
+  overlay.hidden=false;refreshSchedulePresetState();document.getElementById('scheduleTime').focus();
 }
 function closeSchedule(){document.getElementById('scheduleOverlay').hidden=true;scheduleTaskArea='';scheduleTaskIndex=-1;}
+function refreshSchedulePresetState(){
+  var dateInput=document.getElementById('scheduleDate'),timeInput=document.getElementById('scheduleTime'),selected=document.getElementById('scheduleSelected');
+  if(!dateInput||!timeInput)return;
+  var now=new Date(),tomorrowDate=new Date();tomorrowDate.setDate(tomorrowDate.getDate()+1);
+  var today=todayKey(now),tomorrow=todayKey(tomorrowDate),date=dateInput.value,time=timeInput.value;
+  var active={today:date===today,tomorrow:date===tomorrow,morning:time==='09:00',evening:time==='20:00'};
+  document.querySelectorAll('[data-schedule-preset]').forEach(function(button){
+    var on=!!active[button.dataset.schedulePreset];
+    button.classList.toggle('active',on);button.setAttribute('aria-pressed',String(on));
+  });
+  if(selected){
+    var dateLabel=date===today?'Сегодня':(date===tomorrow?'Завтра':(date?localDateFromKey(date).toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'Дата не выбрана'));
+    selected.textContent='Выбрано: '+dateLabel+(time?' · '+time:'');
+  }
+}
 function setSchedulePreset(kind){
-  var date=new Date(),time=document.getElementById('scheduleTime');
-  if(kind==='tomorrow')date.setDate(date.getDate()+1);
+  var date=new Date(),dateInput=document.getElementById('scheduleDate'),time=document.getElementById('scheduleTime');
+  if(kind==='today')dateInput.value=todayKey(date);
+  if(kind==='tomorrow'){date.setDate(date.getDate()+1);dateInput.value=todayKey(date);}
   if(kind==='morning')time.value='09:00';
   if(kind==='evening')time.value='20:00';
-  document.getElementById('scheduleDate').value=todayKey(date);
+  refreshSchedulePresetState();
 }
 function saveSchedule(){
   var actions=actionsForArea(scheduleTaskArea),text=actions[scheduleTaskIndex];if(!text)return closeSchedule();
@@ -2178,6 +2188,7 @@ function homeSphereIcon(id){
 function renderHomeSpheres(){
   var box=document.getElementById('homeSpheres');if(!box)return;
   var selected=selectedAreaIds();
+  box.classList.toggle('is-compact',selected.length<5);
   if(selected.indexOf(homeAreaId)<0)homeAreaId=selected[0];
   var shortNames={health:'Здоровье',sport:'Спорт',biz:'Доход',life:'Развитие',relations:'Отношения'};
   box.innerHTML=selected.map(function(id){
