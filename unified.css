@@ -1,0 +1,87 @@
+/* Shared interaction layer for the light and dark WAY themes. */
+[hidden]{display:none!important;}
+.screen:not(.active){pointer-events:none;}
+.screen.active{pointer-events:auto;}
+button,a,input,select,textarea,[onclick]{touch-action:manipulation;}
+
+.home-tools,.mentor-head-actions{display:flex;align-items:center;gap:8px;}
+.points-chip{min-width:58px;min-height:38px;justify-content:center;border:1px solid var(--line);cursor:pointer;}
+.theme-toggle,.schedule-close{
+  display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:50%;
+  background:var(--surface);color:var(--txt);font:700 20px/1 Inter,sans-serif;cursor:pointer;
+}
+.theme-toggle:focus-visible,.schedule-close:focus-visible,.daily-quote-close:focus-visible,.task-schedule:focus-visible{
+  outline:3px solid rgba(198,255,0,.45);outline-offset:2px;
+}
+.theme-way-a .theme-sun,.theme-way-b .theme-moon{display:none;}
+.theme-way-a .theme-moon,.theme-way-b .theme-sun{display:block;}
+.theme-way-b .theme-toggle{background:var(--way-surface-primary);border-color:var(--way-border-default);color:var(--way-brand-primary);}
+.theme-way-b .points-chip{background:var(--way-surface-primary);border-color:var(--way-border-default);color:var(--way-text-primary);}
+.theme-way-b .points-chip svg{color:var(--way-brand-primary);}
+
+.daily-quote{
+  position:relative;margin-top:16px;padding:18px 48px 18px 18px;border:1px solid #A8D800;border-radius:18px;
+  background:linear-gradient(135deg,#D8FF4A 0%,#C6FF00 62%,#B4EB00 100%);color:#111;
+  box-shadow:0 10px 26px rgba(155,201,0,.22);animation:quoteIn .32s ease-out;
+}
+.daily-quote-kicker{font-size:10px;font-weight:800;letter-spacing:.08em;opacity:.65;}
+.daily-quote p{margin-top:6px;font-family:Montserrat,Inter,sans-serif;font-size:17px;line-height:1.3;font-weight:800;}
+.daily-quote-close{position:absolute;top:10px;right:10px;width:30px;height:30px;border:0;background:rgba(17,17,17,.09);color:#111;font-size:21px;}
+@keyframes quoteIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+.theme-way-b .screen[data-s="today"]>*{order:initial!important;}
+.theme-way-b .daily-quote{border-color:rgba(198,255,0,.55);box-shadow:0 0 28px rgba(198,255,0,.13);}
+
+#dayList.home-actions .t{gap:10px;cursor:default;}
+.task-main{display:flex;align-items:center;gap:12px;min-width:0;flex:1;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;}
+.task-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;}
+.task-copy .lbl{display:block;line-height:1.32;white-space:normal;overflow-wrap:anywhere;}
+.task-time{display:inline-flex;align-items:center;gap:5px;width:max-content;max-width:100%;color:var(--dim);font-size:10.5px;font-weight:700;}
+.task-time svg{width:13px;height:13px;flex:none;}
+.task-time.today{color:var(--way-brand-ink,#789C00);}
+.task-time.future{color:var(--dim);}
+.task-schedule{
+  display:grid;place-items:center;width:38px;height:38px;flex:none;border:1px solid var(--line);border-radius:11px;
+  background:var(--surface);color:var(--mut);cursor:pointer;
+}
+.task-schedule svg{width:18px;height:18px;}
+.task-schedule.has-time{border-color:#A8D800;background:rgba(198,255,0,.13);color:var(--way-brand-ink,#789C00);}
+.theme-way-b .task-schedule{background:var(--way-surface-secondary);border-color:var(--way-border-strong);color:var(--way-text-secondary);}
+.theme-way-b .task-schedule.has-time{border-color:var(--way-brand-border);background:var(--way-brand-muted);color:var(--way-brand-primary);}
+.theme-way-b .task-time.today{color:var(--way-brand-primary);}
+
+.home-route-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px;}
+.home-route-actions button{min-height:36px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--mut);font:700 11px Inter,sans-serif;cursor:pointer;}
+.home-route-actions button:active{transform:scale(.98);}
+.theme-way-b .home-route-actions button{border-color:var(--way-border-default);background:var(--way-surface-primary);color:var(--way-text-secondary);}
+
+.schedule-overlay{position:absolute;z-index:120;inset:0;display:flex;align-items:flex-end;background:rgba(0,0,0,.52);backdrop-filter:blur(5px);}
+.schedule-sheet{width:100%;max-height:88%;overflow:auto;padding:12px 18px calc(22px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;background:var(--bg);color:var(--txt);box-shadow:0 -18px 50px rgba(0,0,0,.2);}
+.schedule-handle{width:42px;height:4px;margin:0 auto 16px;border-radius:99px;background:var(--line);}
+.schedule-close{width:38px;height:38px;}
+.schedule-task-name{margin-top:10px;padding:10px 12px;border-radius:11px;background:var(--surface2);}
+.schedule-fields{display:grid;grid-template-columns:1.25fr .75fr;gap:10px;margin-top:16px;}
+.schedule-fields label>span,.schedule-repeat>span{display:block;margin:0 0 6px 2px;color:var(--mut);font-size:11px;font-weight:800;}
+.schedule-repeat{display:block;margin-top:12px;}
+.schedule-presets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.schedule-presets button{min-height:42px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--txt);font:700 12px Inter,sans-serif;cursor:pointer;}
+.schedule-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;}
+.theme-way-b .schedule-sheet{background:var(--way-bg-secondary);}
+.theme-way-b .schedule-task-name,.theme-way-b .schedule-presets button{background:var(--way-surface-primary);border-color:var(--way-border-default);color:var(--way-text-primary);}
+
+.profile-theme-copy{display:flex!important;flex:1;flex-direction:column;gap:2px;margin:0!important;color:inherit!important;font-size:inherit!important;}
+.profile-theme-copy small{color:var(--dim);font-size:10px;font-weight:500;}
+
+/* The knowledge item used to float above the bar and steal nearby taps in theme B. */
+.theme-way-b .nav a:nth-child(3),.theme-way-b .nav a:nth-child(3).on{transform:none;color:var(--way-text-tertiary);}
+.theme-way-b .nav a:nth-child(3) svg,.theme-way-b .nav a:nth-child(3).on svg{
+  width:22px;height:22px;margin:0;padding:0;border-radius:0;background:transparent;color:currentColor;stroke-width:1.9;
+}
+.theme-way-b .nav a:nth-child(3).on{color:var(--way-brand-primary);}
+.theme-way-b .nav a:nth-child(3).on svg{color:var(--way-brand-primary);stroke-width:2.1;}
+
+@media(max-width:360px){
+  .daily-quote p{font-size:15px;}
+  .schedule-fields,.schedule-actions{grid-template-columns:1fr;}
+}
+@media(prefers-reduced-motion:reduce){.daily-quote{animation:none;}}

@@ -1,14 +1,14 @@
 {
-  "name": "WAY — версия B",
-  "short_name": "WAY B",
+  "name": "WAY — твой путь",
+  "short_name": "WAY",
   "description": "Твой путь. Твои правила. Твой результат.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "lang": "ru",
   "display": "standalone",
-  "background_color": "#0D0D0D",
-  "theme_color": "#0D0D0D",
+  "background_color": "#F7F7F3",
+  "theme_color": "#C6FF00",
   "icons": [
     {"src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
     {"src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}

@@ -359,12 +359,58 @@ async function logout(req, res) {
   return send(res, 200, { ok: true }, { 'Set-Cookie': cookie('', 0) });
 }
 
+function telegramAppUrl() {
+  const value = cleanText(process.env.WAY_APP_URL, 300);
+  if (!/^https:\/\/[a-z0-9.-]+(?::\d+)?(?:\/[^\s]*)?$/i.test(value)) return '';
+  return value.replace(/\/+$/, '');
+}
+
+async function telegramApi(method, payload) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) throw new Error('Telegram-бот ещё не подключён');
+  const response = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await response.json().catch(() => null);
+  if (!response.ok || !data?.ok) throw new Error('Telegram не принял запрос');
+  return data.result;
+}
+
+async function telegramWebhook(req, res) {
+  const supplied = Array.isArray(req.headers['x-telegram-bot-api-secret-token'])
+    ? req.headers['x-telegram-bot-api-secret-token'][0]
+    : req.headers['x-telegram-bot-api-secret-token'];
+  if (!isSameSecret(supplied, process.env.TELEGRAM_WEBHOOK_SECRET)) {
+    return send(res, 401, { error: 'Неверная подпись Telegram' });
+  }
+  const update = await readJson(req);
+  const message = update?.message;
+  const chatId = message?.chat?.id;
+  const text = cleanText(message?.text, 120).toLowerCase().split(/\s+/)[0];
+  if (chatId && ['/start', '/app', '/help'].includes(text.split('@')[0])) {
+    const appUrl = telegramAppUrl();
+    if (!appUrl) return send(res, 503, { error: 'Адрес приложения не настроен' });
+    await telegramApi('sendMessage', {
+      chat_id: chatId,
+      text: 'WAY — твой путь, твои правила, твой результат. Открой приложение, чтобы увидеть цели, расписание и прогресс.',
+      reply_markup: { inline_keyboard: [[{ text: 'Открыть WAY', web_app: { url: appUrl } }]] }
+    });
+  }
+  return send(res, 200, { ok: true });
+}
+
 export default async function handler(req, res) {
   // On Vercel catch-all functions `req.query.path` differs between local dev
   // and production. The URL is the stable source of the requested API path.
   const pathname = new URL(req.url || '/', 'https://moy-put.local').pathname;
   const route = pathname === '/api' ? '/' : pathname.replace(/^\/api(?=\/|$)/, '');
   try {
+    if (req.method === 'GET' && route === '/telegram/health') {
+      return send(res, 200, { ok: true, configured: Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_WEBHOOK_SECRET && telegramAppUrl()) });
+    }
+    if (req.method === 'POST' && route === '/telegram/webhook') return await telegramWebhook(req, res);
     await ensureSchema();
     if (req.method === 'GET' && route === '/health') return send(res, 200, { ok: true, storage: 'neon-postgres' });
     if (req.method === 'POST' && route === '/register') return await register(req, res);

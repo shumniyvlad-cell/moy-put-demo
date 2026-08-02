@@ -1,4 +1,4 @@
-:root{
+body.theme-way-b{
   color-scheme:dark;
   --way-brand-primary:#C6FF00;
   --way-brand-hover:#B8EE00;
@@ -62,7 +62,7 @@
   --way-black:var(--way-bg-primary);
 }
 
-*{
+.theme-way-b *{
   scrollbar-color:var(--way-border-strong) transparent;
 }
 
