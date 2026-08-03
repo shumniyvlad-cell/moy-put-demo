@@ -124,7 +124,16 @@ h2{font-size:21px;line-height:1.18;letter-spacing:-.35px;}
   color:var(--way-brand);
   text-shadow:0 0 18px rgba(198,255,0,.24);
 }
-.home-brand .wordmark{font-size:25px;text-shadow:0 0 18px rgba(198,255,0,.2);}
+.home-brand .wordmark{
+  padding:6px 9px 7px;
+  border:1px solid #242424;
+  border-radius:9px;
+  background:#111;
+  color:var(--way-brand);
+  font-size:24px;
+  text-shadow:0 0 15px rgba(198,255,0,.3);
+  box-shadow:0 6px 16px rgba(17,17,17,.14);
+}
 
 /* Splash */
 .screen[data-s="splash"]{

@@ -36,6 +36,10 @@ button,a,input,select,textarea,[onclick]{touch-action:manipulation;}
 .task-main{display:flex;align-items:center;gap:12px;min-width:0;flex:1;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;}
 .task-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;}
 .task-copy .lbl{display:block;line-height:1.32;white-space:normal;overflow-wrap:anywhere;}
+.task-meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;}
+.task-area-tag{display:inline-flex;align-items:center;min-height:20px;padding:3px 7px;border-radius:999px;background:var(--soft);color:var(--way-brand-ink,#789C00);font-size:9px;font-weight:800;line-height:1.2;}
+.theme-way-b .task-area-tag{background:var(--way-brand-muted);color:var(--way-brand-primary);}
+.empty-today{padding:18px 4px;color:var(--mut);font-size:12px;line-height:1.5;text-align:center;}
 .task-time{display:inline-flex;align-items:center;gap:5px;width:max-content;max-width:100%;color:var(--dim);font-size:10.5px;font-weight:700;}
 .task-time svg{width:13px;height:13px;flex:none;}
 .task-time.today{color:var(--way-brand-ink,#789C00);}

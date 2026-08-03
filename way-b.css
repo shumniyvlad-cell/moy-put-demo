@@ -697,8 +697,13 @@ body.theme-way-b{
 .theme-way-b .home-brand .logo{display:none;}
 
 .theme-way-b .home-brand .wordmark{
+  padding:6px 9px 7px;
+  border:1px solid var(--way-border-strong);
+  border-radius:9px;
+  background:var(--way-surface-primary);
   font-size:25px;
   letter-spacing:-2.4px;
+  box-shadow:0 0 20px rgba(198,255,0,.08);
 }
 
 .theme-way-b .home-date{

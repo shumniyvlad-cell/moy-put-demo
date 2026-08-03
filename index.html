@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F7F7F3">
-<link rel="icon" type="image/png" href="img/icon-192.png">
+<link rel="icon" type="image/png" href="img/icon-192.png?v=2">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png?v=2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="WAY">
@@ -381,9 +381,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 @media(max-width:460px){body{padding:0;}.phone{width:100vw;height:100dvh;border-radius:0;border:none;box-shadow:none;}.demoTag{display:none;}}
 @media(max-width:360px){.goalfields{grid-template-columns:1fr}.goalfields .wide{grid-column:auto}.sharestats{gap:11px}.nav a{font-size:7.5px}}
 </style>
-<link rel="stylesheet" href="way-a.css?v=6">
-<link rel="stylesheet" href="way-b.css?v=6">
-<link rel="stylesheet" href="unified.css?v=6">
+<link rel="stylesheet" href="way-a.css?v=7">
+<link rel="stylesheet" href="way-b.css?v=7">
+<link rel="stylesheet" href="unified.css?v=7">
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 </head>
 <body class="theme-way-a">
@@ -553,7 +553,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       <span class="home-goal-track"><i id="homeGoalBar"></i></span>
       <span class="home-goal-foot"><span id="homeGoalProgress">0 из 1</span><span>Открыть в «Пути» ›</span></span>
     </button>
-    <div class="home-route-actions">
+    <div class="home-route-actions" id="homeRouteActions">
       <button type="button" onclick="editGoalForArea(homeAreaId)">Изменить цель</button>
       <button type="button" onclick="editActionsForArea(homeAreaId)">Изменить действия</button>
     </div>
@@ -2182,6 +2182,7 @@ function greet(){
   return g+(S.name?', '+S.name:'')+'!';
 }
 function fmt(n){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(Number(n)||0);}
+function ruPlural(n,one,few,many){n=Math.abs(Number(n)||0)%100;var n1=n%10;if(n>10&&n<20)return many;if(n1>1&&n1<5)return few;if(n1===1)return one;return many;}
 function goalProgressText(goal){goal=goal||S.goal;return fmt(goal.current)+' из '+fmt(goal.target)+' '+goal.unit;}
 function goalDirectionName(goal){
   goal=goal||S.goal;
@@ -2263,6 +2264,7 @@ function areaWeekStats(id,d){
 }
 function homeSphereIcon(id){
   var icons={
+    all:'<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M15 17l2 2 4-5"/>',
     biz:'<path d="M4 19V8h16v11M8 8V5h8v3M8 13h8M11 13v6"/>',
     health:'<path d="M12 21C7 16.5 3 13.2 3 9.3 3 6.4 5.2 4 8 4c1.6 0 3.1.8 4 2.1C12.9 4.8 14.4 4 16 4c2.8 0 5 2.4 5 5.3 0 3.9-4 7.2-9 11.7z"/><path d="M7 12h2l1.2-2.5L12.6 15l1.7-3H17"/>',
     sport:'<path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/>',
@@ -2273,17 +2275,18 @@ function homeSphereIcon(id){
 }
 function renderHomeSpheres(){
   var box=document.getElementById('homeSpheres');if(!box)return;
-  var selected=selectedAreaIds();
-  box.classList.toggle('is-compact',selected.length<5);
-  if(selected.indexOf(homeAreaId)<0)homeAreaId=selected[0];
-  var shortNames={health:'Здоровье',sport:'Спорт',biz:'Доход',life:'Развитие',relations:'Отношения'};
-  box.innerHTML=selected.map(function(id){
-    return '<button type="button" class="home-sphere '+(id===homeAreaId?'on':'')+'" onclick="selectHomeSphere(\''+id+'\')" aria-pressed="'+(id===homeAreaId)+'"><span class="icc">'+homeSphereIcon(id)+'</span><b>'+esc(shortNames[id])+'</b></button>';
+  var selected=selectedAreaIds(),items=['all'].concat(selected);
+  box.classList.toggle('is-compact',items.length<=5);
+  if(homeAreaId!=='all'&&selected.indexOf(homeAreaId)<0)homeAreaId=selected[0];
+  var shortNames={all:'Все',health:'Здоровье',sport:'Спорт',biz:'Доход',life:'Развитие',relations:'Отношения'};
+  box.innerHTML=items.map(function(id){
+    return '<button type="button" class="home-sphere '+(id===homeAreaId?'on':'')+'" data-home-area="'+id+'" onclick="selectHomeSphere(\''+id+'\')" aria-label="'+(id==='all'?'Все направления':esc(shortNames[id]))+'" aria-pressed="'+(id===homeAreaId)+'"><span class="icc">'+homeSphereIcon(id)+'</span><b>'+esc(shortNames[id])+'</b></button>';
   }).join('');
   renderHomeGoal();
 }
 function selectHomeSphere(id){
   var selected=selectedAreaIds();
+  if(id==='all'){homeAreaId='all';renderToday();return;}
   if(selected.indexOf(id)>=0){homeAreaId=id;renderToday();return;}
   if(!S.diagnosticAreas)S.diagnosticAreas=[];
   S.diagnosticAreas.push(id);
@@ -2296,15 +2299,28 @@ function selectHomeSphere(id){
   go('minimum');
 }
 function renderHomeGoal(){
-  var id=homeAreaId||selectedAreaIds()[0],area=DIAGNOSTIC_AREAS[id],goal=goalForArea(id),pct=goalPct(goal);
+  var id=homeAreaId||selectedAreaIds()[0],routeActions=document.getElementById('homeRouteActions');
+  if(id==='all'){
+    var rec=dayRec(),keys=dueTaskKeys(),done=keys.filter(function(key){return rec.done.indexOf(key)>=0;}).length,pct=keys.length?Math.min(100,Math.round(done/keys.length*100)):0,areaCount=selectedAreaIds().length;
+    document.getElementById('homeGoalArea').textContent='Все направления';
+    document.getElementById('homeGoalTitle').textContent=keys.length?done+' из '+keys.length+' задач выполнено':'На сегодня задач нет';
+    document.getElementById('homeGoalPct').textContent=pct+'%';
+    document.getElementById('homeGoalBar').style.width=pct+'%';
+    document.getElementById('homeGoalProgress').textContent=areaCount+' '+ruPlural(areaCount,'направление','направления','направлений')+' в одном списке';
+    document.getElementById('homeActionsArea').textContent='все направления';
+    if(routeActions)routeActions.hidden=true;
+    return;
+  }
+  var area=DIAGNOSTIC_AREAS[id],goal=goalForArea(id),pct=goalPct(goal);
   document.getElementById('homeGoalArea').textContent=area.name;
   document.getElementById('homeGoalTitle').textContent=goal.title;
   document.getElementById('homeGoalPct').textContent=pct+'%';
   document.getElementById('homeGoalBar').style.width=pct+'%';
   document.getElementById('homeGoalProgress').textContent=goalProgressText(goal);
   document.getElementById('homeActionsArea').textContent=area.name.toLowerCase();
+  if(routeActions)routeActions.hidden=false;
 }
-function openHomeGoal(){pathAreaId=homeAreaId||selectedAreaIds()[0];go('path');}
+function openHomeGoal(){pathAreaId=homeAreaId==='all'?selectedAreaIds()[0]:(homeAreaId||selectedAreaIds()[0]);go('path');}
 function renderToday(){
   var d=new Date();
   document.getElementById('todayDate').textContent=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
@@ -2312,22 +2328,28 @@ function renderToday(){
   renderDailyQuote();
   renderHomeSpheres();
   renderCheckinPrompt();
-  var rec=dayRec(),h='';
-  var id=homeAreaId||selectedAreaIds()[0],tasks=actionsForArea(id);
-  if(!tasks.length)h='<button type="button" class="btn btn-ghost btn-sm" style="margin-top:9px;" onclick="actionAreaId=\''+id+'\';go(\'minimum\')">Добавить действия для этой сферы</button>';
-  tasks.map(function(text,index){
-    var key=taskKey(id,text),schedule=scheduleForTask(key);
-    return {text:text,index:index,key:key,schedule:schedule,due:scheduleIsDue(schedule),sort:schedule?(schedule.date+'T'+(schedule.time||'99:99')):'9999'};
-  }).sort(function(a,b){
+  var rec=dayRec(),h='',id=homeAreaId||selectedAreaIds()[0],areaIds=id==='all'?selectedAreaIds():[id],tasks=[];
+  areaIds.forEach(function(areaId,areaOrder){
+    actionsForArea(areaId).forEach(function(text,index){
+      var key=taskKey(areaId,text),schedule=scheduleForTask(key),due=scheduleIsDue(schedule);
+      if(id==='all'&&!due)return;
+      tasks.push({text:text,index:index,key:key,areaId:areaId,areaOrder:areaOrder,schedule:schedule,due:due,sort:schedule?(schedule.date+'T'+(schedule.time||'99:99')):'9999'});
+    });
+  });
+  if(!tasks.length){
+    if(id==='all')h='<p class="empty-today">На сегодня задач нет. Открой направление и добавь действие.</p>';
+    else h='<button type="button" class="btn btn-ghost btn-sm" style="margin-top:9px;" onclick="actionAreaId=\''+id+'\';go(\'minimum\')">Добавить действия для этой сферы</button>';
+  }
+  tasks.sort(function(a,b){
     if(a.due!==b.due)return a.due?-1:1;
-    return a.sort.localeCompare(b.sort)||a.index-b.index;
+    return a.sort.localeCompare(b.sort)||a.areaOrder-b.areaOrder||a.index-b.index;
   }).forEach(function(task){
     var done=rec.done.indexOf(task.key)>=0,label=formatSchedule(task.schedule),timeClass=task.schedule?(task.due?'today':'future'):'';
     h+='<div class="t'+(done?' done':'')+'" data-task="'+esc(task.key)+'">'
       +'<button type="button" class="task-main" onclick="tapHabit(this.parentElement)">'+CHECK+'<span class="task-copy">'
-      +'<span class="lbl editable" onclick="event.stopPropagation();editTodayAction(\''+id+'\','+task.index+')">'+esc(task.text)+'</span>'
-      +'<span class="task-time '+timeClass+'">'+CLOCK_ICON+esc(label)+'</span></span></button>'
-      +'<button type="button" class="task-schedule '+(task.schedule?'has-time':'')+'" onclick="openSchedule(\''+id+'\','+task.index+')" aria-label="Расписание: '+esc(label)+'">'+CLOCK_ICON+'</button></div>';
+      +'<span class="lbl editable" onclick="event.stopPropagation();editTodayAction(\''+task.areaId+'\','+task.index+')">'+esc(task.text)+'</span>'
+      +'<span class="task-meta">'+(id==='all'?'<span class="task-area-tag">'+esc(DIAGNOSTIC_AREAS[task.areaId].name)+'</span>':'')+'<span class="task-time '+timeClass+'">'+CLOCK_ICON+esc(label)+'</span></span></span></button>'
+      +'<button type="button" class="task-schedule '+(task.schedule?'has-time':'')+'" onclick="openSchedule(\''+task.areaId+'\','+task.index+')" aria-label="Расписание: '+esc(label)+'">'+CLOCK_ICON+'</button></div>';
   });
   document.getElementById('dayList').innerHTML=h;
   refreshDay();
@@ -2346,18 +2368,19 @@ function renderCheckinPrompt(){
   box.innerHTML='<div class="card2" style="margin-top:12px;border-color:#F2C89F;"><div class="tiny amber" style="font-weight:800;">НАСТАВНИК ЖДЁТ ЧЕК-ИН</div><p class="small mut" style="margin-top:5px;">'+esc(request.body)+'</p><button class="btn btn-amber btn-sm" style="margin-top:10px;" onclick="go(\'checkin\')">Заполнить чек-ин</button></div>';
 }
 function refreshDay(){
-  var rec=dayRec(),id=homeAreaId||selectedAreaIds()[0],actions=actionsForArea(id),due=actions.filter(function(text){return scheduleIsDue(scheduleForTask(taskKey(id,text)));}),tot=due.length,done=due.filter(function(text){return rec.done.indexOf(taskKey(id,text))>=0;}).length,p=tot?Math.min(100,Math.round(done/tot*100)):0;
+  var rec=dayRec(),id=homeAreaId||selectedAreaIds()[0],keys=id==='all'?dueTaskKeys():actionsForArea(id).filter(function(text){return scheduleIsDue(scheduleForTask(taskKey(id,text)));}).map(function(text){return taskKey(id,text);}),tot=keys.length,done=keys.filter(function(key){return rec.done.indexOf(key)>=0;}).length,p=tot?Math.min(100,Math.round(done/tot*100)):0;
   document.getElementById('doneN').textContent=done;
   document.getElementById('totN').textContent=tot;
   document.getElementById('dayPercent').textContent=p+'%';
   document.getElementById('dayBar').style.width=p+'%';
   var dayRing=document.getElementById('dayRing');if(dayRing)dayRing.style.setProperty('--p',(p*3.6)+'deg');
   var st=document.getElementById('dayState');
-  if(!tot){st.textContent='На сегодня по этой сфере ничего не запланировано.';st.className='note';}
+  if(!tot){st.textContent=id==='all'?'На сегодня ничего не запланировано.':'На сегодня по этой сфере ничего не запланировано.';st.className='note';}
   else if(done>=tot){st.textContent='День закрыт на 100% — ты красавчик 🔥';st.className='note grn';}
   else if(done){st.textContent='Уже в движении. Осталось '+(tot-done)+'.';st.className='note amber';}
   else{st.textContent='Начни с одного простого действия.';st.className='note';}
   var pt=document.getElementById('ptsTop');if(pt)pt.textContent=pts();
+  if(id==='all')renderHomeGoal();
 }
 function tapHabit(el){
   var name=el.getAttribute('data-task')||el.querySelector('.lbl').textContent, rec=dayRec(),idx=rec.done.indexOf(name);

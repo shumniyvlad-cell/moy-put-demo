@@ -1,7 +1,7 @@
-const CACHE='mp-way-telegram-reminders-v6';
+const CACHE='mp-way-all-tasks-and-icon-v7';
 const APP_SHELL=[
   './','./index.html','./way-a.css','./way-b.css','./unified.css','./manifest.json',
-  './img/brand-mark.svg','./img/icon-192.png','./img/icon-512.png','./img/splash-hero.jpg','./img/dodecahedron-journey-v1.webp','./img/way-a-splash-runner.webp',
+  './img/brand-mark.svg','./img/icon-192.png','./img/icon-512.png','./img/icon-maskable-512.png','./img/apple-touch-icon.png','./img/splash-hero.jpg','./img/dodecahedron-journey-v1.webp','./img/way-a-splash-runner.webp',
   './img/hero-1.jpg','./img/hero-2.jpg','./img/hero-3.jpg','./img/hero-4.jpg','./img/hero-5.jpg','./img/hero-6.jpg',
   './img/mentor-1.jpg','./img/mentor-2.jpg','./img/mentor-3.jpg','./img/mentor-4.jpg'
 ];

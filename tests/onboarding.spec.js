@@ -83,7 +83,7 @@ test('participant completes passwordless onboarding and stays signed in', async 
   await page.locator('#modeSelf').click();
   await page.locator('[data-s="mentor"] .btn-amber').click();
   await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'today');
-  await expect(page.locator('#homeSpheres button')).toHaveCount(2);
+  await expect(page.locator('#homeSpheres button')).toHaveCount(3);
   await page.waitForTimeout(450);
   await page.screenshot({ path: 'test-results/today-light-mobile.png', fullPage: true });
   await page.locator('.theme-toggle').first().click();
@@ -159,7 +159,7 @@ test('today screen centers selected areas and composes schedule presets', async 
   await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'today');
   const topPadding = await page.locator('.screen.active').evaluate((element) => parseFloat(getComputedStyle(element).paddingTop));
   expect(topPadding).toBe(20);
-  await expect(page.locator('#homeSpheres button')).toHaveCount(3);
+  await expect(page.locator('#homeSpheres button')).toHaveCount(4);
   await expect(page.getByText('Быстрые действия', { exact: true })).toHaveCount(0);
   await expect(page.locator('.way-quick')).toHaveCount(0);
 
@@ -174,6 +174,17 @@ test('today screen centers selected areas and composes schedule presets', async 
   const percentageFont = await page.locator('#homeGoalPct').evaluate((element) => getComputedStyle(element).fontFamily);
   expect(percentageFont).toContain('Inter');
   expect(percentageFont).not.toContain('Unbounded');
+
+  await page.locator('[data-home-area="all"]').click();
+  await expect(page.locator('#dayList .t')).toHaveCount(3);
+  await expect(page.locator('#dayList .task-area-tag')).toHaveCount(3);
+  await expect(page.locator('#homeGoalArea')).toHaveText('Все направления');
+  await expect(page.locator('#homeGoalTitle')).toHaveText('0 из 3 задач выполнено');
+  await page.locator('#dayList [data-task="sport::Тренировка"] .task-main').click();
+  await expect(page.locator('#homeGoalTitle')).toHaveText('1 из 3 задач выполнено');
+  await expect(page.locator('#dayList [data-task="sport::Тренировка"]')).toHaveClass(/done/);
+  await page.screenshot({ path: 'test-results/today-all-focuses-light.png', fullPage: true });
+  await page.locator('[data-home-area="health"]').click();
 
   await page.getByRole('button', { name: 'Расписание: Добавить время' }).click();
   const dateInput = page.locator('#scheduleDate');
@@ -208,6 +219,10 @@ test('today screen centers selected areas and composes schedule presets', async 
   await expect(page.locator('#scheduleTelegramHint')).toHaveText('Бот напишет точно в выбранное время.');
   await page.screenshot({ path: 'test-results/schedule-telegram-dark.png' });
   await page.getByRole('button', { name: 'Закрыть' }).click();
+  await page.locator('[data-home-area="all"]').click();
+  await expect(page.locator('#dayList .t')).toHaveCount(2);
+  await expect(page.locator('#dayList [data-task="health::Сон до 23:30"]')).toHaveCount(0);
+  await page.screenshot({ path: 'test-results/today-all-focuses-dark.png', fullPage: true });
   await page.waitForTimeout(650);
   expect(state.schedules['health::Сон до 23:30']).toMatchObject({ date: expectedTomorrow, time: '20:00', repeat: 'none', notifyTelegram: true });
   expect(state.schedules['health::Сон до 23:30'].timezone).toBeTruthy();
