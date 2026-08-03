@@ -79,24 +79,14 @@ body.theme-way-b{
   box-shadow:var(--way-shadow-phone),inset 0 0 0 6px var(--way-bg-primary),inset 0 0 0 7px var(--way-border-strong);
 }
 
-.theme-way-b .notch{
-  background:var(--way-bg-primary);
-  border-radius:0 0 17px 17px;
-}
-
-.theme-way-b .statusbar{
-  color:var(--way-text-primary);
-  font-size:12px;
-}
-
 .theme-way-b .screen{
-  padding:56px 20px 112px;
+  padding:20px 20px 112px;
   background:var(--way-bg-primary);
   animation:wayFade .22s var(--way-ease);
 }
 
 .theme-way-b .screen.full{
-  padding:56px 20px 24px;
+  padding:20px 20px 24px;
 }
 
 @keyframes wayFade{

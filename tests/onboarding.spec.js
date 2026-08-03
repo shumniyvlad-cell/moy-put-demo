@@ -4,6 +4,25 @@ function profile() {
   return { id: 'p_qa_onboarding', role: 'participant', displayName: 'Тест', contact: '@qa', registered: true, telegramLinked: true };
 }
 
+test('mobile app shell has no simulated iPhone status bar', async ({ page }) => {
+  await page.route('**/api/**', async (route) => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === '/api/snapshot' || path === '/api/resume') {
+      return route.fulfill({ status: 401, contentType: 'application/json', body: '{"error":"Нужен вход"}' });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('http://127.0.0.1:8767/');
+  await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'splash');
+  await expect(page.locator('.notch, .statusbar')).toHaveCount(0);
+
+  const shell = await page.locator('.phone').boundingBox();
+  expect(shell).toMatchObject({ x: 0, y: 0, width: 390, height: 844 });
+  await page.screenshot({ path: 'test-results/app-shell-without-phone-status.png' });
+});
+
 test('participant completes passwordless onboarding and stays signed in', async ({ page }) => {
   let registered = false;
   let state = null;
@@ -138,6 +157,8 @@ test('today screen centers selected areas and composes schedule presets', async 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('http://127.0.0.1:8767/#today');
   await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'today');
+  const topPadding = await page.locator('.screen.active').evaluate((element) => parseFloat(getComputedStyle(element).paddingTop));
+  expect(topPadding).toBe(20);
   await expect(page.locator('#homeSpheres button')).toHaveCount(3);
   await expect(page.getByText('Быстрые действия', { exact: true })).toHaveCount(0);
   await expect(page.locator('.way-quick')).toHaveCount(0);

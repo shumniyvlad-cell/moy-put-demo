@@ -35,9 +35,7 @@ body{
   box-shadow:0 32px 90px rgba(17,17,17,.16),inset 0 0 0 6px #fff,inset 0 0 0 7px #DADAD5;
 }
 
-.notch{background:#111;border-radius:0 0 17px 17px;}
-.statusbar{color:#111;font-size:12px;}
-.screen{padding:56px 16px 92px;}
+.screen{padding:20px 16px 92px;}
 .screen.full{padding-bottom:20px;}
 h1,h2,.num,.sharelead,.med b{font-family:Montserrat,Inter,sans-serif;}
 h1{font-size:27px;line-height:1.12;letter-spacing:-.7px;}

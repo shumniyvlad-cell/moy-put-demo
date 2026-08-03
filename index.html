@@ -34,10 +34,7 @@ body{font-family:Manrope,-apple-system,'SF Pro Text',Roboto,sans-serif;
   font-variant-numeric:tabular-nums;}
 .phone{position:relative;width:392px;height:min(824px,calc(100dvh - 44px));background:var(--bg);border-radius:42px;
   border:1px solid #EFE6D8;box-shadow:0 40px 110px rgba(150,110,70,.30), inset 0 0 0 6px #fff, inset 0 0 0 7px #efe6d8;overflow:hidden;}
-.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:118px;height:26px;background:#15110d;border-radius:0 0 16px 16px;z-index:60;}
-.statusbar{position:absolute;top:0;left:0;right:0;height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 26px;font-size:13px;font-weight:700;z-index:50;pointer-events:none;color:var(--txt);}
-.statusbar .r{display:flex;gap:6px;align-items:center;}
-.screen{position:absolute;inset:0;padding:56px 18px 96px;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;animation:fade .34s ease;}
+.screen{position:absolute;inset:0;padding:20px 18px 96px;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;animation:fade .34s ease;}
 .screen>*{flex-shrink:0;}
 .screen::-webkit-scrollbar{width:0;}
 .screen.active{display:flex;}
@@ -384,9 +381,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 @media(max-width:460px){body{padding:0;}.phone{width:100vw;height:100dvh;border-radius:0;border:none;box-shadow:none;}.demoTag{display:none;}}
 @media(max-width:360px){.goalfields{grid-template-columns:1fr}.goalfields .wide{grid-column:auto}.sharestats{gap:11px}.nav a{font-size:7.5px}}
 </style>
-<link rel="stylesheet" href="way-a.css">
-<link rel="stylesheet" href="way-b.css">
-<link rel="stylesheet" href="unified.css">
+<link rel="stylesheet" href="way-a.css?v=6">
+<link rel="stylesheet" href="way-b.css?v=6">
+<link rel="stylesheet" href="unified.css?v=6">
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 </head>
 <body class="theme-way-a">
@@ -400,9 +397,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 })();
 </script>
 <div class="phone">
-  <div class="notch"></div>
-  <div class="statusbar"><span>9:41</span><span class="r">●&nbsp;&nbsp;▮▮▮&nbsp;&nbsp;<b>76</b></span></div>
-
   <!-- 1. SPLASH -->
   <section class="screen full active" data-s="splash">
     <div class="way-splash">
