@@ -1,4 +1,4 @@
-const CACHE='mp-way-today-schedule-groups-v9';
+const CACHE='mp-way-install-handoff-v10';
 const APP_SHELL=[
   './','./index.html','./way-a.css','./way-b.css','./unified.css','./manifest.json',
   './img/brand-mark.svg','./img/icon-192.png','./img/icon-512.png','./img/icon-maskable-512.png','./img/apple-touch-icon.png','./img/splash-hero.jpg','./img/dodecahedron-journey-v1.webp','./img/way-a-splash-runner.webp',

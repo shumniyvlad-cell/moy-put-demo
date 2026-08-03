@@ -5,6 +5,7 @@ import { enqueueProfileReminders } from '../lib/reminders.js';
 const MAX_BODY = 750_000;
 const COOKIE_NAME = 'mp_session';
 const SESSION_SECONDS = 60 * 60 * 24 * 180;
+const INSTALL_HANDOFF_SECONDS = 60 * 10;
 let schemaReady = null;
 
 function send(res, status, payload, headers = {}) {
@@ -50,6 +51,15 @@ async function ensureSchema() {
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         last_used_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )`;
+      await sql`CREATE TABLE IF NOT EXISTS install_handoffs (
+        token_hash TEXT PRIMARY KEY,
+        profile_id TEXT NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+        expires_at TIMESTAMPTZ NOT NULL,
+        used_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )`;
+      await sql`CREATE INDEX IF NOT EXISTS install_handoffs_profile_idx
+        ON install_handoffs (profile_id, expires_at DESC)`;
       await sql`CREATE TABLE IF NOT EXISTS participant_state (
         participant_id TEXT PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
         state_json TEXT NOT NULL,
@@ -164,6 +174,14 @@ function cleanDeviceToken(value) {
 }
 
 function deviceCredentialHash(value) {
+  return crypto.createHash('sha256').update(value).digest('hex');
+}
+
+function cleanHandoffToken(value) {
+  return typeof value === 'string' && /^[A-Za-z0-9_-]{32,180}$/.test(value) ? value : '';
+}
+
+function handoffTokenHash(value) {
   return crypto.createHash('sha256').update(value).digest('hex');
 }
 
@@ -378,7 +396,7 @@ async function resume(req, res) {
   if (!rows[0] && deviceToken) {
     rows = await sql`SELECT p.id, p.role, p.display_name AS "displayName", p.contact, p.telegram_user_id AS "telegramUserId"
       FROM device_credentials d JOIN profiles p ON p.id = d.profile_id
-      WHERE d.credential_hash = ${deviceCredentialHash(deviceToken)} AND p.role = 'participant'`;
+      WHERE d.credential_hash = ${deviceCredentialHash(deviceToken)}`;
   }
   const profile = rows[0];
   if (!profile) return send(res, 401, { error: 'Сохранённый вход не найден' });
@@ -388,13 +406,84 @@ async function resume(req, res) {
     await sql`UPDATE profiles SET telegram_user_id = ${telegram.id} WHERE id = ${profile.id}`;
   }
   if (deviceToken) {
-    await sql`UPDATE device_credentials SET last_used_at = NOW()
-      WHERE credential_hash = ${deviceCredentialHash(deviceToken)}`;
+    const credentialHash = deviceCredentialHash(deviceToken);
+    const linked = await sql`SELECT profile_id AS "profileId" FROM device_credentials WHERE credential_hash = ${credentialHash}`;
+    if (linked[0] && linked[0].profileId !== profile.id) {
+      return send(res, 409, { error: 'На этом устройстве сохранён другой профиль. Сначала выйди из него' });
+    }
+    await sql`INSERT INTO device_credentials (credential_hash, profile_id, last_used_at)
+      VALUES (${credentialHash}, ${profile.id}, NOW())
+      ON CONFLICT (credential_hash) DO UPDATE SET last_used_at = NOW()`;
   }
   const token = await issueSession(sql, profile.id);
   const publicProfile = { id: profile.id, role: profile.role, displayName: profile.displayName, contact: profile.contact, registered: true, telegramLinked: Boolean(telegram || profile.telegramUserId) };
   await enqueueRemindersQuietly(profile.id);
   return send(res, 200, { profile: publicProfile, ...(await snapshot(publicProfile)) }, { 'Set-Cookie': cookie(token) });
+}
+
+async function createInstallHandoff(req, res) {
+  const input = await readJson(req);
+  const telegram = telegramIdentity(input.telegramInitData);
+  if (!telegram) return send(res, 401, { error: 'Открой установку из приложения WAY в Telegram' });
+  const sql = getDb();
+  const rows = await sql`SELECT id, role, display_name AS "displayName", contact,
+    (registered_at IS NOT NULL) AS "registered"
+    FROM profiles WHERE telegram_user_id = ${telegram.id} AND registered_at IS NOT NULL`;
+  const profile = rows[0];
+  if (!profile) return send(res, 401, { error: 'Сначала заверши вход в WAY внутри Telegram' });
+  const handoffToken = crypto.randomBytes(32).toString('base64url');
+  await sql`DELETE FROM install_handoffs WHERE expires_at <= NOW() OR profile_id = ${profile.id}`;
+  await sql`INSERT INTO install_handoffs (token_hash, profile_id, expires_at)
+    VALUES (${handoffTokenHash(handoffToken)}, ${profile.id}, NOW() + INTERVAL '10 minutes')`;
+  return send(res, 201, { handoffToken, expiresIn: INSTALL_HANDOFF_SECONDS });
+}
+
+async function consumeInstallHandoff(req, res) {
+  const input = await readJson(req);
+  const handoffToken = cleanHandoffToken(input.handoffToken);
+  const deviceToken = cleanDeviceToken(input.deviceToken);
+  if (!handoffToken || !deviceToken) return send(res, 400, { error: 'Некорректная ссылка установки' });
+  const sql = getDb();
+  const tokenHash = handoffTokenHash(handoffToken);
+  const available = await sql`SELECT profile_id AS "profileId" FROM install_handoffs
+    WHERE token_hash = ${tokenHash} AND used_at IS NULL AND expires_at > NOW()`;
+  if (!available[0]) return send(res, 401, { error: 'Ссылка установки уже использована или устарела' });
+  const credentialHash = deviceCredentialHash(deviceToken);
+  const linked = await sql`SELECT profile_id AS "profileId" FROM device_credentials WHERE credential_hash = ${credentialHash}`;
+  if (linked[0] && linked[0].profileId !== available[0].profileId) {
+    return send(res, 409, { error: 'На этом устройстве сохранён другой профиль. Сначала выйди из него' });
+  }
+  const claimed = await sql`UPDATE install_handoffs SET used_at = NOW()
+    WHERE token_hash = ${tokenHash} AND used_at IS NULL AND expires_at > NOW()
+    RETURNING profile_id AS "profileId"`;
+  if (!claimed[0]) return send(res, 401, { error: 'Ссылка установки уже использована или устарела' });
+  const profileRows = await sql`SELECT id, role, display_name AS "displayName", contact,
+    (telegram_user_id IS NOT NULL) AS "telegramLinked", (registered_at IS NOT NULL) AS "registered"
+    FROM profiles WHERE id = ${claimed[0].profileId}`;
+  const profile = profileRows[0];
+  if (!profile) return send(res, 404, { error: 'Профиль не найден' });
+  await sql`INSERT INTO device_credentials (credential_hash, profile_id, last_used_at)
+    VALUES (${credentialHash}, ${profile.id}, NOW())
+    ON CONFLICT (credential_hash) DO UPDATE SET last_used_at = NOW()`;
+  const sessionToken = await issueSession(sql, profile.id);
+  await enqueueRemindersQuietly(profile.id);
+  return send(res, 200, { profile, ...(await snapshot(profile)) }, { 'Set-Cookie': cookie(sessionToken) });
+}
+
+async function linkCurrentDevice(req, res, profile) {
+  const input = await readJson(req);
+  const deviceToken = cleanDeviceToken(input.deviceToken);
+  if (!deviceToken) return send(res, 400, { error: 'Не удалось создать ключ этого устройства' });
+  const sql = getDb();
+  const credentialHash = deviceCredentialHash(deviceToken);
+  const linked = await sql`SELECT profile_id AS "profileId" FROM device_credentials WHERE credential_hash = ${credentialHash}`;
+  if (linked[0] && linked[0].profileId !== profile.id) {
+    return send(res, 409, { error: 'На этом устройстве сохранён другой профиль. Сначала выйди из него' });
+  }
+  await sql`INSERT INTO device_credentials (credential_hash, profile_id, last_used_at)
+    VALUES (${credentialHash}, ${profile.id}, NOW())
+    ON CONFLICT (credential_hash) DO UPDATE SET last_used_at = NOW()`;
+  return send(res, 200, { ok: true });
 }
 
 async function enqueueRemindersQuietly(profileId) {
@@ -615,6 +704,8 @@ export default async function handler(req, res) {
     if (req.method === 'GET' && route === '/health') return send(res, 200, { ok: true, storage: 'neon-postgres' });
     if (req.method === 'POST' && route === '/register') return await register(req, res);
     if (req.method === 'POST' && route === '/resume') return await resume(req, res);
+    if (req.method === 'POST' && route === '/install-handoff/create') return await createInstallHandoff(req, res);
+    if (req.method === 'POST' && route === '/install-handoff/consume') return await consumeInstallHandoff(req, res);
     if (req.method === 'POST' && route === '/login') return await login(req, res);
     if (req.method === 'POST' && route === '/logout') return await logout(req, res);
     const profile = await currentProfile(req);
@@ -622,6 +713,7 @@ export default async function handler(req, res) {
     if (req.method === 'GET' && route === '/snapshot') {
       return send(res, 200, { profile, ...(await snapshot(profile, cleanText(requestUrl.searchParams.get('participantId'), 80))) });
     }
+    if (req.method === 'POST' && route === '/device/link') return await linkCurrentDevice(req, res, profile);
     if (req.method === 'PUT' && route === '/state') return await saveState(req, res, profile);
     if (req.method === 'PUT' && route === '/personal-state') return await savePersonalState(req, res, profile);
     if (req.method === 'DELETE' && route === '/profile') return await deleteOwnProfile(req, res, profile);

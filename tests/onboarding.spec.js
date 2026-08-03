@@ -4,6 +4,34 @@ function profile() {
   return { id: 'p_qa_onboarding', role: 'participant', displayName: 'Тест', contact: '@qa', registered: true, telegramLinked: true };
 }
 
+function completedState() {
+  return {
+    v: 8,
+    name: 'Тест',
+    contact: '@qa',
+    dir: 'health',
+    dirName: 'Здоровье и энергия',
+    mode: 'Сам',
+    mentorId: 'alex',
+    diagnosticAreas: ['health'],
+    diagnosticGoals: { health: 'Спать 8 часов' },
+    goalsByArea: { health: { title: 'Спать 8 часов', target: 30, current: 4, unit: 'дней', deadline: '', pending: null } },
+    actionsByArea: { health: ['Лечь до 23:00'] },
+    habits: ['health::Лечь до 23:00'],
+    days: {},
+    schedules: {},
+    quoteDismissedOn: '',
+    lastCheckinAt: '',
+    rewards: { weeks: {}, returns: {}, shares: {} },
+    bonus: 0,
+    applied: false,
+    mentorStatus: 'none',
+    onboardingStep: 'complete',
+    onboardingComplete: true,
+    created: '2026-08-03'
+  };
+}
+
 test('mobile app shell has no simulated iPhone status bar', async ({ page }) => {
   await page.route('**/api/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
@@ -351,4 +379,107 @@ test('state changes made during an in-flight save are sent afterwards', async ({
   });
   await expect.poll(() => writes.length, { timeout: 4000 }).toBeGreaterThanOrEqual(2);
   expect(writes.at(-1).lifeGoal).toBe('Последнее изменение должно сохраниться');
+});
+
+test('Telegram profile creates a one-time Safari install link', async ({ page }) => {
+  let createBody = null;
+  const handoffToken = 'install_handoff_token_1234567890_ABCDEFGH';
+  await page.route('https://telegram.org/js/telegram-web-app.js*', (route) => route.fulfill({ status: 200, contentType: 'application/javascript', body: '' }));
+  await page.addInitScript(() => {
+    window.__wayOpenedInstallLink = '';
+    Object.defineProperty(window, 'Telegram', {
+      configurable: false,
+      writable: false,
+      value: {
+        WebApp: {
+          initData: 'signed-telegram-init-data',
+          ready() {},
+          expand() {},
+          setHeaderColor() {},
+          setBackgroundColor() {},
+          openLink(url) { window.__wayOpenedInstallLink = url; }
+        }
+      }
+    });
+  });
+  await page.route('**/api/**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (path === '/api/snapshot') {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ profile: profile(), state: completedState(), messages: [], resultSubmissions: [], mentorProfile: { displayName: 'Саша' } }) });
+    }
+    if (path === '/api/install-handoff/create') {
+      createBody = request.postDataJSON();
+      return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ handoffToken, expiresIn: 600 }) });
+    }
+    if (path === '/api/device/link') return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('http://127.0.0.1:8767/#profile');
+  await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'profile');
+  await expect(page.locator('#profileInstallRow')).toBeVisible();
+  await expect(page.locator('#profileInstallTitle')).toHaveText('Установить WAY на iPhone');
+  await page.locator('#profileInstallRow').click();
+  await expect.poll(() => page.evaluate(() => window.__wayOpenedInstallLink)).toContain(`#install=${handoffToken}`);
+  expect(createBody).toEqual({ telegramInitData: 'signed-telegram-init-data' });
+  const opened = await page.evaluate(() => window.__wayOpenedInstallLink);
+  expect(new URL(opened).search).toBe('');
+});
+
+test('Safari consumes the handoff, removes it from the URL and keeps the profile on reload', async ({ page }) => {
+  const handoffToken = 'install_handoff_token_1234567890_ABCDEFGH';
+  let consumeBody = null;
+  let snapshotCalls = 0;
+  let linkedDevice = '';
+  await page.route('**/api/**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    const snapshot = { profile: profile(), state: completedState(), messages: [], resultSubmissions: [], mentorProfile: { displayName: 'Саша' } };
+    if (path === '/api/install-handoff/consume') {
+      consumeBody = request.postDataJSON();
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(snapshot) });
+    }
+    if (path === '/api/snapshot') {
+      snapshotCalls += 1;
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(snapshot) });
+    }
+    if (path === '/api/device/link') {
+      linkedDevice = request.postDataJSON().deviceToken;
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`http://127.0.0.1:8767/#install=${handoffToken}`);
+  await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'today');
+  await expect(page).toHaveURL('http://127.0.0.1:8767/#today');
+  expect(page.url()).not.toContain('#install=');
+  await expect(page.locator('#installOverlay')).toBeVisible();
+  await expect(page.locator('#installGuideTitle')).toHaveText('Вход перенесён');
+  const installSheet = await page.locator('.install-sheet').boundingBox();
+  expect(installSheet).not.toBeNull();
+  expect(installSheet.x).toBeGreaterThanOrEqual(0);
+  expect(installSheet.y).toBeGreaterThanOrEqual(0);
+  expect(installSheet.x + installSheet.width).toBeLessThanOrEqual(390);
+  expect(installSheet.y + installSheet.height).toBeLessThanOrEqual(844);
+  await page.screenshot({ path: 'test-results/install-handoff-light.png' });
+  expect(consumeBody.handoffToken).toBe(handoffToken);
+  expect(consumeBody.deviceToken).toMatch(/^[A-Za-z0-9_-]{32,180}$/);
+  expect(snapshotCalls).toBe(0);
+  const firstDevice = consumeBody.deviceToken;
+  await page.getByRole('button', { name: 'Понятно' }).click();
+  await page.locator('.theme-toggle').first().click();
+  await page.evaluate(() => showInstallGuide(true));
+  await expect(page.locator('body')).toHaveClass(/theme-way-b/);
+  await page.screenshot({ path: 'test-results/install-handoff-dark.png' });
+  await page.getByRole('button', { name: 'Понятно' }).click();
+
+  await page.reload();
+  await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'today');
+  await expect(page.locator('#installOverlay')).toBeHidden();
+  await expect.poll(() => snapshotCalls).toBe(1);
+  await expect.poll(() => linkedDevice).toBe(firstDevice);
 });

@@ -114,6 +114,25 @@ button,a,input,select,textarea,[onclick]{touch-action:manipulation;}
 
 .profile-theme-copy{display:flex!important;flex:1;flex-direction:column;gap:2px;margin:0!important;color:inherit!important;font-size:inherit!important;}
 .profile-theme-copy small{color:var(--dim);font-size:10px;font-weight:500;}
+.profile-install-copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:2px;}
+.profile-install-copy b{font-size:13px;line-height:1.3;}
+.profile-install-copy small{color:var(--dim);font-size:10px;line-height:1.35;font-weight:500;}
+.profile-install-row[aria-busy="true"]{opacity:.62;pointer-events:none;}
+
+.install-overlay{position:absolute;z-index:130;inset:0;display:flex;align-items:flex-end;background:rgba(0,0,0,.56);backdrop-filter:blur(6px);}
+.install-sheet{width:100%;padding:22px 20px calc(24px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;background:var(--bg);color:var(--txt);box-shadow:0 -18px 50px rgba(0,0,0,.24);}
+.install-success{width:48px;height:48px;display:grid;place-items:center;margin-bottom:14px;border-radius:15px;background:var(--way-brand,#C6FF00);color:#111;}
+.install-success svg{width:25px;height:25px;}
+.install-sheet h2{margin-top:5px;}
+.install-sheet>p{margin-top:7px;}
+.install-steps{display:flex;flex-direction:column;gap:9px;margin:18px 0;}
+.install-steps>div{display:flex;align-items:flex-start;gap:11px;padding:12px;border:1px solid var(--line);border-radius:13px;background:var(--surface);}
+.install-steps b{width:25px;height:25px;display:grid;place-items:center;flex:0 0 25px;border-radius:8px;background:rgba(198,255,0,.22);color:var(--way-brand-ink,#789C00);font-size:11px;}
+.install-steps span{padding-top:3px;font-size:12px;line-height:1.45;}
+.install-note{margin:0 2px 15px!important;color:var(--mut);font-size:10.5px;line-height:1.45;text-align:center;}
+.theme-way-b .install-sheet{background:var(--way-bg-secondary);}
+.theme-way-b .install-steps>div{border-color:var(--way-border-default);background:var(--way-surface-primary);}
+.theme-way-b .install-steps b{background:var(--way-brand-muted);color:var(--way-brand-primary);}
 
 .onboarding-profile-card{box-shadow:none;}
 .onboarding-policy{margin-top:12px;}
