@@ -33,6 +33,16 @@ button,a,input,select,textarea,[onclick]{touch-action:manipulation;}
 .theme-way-b .daily-quote{border-color:rgba(198,255,0,.55);box-shadow:0 0 28px rgba(198,255,0,.13);}
 
 #dayList.home-actions .t{gap:10px;cursor:default;}
+.task-group{display:block;}
+.task-group-heading{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:15px 2px 2px;padding-top:14px;border-top:1px solid var(--line);
+}
+.task-group-heading b{font-size:13px;line-height:1.2;}
+.task-group-heading span{color:var(--dim);font-size:10.5px;font-weight:700;}
+.task-group-scheduled:first-child .task-group-heading{margin-top:0;padding-top:5px;border-top:0;}
+.theme-way-b .task-group-heading{border-color:var(--way-border-default);}
+.theme-way-b .task-group-heading b{color:var(--way-text-primary);}
+.theme-way-b .task-group-heading span{color:var(--way-text-tertiary);}
 .task-main{display:flex;align-items:center;gap:12px;min-width:0;flex:1;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;}
 .task-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;}
 .task-copy .lbl{display:block;line-height:1.32;white-space:normal;overflow-wrap:anywhere;}

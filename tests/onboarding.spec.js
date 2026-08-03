@@ -102,6 +102,10 @@ test('participant completes passwordless onboarding and stays signed in', async 
 });
 
 test('today screen centers selected areas and composes schedule presets', async ({ page }) => {
+  const now = new Date();
+  const currentDate = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
+  const previous = new Date(now); previous.setDate(previous.getDate() - 1);
+  const previousDate = [previous.getFullYear(), String(previous.getMonth() + 1).padStart(2, '0'), String(previous.getDate()).padStart(2, '0')].join('-');
   let state = {
     v: 8,
     name: 'Тест',
@@ -128,7 +132,10 @@ test('today screen centers selected areas and composes schedule presets', async 
     },
     habits: ['health::Сон до 23:30', 'sport::Тренировка', 'biz::Написать 3 клиентам'],
     days: {},
-    schedules: {},
+    schedules: {
+      'sport::Тренировка': { date: previousDate, time: '20:00', repeat: 'daily', timezone: 'Europe/Moscow', notifyTelegram: true },
+      'biz::Написать 3 клиентам': { date: currentDate, time: '09:00', repeat: 'none', timezone: 'Europe/Moscow', notifyTelegram: true }
+    },
     quoteDismissedOn: '',
     lastCheckinAt: '',
     rewards: { weeks: {}, returns: {}, shares: {} },
@@ -178,6 +185,12 @@ test('today screen centers selected areas and composes schedule presets', async 
   await page.locator('[data-home-area="all"]').click();
   await expect(page.locator('#dayList .t')).toHaveCount(3);
   await expect(page.locator('#dayList .task-area-tag')).toHaveCount(3);
+  await expect(page.locator('#dayList .task-group-today .t')).toHaveCount(1);
+  await expect(page.locator('#dayList .task-group-today .task-time')).toHaveCount(0);
+  await expect(page.locator('#dayList .task-group-scheduled .t')).toHaveCount(2);
+  await expect(page.locator('#dayList .task-group-heading')).toContainText('Расписание');
+  await expect(page.locator('#dayList .task-group-scheduled .t').nth(0)).toHaveAttribute('data-task', 'biz::Написать 3 клиентам');
+  await expect(page.locator('#dayList .task-group-scheduled .t').nth(1)).toHaveAttribute('data-task', 'sport::Тренировка');
   await expect(page.locator('#homeGoalArea')).toHaveText('Все направления');
   await expect(page.locator('#homeGoalTitle')).toHaveText('0 из 3 задач выполнено');
   await page.locator('#dayList [data-task="sport::Тренировка"] .task-main').click();

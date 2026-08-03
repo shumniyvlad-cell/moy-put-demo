@@ -383,7 +383,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 </style>
 <link rel="stylesheet" href="way-a.css?v=8">
 <link rel="stylesheet" href="way-b.css?v=8">
-<link rel="stylesheet" href="unified.css?v=8">
+<link rel="stylesheet" href="unified.css?v=9">
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 </head>
 <body class="theme-way-a">
@@ -2322,6 +2322,16 @@ function renderHomeGoal(){
   if(routeActions)routeActions.hidden=false;
 }
 function openHomeGoal(){pathAreaId=homeAreaId==='all'?selectedAreaIds()[0]:(homeAreaId||selectedAreaIds()[0]);go('path');}
+function renderTodayTask(task,rec,showArea){
+  var done=rec.done.indexOf(task.key)>=0,label=formatSchedule(task.schedule),timeClass=task.schedule?(task.due?'today':'future'):'',meta=[];
+  if(showArea)meta.push('<span class="task-area-tag">'+esc(DIAGNOSTIC_AREAS[task.areaId].name)+'</span>');
+  if(task.schedule)meta.push('<span class="task-time '+timeClass+'">'+CLOCK_ICON+esc(label)+'</span>');
+  return '<div class="t'+(done?' done':'')+'" data-task="'+esc(task.key)+'">'
+    +'<button type="button" class="task-main" onclick="tapHabit(this.parentElement)">'+CHECK+'<span class="task-copy">'
+    +'<span class="lbl editable" onclick="event.stopPropagation();editTodayAction(\''+task.areaId+'\','+task.index+')">'+esc(task.text)+'</span>'
+    +(meta.length?'<span class="task-meta">'+meta.join('')+'</span>':'')+'</span></button>'
+    +'<button type="button" class="task-schedule '+(task.schedule?'has-time':'')+'" onclick="openSchedule(\''+task.areaId+'\','+task.index+')" aria-label="Расписание: '+esc(label)+'">'+CLOCK_ICON+'</button></div>';
+}
 function renderToday(){
   var d=new Date();
   document.getElementById('todayDate').textContent=DOW[d.getDay()]+', '+d.getDate()+' '+MON[d.getMonth()];
@@ -2334,24 +2344,28 @@ function renderToday(){
     actionsForArea(areaId).forEach(function(text,index){
       var key=taskKey(areaId,text),schedule=scheduleForTask(key),due=scheduleIsDue(schedule);
       if(id==='all'&&!due)return;
-      tasks.push({text:text,index:index,key:key,areaId:areaId,areaOrder:areaOrder,schedule:schedule,due:due,sort:schedule?(schedule.date+'T'+(schedule.time||'99:99')):'9999'});
+      tasks.push({text:text,index:index,key:key,areaId:areaId,areaOrder:areaOrder,schedule:schedule,due:due});
     });
   });
   if(!tasks.length){
     if(id==='all')h='<p class="empty-today">На сегодня задач нет. Открой направление и добавь действие.</p>';
     else h='<button type="button" class="btn btn-ghost btn-sm" style="margin-top:9px;" onclick="actionAreaId=\''+id+'\';go(\'minimum\')">Добавить действия для этой сферы</button>';
   }
-  tasks.sort(function(a,b){
+  var todayTasks=tasks.filter(function(task){return !task.schedule;});
+  var scheduledTasks=tasks.filter(function(task){return !!task.schedule;});
+  todayTasks.sort(function(a,b){return a.areaOrder-b.areaOrder||a.index-b.index;});
+  scheduledTasks.sort(function(a,b){
     if(a.due!==b.due)return a.due?-1:1;
-    return a.sort.localeCompare(b.sort)||a.areaOrder-b.areaOrder||a.index-b.index;
-  }).forEach(function(task){
-    var done=rec.done.indexOf(task.key)>=0,label=formatSchedule(task.schedule),timeClass=task.schedule?(task.due?'today':'future'):'';
-    h+='<div class="t'+(done?' done':'')+'" data-task="'+esc(task.key)+'">'
-      +'<button type="button" class="task-main" onclick="tapHabit(this.parentElement)">'+CHECK+'<span class="task-copy">'
-      +'<span class="lbl editable" onclick="event.stopPropagation();editTodayAction(\''+task.areaId+'\','+task.index+')">'+esc(task.text)+'</span>'
-      +'<span class="task-meta">'+(id==='all'?'<span class="task-area-tag">'+esc(DIAGNOSTIC_AREAS[task.areaId].name)+'</span>':'')+'<span class="task-time '+timeClass+'">'+CLOCK_ICON+esc(label)+'</span></span></span></button>'
-      +'<button type="button" class="task-schedule '+(task.schedule?'has-time':'')+'" onclick="openSchedule(\''+task.areaId+'\','+task.index+')" aria-label="Расписание: '+esc(label)+'">'+CLOCK_ICON+'</button></div>';
+    var aSort=(a.due?'0':'1'+(a.schedule.date||''))+'T'+(a.schedule.time||'99:99');
+    var bSort=(b.due?'0':'1'+(b.schedule.date||''))+'T'+(b.schedule.time||'99:99');
+    return aSort.localeCompare(bSort)||a.areaOrder-b.areaOrder||a.index-b.index;
   });
+  if(todayTasks.length){
+    h+='<section class="task-group task-group-today" aria-label="Задачи на сегодня без времени">'+todayTasks.map(function(task){return renderTodayTask(task,rec,id==='all');}).join('')+'</section>';
+  }
+  if(scheduledTasks.length){
+    h+='<section class="task-group task-group-scheduled" aria-label="Расписание"><div class="task-group-heading"><b>Расписание</b><span>по времени</span></div>'+scheduledTasks.map(function(task){return renderTodayTask(task,rec,id==='all');}).join('')+'</section>';
+  }
   document.getElementById('dayList').innerHTML=h;
   refreshDay();
 }
