@@ -408,7 +408,7 @@ test('Telegram profile creates a one-time Safari install link', async ({ page })
     if (path === '/api/snapshot') {
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ profile: profile(), state: completedState(), messages: [], resultSubmissions: [], mentorProfile: { displayName: 'Саша' } }) });
     }
-    if (path === '/api/install-handoff/create') {
+    if (path === '/api/install-handoff-create') {
       createBody = request.postDataJSON();
       return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ handoffToken, expiresIn: 600 }) });
     }
@@ -437,7 +437,7 @@ test('Safari consumes the handoff, removes it from the URL and keeps the profile
     const request = route.request();
     const path = new URL(request.url()).pathname;
     const snapshot = { profile: profile(), state: completedState(), messages: [], resultSubmissions: [], mentorProfile: { displayName: 'Саша' } };
-    if (path === '/api/install-handoff/consume') {
+    if (path === '/api/install-handoff-consume') {
       consumeBody = request.postDataJSON();
       return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(snapshot) });
     }

@@ -704,8 +704,8 @@ export default async function handler(req, res) {
     if (req.method === 'GET' && route === '/health') return send(res, 200, { ok: true, storage: 'neon-postgres' });
     if (req.method === 'POST' && route === '/register') return await register(req, res);
     if (req.method === 'POST' && route === '/resume') return await resume(req, res);
-    if (req.method === 'POST' && route === '/install-handoff/create') return await createInstallHandoff(req, res);
-    if (req.method === 'POST' && route === '/install-handoff/consume') return await consumeInstallHandoff(req, res);
+    if (req.method === 'POST' && route === '/install-handoff-create') return await createInstallHandoff(req, res);
+    if (req.method === 'POST' && route === '/install-handoff-consume') return await consumeInstallHandoff(req, res);
     if (req.method === 'POST' && route === '/login') return await login(req, res);
     if (req.method === 'POST' && route === '/logout') return await logout(req, res);
     const profile = await currentProfile(req);

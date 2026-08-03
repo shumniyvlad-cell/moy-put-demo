@@ -1438,13 +1438,13 @@ function startInstallFlow(){
   var initData=telegramInitData();
   if(!initData){showInstallGuide(false);return;}
   var row=document.getElementById('profileInstallRow');if(row)row.setAttribute('aria-busy','true');
-  apiRequest('install-handoff/create',{method:'POST',body:JSON.stringify({telegramInitData:initData})}).then(function(data){
+  apiRequest('install-handoff-create',{method:'POST',body:JSON.stringify({telegramInitData:initData})}).then(function(data){
     if(!data.handoffToken)throw new Error('Сервис не создал ссылку установки');
     openInstallHandoffUrl(data.handoffToken);
   }).catch(function(error){toast(error.message||'Не удалось открыть Safari','ok');}).finally(function(){if(row)row.removeAttribute('aria-busy');});
 }
 function consumeInstallHandoff(token){
-  return apiRequest('install-handoff/consume',{method:'POST',body:JSON.stringify({handoffToken:token,deviceToken:deviceToken(true)})}).then(function(data){
+  return apiRequest('install-handoff-consume',{method:'POST',body:JSON.stringify({handoffToken:token,deviceToken:deviceToken(true)})}).then(function(data){
     clearInstallHandoffHash();installTransferCompleted=true;deviceLinked=true;applySnapshot(data);return data;
   });
 }
