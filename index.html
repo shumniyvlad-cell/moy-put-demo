@@ -381,9 +381,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 @media(max-width:460px){body{padding:0;}.phone{width:100vw;height:100dvh;border-radius:0;border:none;box-shadow:none;}.demoTag{display:none;}}
 @media(max-width:360px){.goalfields{grid-template-columns:1fr}.goalfields .wide{grid-column:auto}.sharestats{gap:11px}.nav a{font-size:7.5px}}
 </style>
-<link rel="stylesheet" href="way-a.css?v=7">
-<link rel="stylesheet" href="way-b.css?v=7">
-<link rel="stylesheet" href="unified.css?v=7">
+<link rel="stylesheet" href="way-a.css?v=8">
+<link rel="stylesheet" href="way-b.css?v=8">
+<link rel="stylesheet" href="unified.css?v=8">
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 </head>
 <body class="theme-way-a">
@@ -2277,6 +2277,7 @@ function renderHomeSpheres(){
   var box=document.getElementById('homeSpheres');if(!box)return;
   var selected=selectedAreaIds(),items=['all'].concat(selected);
   box.classList.toggle('is-compact',items.length<=5);
+  box.classList.toggle('is-dense',items.length===6);
   if(homeAreaId!=='all'&&selected.indexOf(homeAreaId)<0)homeAreaId=selected[0];
   var shortNames={all:'Все',health:'Здоровье',sport:'Спорт',biz:'Доход',life:'Развитие',relations:'Отношения'};
   box.innerHTML=items.map(function(id){

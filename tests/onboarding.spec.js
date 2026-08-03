@@ -228,6 +228,41 @@ test('today screen centers selected areas and composes schedule presets', async 
   expect(state.schedules['health::Сон до 23:30'].timezone).toBeTruthy();
 });
 
+test('five selected areas and the all filter stay visible in one row', async ({ page }) => {
+  const areas = ['health', 'sport', 'biz', 'life', 'relations'];
+  const state = {
+    v: 8, name: 'Тест', contact: '@qa', dir: 'health', dirName: 'Здоровье и энергия', mode: 'Сам', mentorId: 'alex',
+    diagnosticAreas: areas,
+    diagnosticGoals: Object.fromEntries(areas.map((id) => [id, `Цель ${id}`])),
+    goalsByArea: Object.fromEntries(areas.map((id) => [id, { title: `Цель ${id}`, target: 10, current: 0, unit: 'шагов', deadline: '', pending: null }])),
+    actionsByArea: Object.fromEntries(areas.map((id) => [id, [`Задача ${id}`]])),
+    habits: areas.map((id) => `${id}::Задача ${id}`), days: {}, schedules: {}, quoteDismissedOn: '', lastCheckinAt: '',
+    rewards: { weeks: {}, returns: {}, shares: {} }, bonus: 0, applied: false, mentorStatus: 'none',
+    onboardingStep: 'complete', onboardingComplete: true, created: '2026-08-03'
+  };
+
+  await page.route('**/api/**', async (route) => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === '/api/snapshot') return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ profile: profile(), state, messages: [], resultSubmissions: [], mentorProfile: { displayName: 'Саша' } }) });
+    if (path === '/api/resume') return route.fulfill({ status: 401, contentType: 'application/json', body: '{"error":"Сохранённый вход не найден"}' });
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('http://127.0.0.1:8767/#today');
+  await expect(page.locator('#homeSpheres')).toHaveClass(/is-dense/);
+  await expect(page.locator('#homeSpheres button')).toHaveCount(6);
+  const rail = await page.locator('#homeSpheres').evaluate((element) => {
+    const container = element.getBoundingClientRect();
+    const boxes = [...element.querySelectorAll('button')].map((button) => button.getBoundingClientRect());
+    return { rows: new Set(boxes.map((box) => Math.round(box.top))).size, inside: boxes.every((box) => box.left >= container.left && box.right <= container.right) };
+  });
+  expect(rail).toEqual({ rows: 1, inside: true });
+  await page.locator('[data-home-area="all"]').click();
+  await expect(page.locator('#dayList .t')).toHaveCount(5);
+  await page.screenshot({ path: 'test-results/today-six-filters-light.png', fullPage: true });
+});
+
 test('existing device is not sent to a new registration when resume fails', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('way_registered_once', '1');
