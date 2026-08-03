@@ -411,11 +411,26 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
         <div class="way-wordmark">WAY</div>
         <div class="way-splash-tag"><span>Твой путь.</span><span>Твои правила.</span><span>Твой результат.</span></div>
       </div>
-      <button class="way-splash-arrow" type="button" onclick="go('participantregister')" aria-label="Начать путь">
+      <button class="way-splash-arrow" type="button" onclick="startParticipantFlow()" aria-label="Начать путь">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 19 5M9 5h10v10"/></svg>
       </button>
     </div>
     <p class="way-splash-login">Входишь как наставник? <button type="button" onclick="go('mentorlogin')">Открыть кабинет</button></p>
+  </section>
+
+  <!-- ВОССТАНОВЛЕНИЕ ВХОДА -->
+  <section class="screen full" data-s="restoreerror">
+    <div class="way-auth-brand"><span class="way-wordmark">WAY</span></div>
+    <div class="kick">Сохранённый маршрут</div>
+    <h1 style="font-size:25px;margin-top:8px;">Не удалось восстановить вход</h1>
+    <p class="mut small" id="restoreErrorText" style="margin-top:8px;">Сервис временно не ответил. Новую регистрацию начинать не нужно: повторим загрузку сохранённых данных.</p>
+    <div class="card restore-error-card" style="margin-top:18px;">
+      <b>Твои цели не заменяем новым профилем</b>
+      <p class="mut small" style="margin-top:6px;">Сначала повторно проверим Telegram и базу. Если вход открывался обычной ссылкой, вернись в @Myproway_bot и нажми «Открыть WAY».</p>
+    </div>
+    <div class="spacer"></div>
+    <button type="button" class="btn btn-amber" id="restoreRetryButton" onclick="retryRestoreSession()">Повторить загрузку</button>
+    <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="openWayBot()">Открыть @Myproway_bot</button>
   </section>
 
   <!-- 2. РЕГИСТРАЦИЯ УЧАСТНИКА -->
@@ -435,7 +450,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
       </button>
       <button type="button" class="policy-link onboarding-policy" onclick="openParticipantPrivacy()">Прочитать политику обработки данных</button>
     </div>
-    <div class="onboarding-device-note"><span>✓</span><div><b>Вход запомнится</b><small>После обновления страницы повторная регистрация не нужна.</small></div></div>
+    <div class="onboarding-device-note"><span>✓</span><div><b>Вход привяжется к Telegram</b><small>Открывай WAY через того же бота. В обычном браузере вход хранится только на этом устройстве.</small></div></div>
     <div class="spacer"></div>
     <button type="button" class="btn btn-amber" id="participantRegisterButton" onclick="registerParticipant()">Продолжить</button>
     <button type="button" class="onboarding-mentor-link" onclick="go('mentorlogin')">Я наставник</button>
@@ -1064,7 +1079,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;heigh
 <script>
 /* ================== МОЙ ПУТЬ · веб-MVP ================== */
 var MAIN=['today','path','mentorhub','mentordesk','team','knowledge','profile'], prev='splash';
-var OVER=['heroes','mentors','mentorprofile','mentorchat','checkin','apply','thanks','mentorstart','participantregister','mentorlogin','mentordesk','mentorparticipant','privacy'];
+var OVER=['heroes','mentors','mentorprofile','mentorchat','checkin','apply','thanks','mentorstart','participantregister','mentorlogin','mentordesk','mentorparticipant','privacy','restoreerror'];
 var MENTOR_PRICE=24000;
 var MENTORS={
   alex:{id:'alex',name:'Александр',photo:'img/mentor-1.jpg',focus:'Спорт · дисциплина',rating:'4.9',reviews:86,experience:'12 лет практики',clients:'148 сопровождений',format:'Личный чат · недельный фокус · 1 созвон в неделю',about:'Помогает выстроить устойчивую дисциплину без жёстких запретов: цель, минимум на каждый день и разбор срывов.',case:'Антон: с 0 до 12 тренировок в месяц за 8 недель',review:'«Не давит, а возвращает в план. Наконец-то перестал бросать на второй неделе.»'},
@@ -1178,7 +1193,7 @@ function cleanAwardMap(value){
   Object.keys(value).forEach(function(k){var n=Number(value[k]);if(k.length<40&&isFinite(n)&&n>0)out[k]=n;});
   return out;
 }
-function load(){
+function load(persist){
   var raw=null,base=defState(),rawVersion=1,dirNames={biz:'Доход и дело',sport:'Спорт и тело',health:'Здоровье и энергия',life:'Смысл и развитие',relations:'Отношения и окружение',regime:'Режим дня'};
   try{
     var stored=localStorage.getItem(stateStorageKey());
@@ -1266,9 +1281,10 @@ function load(){
   S.onboardingStep=S.onboardingComplete?'complete':(['diagnostic','actions','mode'].indexOf(S.onboardingStep)>=0?S.onboardingStep:(S.diagnosticAreas.length?'actions':'diagnostic'));
   S.created=typeof S.created==='string'&&S.created?S.created:todayKey();
   S.lastCheckinAt=typeof S.lastCheckinAt==='string'?S.lastCheckinAt:'';
-  save();
+  if(persist===false)writeLocalState();else save();
 }
-var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false,liveSyncTimer=0;
+var AUTH=null,REMOTE=null,syncTimer=0,syncBusy=false,syncPromise=null,syncRetryTimer=0,syncRevision=0,syncedRevision=0,liveSyncTimer=0;
+var bootstrapStatus='checking',bootstrapError=null;
 var profileSectionOrigin='',pathPeriod='week',goalEditAreaId='',goalEditReturn='';
 var goalProofData='',goalProofName='',goalProofType='';
 var mentorParticipantId='';
@@ -1281,8 +1297,8 @@ function apiRequest(path,options){
         var data=null;try{data=raw?JSON.parse(raw):{};}catch(e){}
         var retryable=response.status===429||response.status>=500||(!data&&/vercel security checkpoint|we.?re verifying your browser/i.test(raw));
         if(retryable&&attempt===0)return pause(700).then(function(){return request(1);});
-        if(!data){throw new Error('Сервис временно недоступен. Обнови страницу и повтори вход.');}
-        if(!response.ok)throw new Error(data.error||'Не удалось выполнить запрос');
+        if(!data){var unavailable=new Error('Сервис временно недоступен. Повтори загрузку.');unavailable.status=response.status||0;unavailable.transient=true;throw unavailable;}
+        if(!response.ok){var failed=new Error(data.error||'Не удалось выполнить запрос');failed.status=response.status;failed.code=data.error||'';throw failed;}
         return data;
       });
     }).catch(function(error){
@@ -1294,22 +1310,48 @@ function apiRequest(path,options){
 }
 function scheduleStateSync(){
   if(!AUTH||(AUTH.role!=='participant'&&AUTH.role!=='mentor'))return;
-  clearTimeout(syncTimer);syncTimer=setTimeout(syncState,450);
+  syncRevision++;
+  clearTimeout(syncTimer);syncTimer=setTimeout(function(){syncTimer=0;syncState(true).catch(function(){});},450);
 }
-function syncState(){
-  if(syncBusy||!AUTH||(AUTH.role!=='participant'&&AUTH.role!=='mentor'))return Promise.resolve();
+function scheduleSyncRetry(){
+  clearTimeout(syncRetryTimer);
+  syncRetryTimer=setTimeout(function(){syncRetryTimer=0;syncState(true).catch(function(){});},2500);
+}
+function syncState(silent){
+  if(!AUTH||(AUTH.role!=='participant'&&AUTH.role!=='mentor'))return Promise.resolve();
+  if(syncPromise){
+    return syncPromise.catch(function(){return null;}).then(function(){return syncRevision>syncedRevision?syncState(silent):{ok:true};});
+  }
+  if(syncRevision<=syncedRevision)return Promise.resolve({ok:true});
+  clearTimeout(syncTimer);syncTimer=0;
+  clearTimeout(syncRetryTimer);syncRetryTimer=0;
+  var revision=syncRevision,payload=JSON.stringify({state:S});
   syncBusy=true;
   var route=AUTH.role==='mentor'?'personal-state':'state';
-  return apiRequest(route,{method:'PUT',body:JSON.stringify({state:S})}).catch(function(error){console.warn('state sync',error);}).then(function(){syncBusy=false;});
+  syncPromise=apiRequest(route,{method:'PUT',body:payload}).then(function(data){
+    syncedRevision=Math.max(syncedRevision,revision);return data;
+  }).catch(function(error){
+    scheduleSyncRetry();
+    if(silent){console.warn('state sync',error);return {ok:false};}
+    throw error;
+  }).finally(function(){
+    syncBusy=false;syncPromise=null;
+    if(syncRevision>syncedRevision&&!syncRetryTimer){
+      clearTimeout(syncTimer);syncTimer=setTimeout(function(){syncTimer=0;syncState(true).catch(function(){});},60);
+    }
+  });
+  return syncPromise;
 }
 function applySnapshot(data){
   AUTH=data.profile||AUTH;REMOTE=data;
+  if(AUTH&&AUTH.role==='participant'){try{localStorage.setItem('way_registered_once','1');}catch(e){}}
   if(AUTH&&AUTH.role==='mentor'&&data.selectedParticipantId)mentorParticipantId=data.selectedParticipantId;
   var ownState=AUTH&&AUTH.role==='mentor'?data.personalState:data.state;
-  if(AUTH&&ownState&&typeof ownState==='object'){
+  var hasPendingLocalState=syncRevision>syncedRevision||!!syncPromise;
+  if(AUTH&&ownState&&typeof ownState==='object'&&!hasPendingLocalState){
     S=ownState;writeLocalState();
     // Снимок базы тоже проходит миграцию: иначе старый профиль теряет новые цели и действия при входе.
-    load();
+    load(false);
     // Ранние версии онбординга сохраняли выбранные направления, но оставляли
     // шаблонную цель. Меняем только нетронутую цель с нулевым прогрессом.
     if(AUTH.role==='participant'&&migrateDiagnosticGoal())scheduleStateSync();
@@ -1348,8 +1390,43 @@ function telegramInitData(){
 }
 function resumeParticipant(){
   var credential=deviceToken(false),initData=telegramInitData();
-  if(!credential&&!initData)return Promise.reject(new Error('Сохранённый вход не найден'));
+  if(!credential&&!initData){var missing=new Error('Сохранённый вход не найден');missing.status=401;missing.code=missing.message;return Promise.reject(missing);}
   return apiRequest('resume',{method:'POST',body:JSON.stringify({deviceToken:credential,telegramInitData:initData})}).then(function(data){applySnapshot(data);return data;});
+}
+function startParticipantFlow(){
+  if(bootstrapStatus==='checking'){toast('Проверяем сохранённый вход…','ok');return;}
+  if(bootstrapStatus==='error'){showRestoreError(bootstrapError);return;}
+  go('participantregister');
+}
+function openWayBot(){
+  var url='https://t.me/Myproway_bot';
+  try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.openTelegramLink){Telegram.WebApp.openTelegramLink(url);return;}}catch(e){}
+  window.open(url,'_blank','noopener');
+}
+function showRestoreError(error){
+  bootstrapStatus='error';bootstrapError=error||new Error('Сервис временно недоступен');
+  var message=document.getElementById('restoreErrorText');
+  if(message)message.textContent=bootstrapError.message||'Сервис временно не ответил. Повтори загрузку сохранённых данных.';
+  go('restoreerror');
+}
+function isMissingSession(error){return !!(error&&error.status===401);}
+function registeredOnThisDevice(){try{return localStorage.getItem('way_registered_once')==='1';}catch(e){return false;}}
+function protectedResumeError(error){
+  if(!isMissingSession(error)||!registeredOnThisDevice())return error;
+  var protectedError=new Error('На этом устройстве уже был профиль, но сервер не смог его сопоставить. Новую регистрацию не запускаем — открой WAY через того же Telegram или повтори загрузку.');
+  protectedError.status=409;protectedError.code='PROFILE_RESTORE_REQUIRED';return protectedError;
+}
+function bootstrapSession(){
+  return refreshRemoteSnapshot().catch(function(error){if(!isMissingSession(error))throw error;return resumeParticipant();});
+}
+function retryRestoreSession(){
+  var button=document.getElementById('restoreRetryButton');
+  bootstrapStatus='checking';bootstrapError=null;
+  if(button){button.disabled=true;button.textContent='Проверяем…';}
+  bootstrapSession().then(function(data){bootstrapStatus='ready';routeAfterBootstrap(data);}).catch(function(error){
+    if(isMissingSession(error)&&!registeredOnThisDevice()){bootstrapStatus='anonymous';go('splash');return;}
+    showRestoreError(protectedResumeError(error));
+  }).finally(function(){if(button){button.disabled=false;button.textContent='Повторить загрузку';}});
 }
 function registerParticipant(){
   var name=document.getElementById('participantName').value.trim(),contact=document.getElementById('participantContact').value.trim(),consent=document.getElementById('participantConsent').classList.contains('on'),btn=document.getElementById('participantRegisterButton');
@@ -1372,7 +1449,7 @@ function openTestWorkspace(data,notice){
   applySnapshot(data);
   if(!AUTH){toast('Сессия не подтверждена. Начни регистрацию ещё раз.','ok');go('participantregister');return;}
   var ownState=AUTH.role==='mentor'?data.personalState:data.state;
-  if(!ownState){S=defState();S.name=AUTH.displayName||'';S.contact=AUTH.contact||'';save();scheduleStateSync();}
+  if(!ownState){S=defState();S.name=AUTH.displayName||'';S.contact=AUTH.contact||'';save();}
   if(AUTH.role==='mentor'){go('mentordesk');if(notice)toast(notice,'ok');return;}
   go(participantOnboardingRoute());
   if(notice)toast(notice,'ok');
@@ -1388,7 +1465,7 @@ function loginTest(){
 function logoutTest(){
   var participant=AUTH&&AUTH.role==='participant';
   apiRequest('logout',{method:'POST',body:'{}'}).catch(function(){}).then(function(){
-    if(participant){try{localStorage.removeItem('way_device_credential');}catch(e){}}
+    if(participant){try{localStorage.removeItem('way_device_credential');localStorage.removeItem('way_registered_once');}catch(e){}}
     AUTH=null;REMOTE=null;mentorParticipantId='';go('splash');toast('Вы вышли из профиля','ok');
   });
 }
@@ -1569,7 +1646,7 @@ function removeSchedule(){
 
 /* --- Навигация --- */
 function go(id){
-  if(!AUTH&&id!=='participantregister'&&id!=='mentorlogin'&&id!=='privacy'&&id!=='splash')id='splash';
+  if(!AUTH&&id!=='participantregister'&&id!=='mentorlogin'&&id!=='privacy'&&id!=='splash'&&id!=='restoreerror')id='splash';
   if(id!=='path'&&id!=='team')profileSectionOrigin='';
   var cur=document.querySelector('.screen.active');
   if(cur){var c=cur.dataset.s; if(OVER.indexOf(c)<0) prev=c;}
@@ -2781,12 +2858,24 @@ function routeAfterBootstrap(data){
   if(h&&['splash','participantregister','mentorlogin'].indexOf(h)<0&&document.querySelector('.screen[data-s="'+h+'"]')){go(h);return;}
   openTestWorkspace(data||{});
 }
+function flushStateOnPageHide(){
+  if(!AUTH||(AUTH.role!=='participant'&&AUTH.role!=='mentor')||syncRevision<=syncedRevision)return;
+  var route=AUTH.role==='mentor'?'personal-state':'state',body='';
+  try{body=JSON.stringify({state:S});}catch(e){return;}
+  if(!body||body.length>60000)return;
+  try{fetch('/api/'+route,{method:'PUT',credentials:'same-origin',cache:'no-store',keepalive:true,headers:{'Content-Type':'application/json','Accept':'application/json'},body:body}).catch(function(){});}catch(e){}
+}
 applyTheme(currentTheme,false);
 try{if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}}catch(e){}
 document.addEventListener('keydown',function(event){if(event.key==='Escape'&&!document.getElementById('scheduleOverlay').hidden)closeSchedule();});
 load();
 startLiveSync();
-refreshRemoteSnapshot().catch(function(){return resumeParticipant();}).then(routeAfterBootstrap).catch(function(){routeAfterBootstrap(null);});
+bootstrapSession().then(function(data){bootstrapStatus='ready';routeAfterBootstrap(data);}).catch(function(error){
+  if(isMissingSession(error)&&!registeredOnThisDevice()){bootstrapStatus='anonymous';routeAfterBootstrap(null);return;}
+  showRestoreError(protectedResumeError(error));
+});
+window.addEventListener('pagehide',flushStateOnPageHide);
+document.addEventListener('visibilitychange',function(){if(document.hidden){flushStateOnPageHide();syncState(true).catch(function(){});}});
 window.addEventListener('hashchange',function(){
   var h=(location.hash||'').replace('#','');
   if(['rewards','challenges'].indexOf(h)>=0){go('path');return;}

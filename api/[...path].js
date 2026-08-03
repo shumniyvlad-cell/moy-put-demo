@@ -373,7 +373,7 @@ async function resume(req, res) {
   const sql = getDb();
   let rows = telegram
     ? await sql`SELECT id, role, display_name AS "displayName", contact, telegram_user_id AS "telegramUserId"
-        FROM profiles WHERE telegram_user_id = ${telegram.id} AND role = 'participant'`
+        FROM profiles WHERE telegram_user_id = ${telegram.id}`
     : [];
   if (!rows[0] && deviceToken) {
     rows = await sql`SELECT p.id, p.role, p.display_name AS "displayName", p.contact, p.telegram_user_id AS "telegramUserId"

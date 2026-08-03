@@ -191,3 +191,80 @@ test('today screen centers selected areas and composes schedule presets', async 
   expect(state.schedules['health::Сон до 23:30']).toMatchObject({ date: expectedTomorrow, time: '20:00', repeat: 'none', notifyTelegram: true });
   expect(state.schedules['health::Сон до 23:30'].timezone).toBeTruthy();
 });
+
+test('existing device is not sent to a new registration when resume fails', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('way_registered_once', '1');
+    localStorage.setItem('way_device_credential', 'abcdefghijklmnopqrstuvwxyzABCDEFGH12345678');
+  });
+  await page.route('**/api/**', async (route) => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === '/api/snapshot') return route.fulfill({ status: 401, contentType: 'application/json', body: '{"error":"Нужен вход"}' });
+    if (path === '/api/resume') return route.fulfill({ status: 401, contentType: 'application/json', body: '{"error":"Сохранённый вход не найден"}' });
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+
+  await page.goto('http://127.0.0.1:8767/');
+  await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'restoreerror');
+  await expect(page.getByRole('heading', { name: 'Не удалось восстановить вход' })).toBeVisible();
+  await expect(page.locator('.screen[data-s="participantregister"]')).not.toHaveClass(/active/);
+});
+
+test('state changes made during an in-flight save are sent afterwards', async ({ page }) => {
+  let state = {
+    v: 8,
+    name: 'Тест',
+    contact: '@qa',
+    dir: 'health',
+    dirName: 'Здоровье и энергия',
+    mode: 'Сам',
+    mentorId: 'alex',
+    diagnosticAreas: ['health'],
+    diagnosticGoals: { health: 'Спать 8 часов' },
+    goalsByArea: { health: { title: 'Спать 8 часов', target: 30, current: 0, unit: 'дней', deadline: '', pending: null } },
+    actionsByArea: { health: ['Лечь до 23:00'] },
+    habits: ['health::Лечь до 23:00'],
+    days: {},
+    schedules: {},
+    quoteDismissedOn: '',
+    lastCheckinAt: '',
+    rewards: { weeks: {}, returns: {}, shares: {} },
+    bonus: 0,
+    applied: false,
+    mentorStatus: 'none',
+    onboardingStep: 'complete',
+    onboardingComplete: true,
+    created: '2026-08-02'
+  };
+  const writes = [];
+
+  await page.route('**/api/**', async (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (path === '/api/snapshot') {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ profile: profile(), state, messages: [], resultSubmissions: [], mentorProfile: { displayName: 'Саша' } }) });
+    }
+    if (path === '/api/state') {
+      const next = request.postDataJSON().state;
+      writes.push(next);
+      if (writes.length === 1) await new Promise((resolve) => setTimeout(resolve, 800));
+      state = next;
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+
+  await page.goto('http://127.0.0.1:8767/#today');
+  await expect(page.locator('.screen.active')).toHaveAttribute('data-s', 'today');
+  await page.evaluate(() => {
+    S.lifeGoal = 'Первое изменение';
+    save();
+  });
+  await expect.poll(() => writes.length).toBe(1);
+  await page.evaluate(() => {
+    S.lifeGoal = 'Последнее изменение должно сохраниться';
+    save();
+  });
+  await expect.poll(() => writes.length, { timeout: 4000 }).toBeGreaterThanOrEqual(2);
+  expect(writes.at(-1).lifeGoal).toBe('Последнее изменение должно сохраниться');
+});
